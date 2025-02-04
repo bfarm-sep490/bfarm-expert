@@ -1,0 +1,77 @@
+{
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "@ant-design/graphs": "latest",
+    "@ant-design/icons": "latest",
+    "@ant-design/plots": "latest",
+    "@ant-design/use-emotion-css": "latest",
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@googlemaps/react-wrapper": "latest",
+    "@refinedev/ably": "latest",
+    "@refinedev/antd": "latest",
+    "@refinedev/cli": "latest",
+    "@refinedev/core": "latest",
+    "@refinedev/inferencer": "^5.0.1",
+    "@refinedev/kbar": "latest",
+    "@refinedev/react-router": "latest",
+    "@refinedev/simple-rest": "latest",
+    "@types/bun": "latest",
+    "@uiw/react-md-editor": "latest",
+    "antd": "latest",
+    "antd-style": "latest",
+    "dayjs": "latest",
+    "google-map-react": "latest",
+    "i18next": "latest",
+    "i18next-browser-languagedetector": "latest",
+    "i18next-xhr-backend": "latest",
+    "lodash": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-i18next": "latest",
+    "react-infinite-scroll-component": "latest",
+    "react-input-mask": "latest",
+    "react-router": "latest",
+    "tslib": "latest",
+    "usehooks-ts": "latest"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "@commitlint/cz-commitlint": "latest",
+    "@types/google.maps": "latest",
+    "@types/jest": "latest",
+    "@types/lodash": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@types/react-input-mask": "latest",
+    "@vitejs/plugin-react": "latest",
+    "husky": "latest",
+    "lint-staged": "latest",
+    "sort-package-json": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "lint-staged": {
+    "package.json": [
+      "sort-package-json"
+    ]
+  },
+  "name": "bfarm-expert",
+  "private": true,
+  "scripts": {
+    "build": "tsc && refine build",
+    "dev": "refine dev",
+    "prepare": "husky",
+    "refine": "refine",
+    "serve": "bun run fake-server/serve.ts",
+    "start": "refine start"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}
