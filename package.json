@@ -1,4 +1,20 @@
 {
+  "name": "bfarm-expert",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc && refine build",
+    "dev": "refine dev",
+    "prepare": "husky",
+    "refine": "refine",
+    "start": "refine start"
+  },
+  "lint-staged": {
+    "package.json": [
+      "sort-package-json"
+    ]
+  },
   "browserslist": [
     ">0.2%",
     "not dead",
@@ -56,22 +72,5 @@
     "sort-package-json": "latest",
     "typescript": "latest",
     "vite": "latest"
-  },
-  "lint-staged": {
-    "package.json": [
-      "sort-package-json"
-    ]
-  },
-  "name": "bfarm-expert",
-  "private": true,
-  "scripts": {
-    "build": "tsc && refine build",
-    "dev": "refine dev",
-    "prepare": "husky",
-    "refine": "refine",
-    "serve": "bun run fake-server/serve.ts",
-    "start": "refine start"
-  },
-  "type": "module",
-  "version": "1.0.0"
+  }
 }
