@@ -1,12 +1,14 @@
 import type { AuthProvider } from "@refinedev/core";
-import { notification } from "antd";
+
 import { disableAutoLogin, enableAutoLogin } from "./hooks";
+
+import { notification } from "antd";
 
 export const TOKEN_KEY = "bfarm-auth";
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
-    enableAutoLogin();
+    // enableAutoLogin();
     localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
     return {
       success: true,

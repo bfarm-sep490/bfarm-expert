@@ -15,7 +15,7 @@
         "@refinedev/antd": "latest",
         "@refinedev/cli": "latest",
         "@refinedev/core": "latest",
-        "@refinedev/inferencer": "^5.0.1",
+        "@refinedev/inferencer": "^5.0.3",
         "@refinedev/kbar": "latest",
         "@refinedev/react-router": "latest",
         "@refinedev/simple-rest": "latest",
@@ -42,6 +42,7 @@
         "@commitlint/cli": "latest",
         "@commitlint/config-conventional": "latest",
         "@commitlint/cz-commitlint": "latest",
+        "@trivago/prettier-plugin-sort-imports": "latest",
         "@types/google.maps": "latest",
         "@types/jest": "latest",
         "@types/lodash": "latest",
@@ -52,6 +53,7 @@
         "@vitejs/plugin-react": "latest",
         "husky": "latest",
         "lint-staged": "latest",
+        "prettier": "latest",
         "sort-package-json": "latest",
         "typescript": "latest",
         "vite": "latest",
@@ -163,7 +165,7 @@
 
     "@babel/core": ["@babel/core@7.26.0", "", { "dependencies": { "@ampproject/remapping": "^2.2.0", "@babel/code-frame": "^7.26.0", "@babel/generator": "^7.26.0", "@babel/helper-compilation-targets": "^7.25.9", "@babel/helper-module-transforms": "^7.26.0", "@babel/helpers": "^7.26.0", "@babel/parser": "^7.26.0", "@babel/template": "^7.25.9", "@babel/traverse": "^7.25.9", "@babel/types": "^7.26.0", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, ""],
 
-    "@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+    "@babel/generator": ["@babel/generator@7.26.9", "", { "dependencies": { "@babel/parser": "^7.26.9", "@babel/types": "^7.26.9", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, "sha512-kEWdzjOAUMW4hAyrzJ0ZaTOu9OmpyDIQicIh0zg0EEcEkYXZb2TjtBhnHi2ViX7PKwZqF4xwqfAm299/QMP3lg=="],
 
     "@babel/helper-annotate-as-pure": ["@babel/helper-annotate-as-pure@7.25.9", "", { "dependencies": { "@babel/types": "^7.25.9" } }, ""],
 
@@ -193,7 +195,7 @@
 
     "@babel/helpers": ["@babel/helpers@7.26.0", "", { "dependencies": { "@babel/template": "^7.25.9", "@babel/types": "^7.26.0" } }, ""],
 
-    "@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+    "@babel/parser": ["@babel/parser@7.26.9", "", { "dependencies": { "@babel/types": "^7.26.9" }, "bin": "./bin/babel-parser.js" }, "sha512-81NWa1njQblgZbQHxWHpxxCzNsa3ZwvFqpUg7P+NNUU6f3UU2jBEg4OlF/J6rl8+PQGh1q6/zWScd001YwcA5A=="],
 
     "@babel/plugin-syntax-flow": ["@babel/plugin-syntax-flow@7.26.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.25.9" }, "peerDependencies": { "@babel/core": "^7.0.0-0" } }, ""],
 
@@ -227,11 +229,11 @@
 
     "@babel/runtime": ["@babel/runtime@7.26.0", "", { "dependencies": { "regenerator-runtime": "^0.14.0" } }, ""],
 
-    "@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+    "@babel/template": ["@babel/template@7.26.9", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/parser": "^7.26.9", "@babel/types": "^7.26.9" } }, "sha512-qyRplbeIpNZhmzOysF/wFMuP9sctmh2cFzRAZOn1YapxBsE1i9bJIY586R/WBLfLcmcBlM8ROBiQURnnNy+zfA=="],
 
-    "@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+    "@babel/traverse": ["@babel/traverse@7.26.9", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.9", "@babel/parser": "^7.26.9", "@babel/template": "^7.26.9", "@babel/types": "^7.26.9", "debug": "^4.3.1", "globals": "^11.1.0" } }, "sha512-ZYW7L+pL8ahU5fXmNbPF+iZFHCv5scFak7MZ9bwaRPLUhHh7QQEMjZUg0HevihoqCM5iSYHN61EyCoZvqC+bxg=="],
 
-    "@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+    "@babel/types": ["@babel/types@7.26.9", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, "sha512-Y3IR1cRnOxOCDvMmNiym7XpXQ93iGDDPHx+Zj+NM+rg0fBaShfQLkg+hKPaZCEvg5N/LeCo4+Rj/i3FuJsIQaw=="],
 
     "@colors/colors": ["@colors/colors@1.5.0", "", {}, ""],
 
@@ -391,7 +393,7 @@
 
     "@refinedev/devtools-shared": ["@refinedev/devtools-shared@1.1.14", "", { "dependencies": { "@tanstack/react-query": "^4.10.1", "error-stack-parser": "^2.1.4" }, "peerDependencies": { "@types/react": "^17.0.0 || ^18.0.0", "@types/react-dom": "^17.0.0 || ^18.0.0", "react": "^17.0.0 || ^18.0.0", "react-dom": "^17.0.0 || ^18.0.0" } }, ""],
 
-    "@refinedev/inferencer": ["@refinedev/inferencer@5.0.1", "", { "dependencies": { "@aliemir/react-live": "^4.0.0", "@refinedev/core": "^4.57.1", "@tabler/icons-react": "^3.1.0", "dayjs": "^1.10.7", "graphql": "^15.6.1", "graphql-tag": "^2.12.6", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "pluralize": "^8.0.0", "prettier": "^2.7.1", "prism-react-renderer": "^1.3.5", "react-markdown": "^6.0.1", "remark-gfm": "^1.0.0", "tslib": "^2.6.2" }, "peerDependencies": { "@ant-design/icons": "^5.5.1", "@chakra-ui/react": "^2.5.1", "@emotion/react": "^11.8.2", "@emotion/styled": "^11.8.1", "@mantine/core": "^5.10.4", "@mantine/form": "^5.10.4", "@mantine/hooks": "^5.10.4", "@mantine/notifications": "^5.10.4", "@mui/lab": "^6.0.0-beta.14", "@mui/material": "^6.1.7", "@mui/x-data-grid": "^7.22.2", "@refinedev/antd": "^5.0.0", "@refinedev/chakra-ui": "^2.0.0", "@refinedev/core": "^4.54.0", "@refinedev/mantine": "^2.0.0", "@refinedev/mui": "^6.0.0", "@refinedev/react-hook-form": "^4.0.0", "@refinedev/react-table": "^5.0.0", "@tanstack/react-table": "^8.2.6", "@types/react": "^17.0.0 || ^18.0.0", "@types/react-dom": "^17.0.0 || ^18.0.0", "antd": "^5.0.3", "dayjs": "^1.10.7", "react": "^17.0.0 || ^18.0.0", "react-dom": "^17.0.0 || ^18.0.0", "react-hook-form": "^7.43.5" }, "optionalPeers": ["@chakra-ui/react", "@mantine/core", "@mantine/form", "@mantine/hooks", "@mantine/notifications", "@mui/lab", "@mui/material", "@mui/x-data-grid", "@refinedev/chakra-ui", "@refinedev/mantine", "@refinedev/mui", "@refinedev/react-hook-form", "@refinedev/react-table", "@tanstack/react-table", "react-hook-form"] }, ""],
+    "@refinedev/inferencer": ["@refinedev/inferencer@5.0.3", "", { "dependencies": { "@aliemir/react-live": "^4.0.0", "@refinedev/core": "^4.57.5", "@tabler/icons-react": "^3.1.0", "dayjs": "^1.10.7", "graphql": "^15.6.1", "graphql-tag": "^2.12.6", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "pluralize": "^8.0.0", "prettier": "^2.7.1", "prism-react-renderer": "^1.3.5", "react-markdown": "^6.0.1", "remark-gfm": "^1.0.0", "tslib": "^2.6.2" }, "peerDependencies": { "@ant-design/icons": "^5.5.1", "@chakra-ui/react": "^2.5.1", "@emotion/react": "^11.8.2", "@emotion/styled": "^11.8.1", "@mantine/core": "^5.10.4", "@mantine/form": "^5.10.4", "@mantine/hooks": "^5.10.4", "@mantine/notifications": "^5.10.4", "@mui/lab": "^6.0.0-beta.14", "@mui/material": "^6.1.7", "@mui/x-data-grid": "^7.23.5", "@refinedev/antd": "^5.0.0", "@refinedev/chakra-ui": "^2.0.0", "@refinedev/mantine": "^2.0.0", "@refinedev/mui": "^6.0.0", "@refinedev/react-hook-form": "^4.0.0", "@refinedev/react-table": "^5.0.0", "@tanstack/react-table": "^8.2.6", "@types/react": "^17.0.0 || ^18.0.0", "@types/react-dom": "^17.0.0 || ^18.0.0", "antd": "^5.0.3", "react": "^17.0.0 || ^18.0.0", "react-dom": "^17.0.0 || ^18.0.0", "react-hook-form": "^7.43.5" }, "optionalPeers": ["@chakra-ui/react", "@emotion/react", "@emotion/styled", "@mantine/core", "@mantine/form", "@mantine/hooks", "@mantine/notifications", "@mui/lab", "@mui/material", "@mui/x-data-grid", "@refinedev/antd", "@refinedev/chakra-ui", "@refinedev/mantine", "@refinedev/mui", "@refinedev/react-hook-form", "@refinedev/react-table", "@tanstack/react-table", "antd", "react-hook-form"] }, "sha512-azd5cQiuADX9vlOpUcrQQieLdnXaduu6XJRhb8tHXawaC16yjjgtbgAGIfWqpLznR0IJmx5PwpXXS01QQlk95A=="],
 
     "@refinedev/kbar": ["@refinedev/kbar@1.3.14", "", { "dependencies": { "kbar": "^0.1.0-beta.40" }, "peerDependencies": { "@refinedev/core": "^4.46.1", "react": "^17.0.0 || ^18.0.0", "react-dom": "^17.0.0 || ^18.0.0" } }, "sha512-CxINIblCU7dMDdpJ8GEZay612Ht79OCEvys3Y6q5URDBzIF5efNK71bVW5zNvokKmqSJ7avNa11drPXyUNh8pA=="],
 
@@ -416,6 +418,8 @@
     "@tanstack/query-core": ["@tanstack/query-core@4.36.1", "", {}, ""],
 
     "@tanstack/react-query": ["@tanstack/react-query@4.36.1", "", { "dependencies": { "@tanstack/query-core": "4.36.1", "use-sync-external-store": "^1.2.0" }, "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0", "react-native": "*" }, "optionalPeers": ["react-native"] }, ""],
+
+    "@trivago/prettier-plugin-sort-imports": ["@trivago/prettier-plugin-sort-imports@5.2.2", "", { "dependencies": { "@babel/generator": "^7.26.5", "@babel/parser": "^7.26.7", "@babel/traverse": "^7.26.7", "@babel/types": "^7.26.7", "javascript-natural-sort": "^0.7.1", "lodash": "^4.17.21" }, "peerDependencies": { "@vue/compiler-sfc": "3.x", "prettier": "2.x - 3.x", "prettier-plugin-svelte": "3.x", "svelte": "4.x || 5.x" }, "optionalPeers": ["@vue/compiler-sfc", "prettier-plugin-svelte", "svelte"] }, "sha512-fYDQA9e6yTNmA13TLVSA+WMQRc5Bn/c0EUBditUHNfMMxN7M82c38b1kEggVE3pLpZ0FwkwJkUEKMiOi52JXFA=="],
 
     "@types/babel__core": ["@types/babel__core@7.20.5", "", { "dependencies": { "@babel/parser": "^7.20.7", "@babel/types": "^7.20.7", "@types/babel__generator": "*", "@types/babel__template": "*", "@types/babel__traverse": "*" } }, ""],
 
@@ -1211,6 +1215,8 @@
 
     "jackspeak": ["jackspeak@3.4.3", "", { "dependencies": { "@isaacs/cliui": "^8.0.2" }, "optionalDependencies": { "@pkgjs/parseargs": "^0.11.0" } }, ""],
 
+    "javascript-natural-sort": ["javascript-natural-sort@0.7.1", "", {}, "sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw=="],
+
     "jest-diff": ["jest-diff@29.7.0", "", { "dependencies": { "chalk": "^4.0.0", "diff-sequences": "^29.6.3", "jest-get-type": "^29.6.3", "pretty-format": "^29.7.0" } }, ""],
 
     "jest-get-type": ["jest-get-type@29.6.3", "", {}, ""],
@@ -1579,7 +1585,7 @@
 
     "preferred-pm": ["preferred-pm@3.1.4", "", { "dependencies": { "find-up": "^5.0.0", "find-yarn-workspace-root2": "1.2.16", "path-exists": "^4.0.0", "which-pm": "^2.2.0" } }, ""],
 
-    "prettier": ["prettier@2.8.8", "", { "bin": "bin-prettier.js" }, ""],
+    "prettier": ["prettier@3.5.2", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-lc6npv5PH7hVqozBR7lkBNOGXV9vMwROAPlumdBkX0wTbbzPu/U1hk5yL8p2pt4Xoc+2mkT8t/sow2YrV/M5qg=="],
 
     "pretty-format": ["pretty-format@29.7.0", "", { "dependencies": { "@jest/schemas": "^29.6.3", "ansi-styles": "^5.0.0", "react-is": "^18.0.0" } }, ""],
 
@@ -2133,23 +2139,51 @@
 
     "@antv/react-g/scheduler": ["scheduler@0.20.2", "", { "dependencies": { "loose-envify": "^1.1.0", "object-assign": "^4.1.1" } }, ""],
 
+    "@babel/core/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/core/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/core/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/core/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+
+    "@babel/core/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
     "@babel/core/semver": ["semver@6.3.1", "", { "bin": "bin/semver.js" }, ""],
+
+    "@babel/helper-annotate-as-pure/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
 
     "@babel/helper-compilation-targets/lru-cache": ["lru-cache@5.1.1", "", { "dependencies": { "yallist": "^3.0.2" } }, ""],
 
     "@babel/helper-compilation-targets/semver": ["semver@6.3.1", "", { "bin": "bin/semver.js" }, ""],
 
+    "@babel/helper-create-class-features-plugin/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+
     "@babel/helper-create-class-features-plugin/semver": ["semver@6.3.1", "", { "bin": "bin/semver.js" }, ""],
 
-    "@commitlint/format/chalk": ["chalk@5.4.1", "", {}, ""],
+    "@babel/helper-member-expression-to-functions/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
 
-    "@commitlint/is-ignored/semver": ["semver@7.6.3", "", { "bin": "bin/semver.js" }, ""],
+    "@babel/helper-member-expression-to-functions/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
 
-    "@commitlint/load/chalk": ["chalk@5.4.1", "", {}, ""],
+    "@babel/helper-module-imports/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+
+    "@babel/helper-module-imports/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@babel/helper-module-transforms/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+
+    "@babel/helper-optimise-call-expression/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@babel/helper-replace-supers/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+
+    "@babel/helper-skip-transparent-expression-wrappers/@babel/traverse": ["@babel/traverse@7.26.4", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.3", "@babel/parser": "^7.26.3", "@babel/template": "^7.25.9", "@babel/types": "^7.26.3", "debug": "^4.3.1", "globals": "^11.1.0" } }, ""],
+
+    "@babel/helper-skip-transparent-expression-wrappers/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@babel/helpers/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helpers/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
 
     "@commitlint/top-level/find-up": ["find-up@7.0.0", "", { "dependencies": { "locate-path": "^7.2.0", "path-exists": "^5.0.0", "unicorn-magic": "^0.1.0" } }, ""],
-
-    "@commitlint/types/chalk": ["chalk@5.4.1", "", {}, ""],
 
     "@emotion/babel-plugin/convert-source-map": ["convert-source-map@1.9.0", "", {}, ""],
 
@@ -2181,6 +2215,8 @@
 
     "@refinedev/cli/execa": ["execa@5.1.1", "", { "dependencies": { "cross-spawn": "^7.0.3", "get-stream": "^6.0.0", "human-signals": "^2.1.0", "is-stream": "^2.0.0", "merge-stream": "^2.0.0", "npm-run-path": "^4.0.1", "onetime": "^5.1.2", "signal-exit": "^3.0.3", "strip-final-newline": "^2.0.0" } }, ""],
 
+    "@refinedev/cli/prettier": ["prettier@2.8.8", "", { "bin": "bin-prettier.js" }, ""],
+
     "@refinedev/cli/semver": ["semver@7.5.2", "", { "dependencies": { "lru-cache": "^6.0.0" }, "bin": "bin/semver.js" }, ""],
 
     "@refinedev/devtools-server/chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, ""],
@@ -2190,6 +2226,22 @@
     "@refinedev/devtools-server/react": ["react@18.3.1", "", { "dependencies": { "loose-envify": "^1.1.0" } }, ""],
 
     "@refinedev/devtools-server/react-dom": ["react-dom@18.3.1", "", { "dependencies": { "loose-envify": "^1.1.0", "scheduler": "^0.23.2" }, "peerDependencies": { "react": "^18.3.1" } }, ""],
+
+    "@refinedev/inferencer/@refinedev/core": ["@refinedev/core@4.57.5", "", { "dependencies": { "@refinedev/devtools-internal": "1.1.16", "@tanstack/react-query": "^4.10.1", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "papaparse": "^5.3.0", "pluralize": "^8.0.0", "qs": "^6.10.1", "tslib": "^2.6.2", "warn-once": "^0.1.0" }, "peerDependencies": { "@types/react": "^17.0.0 || ^18.0.0", "@types/react-dom": "^17.0.0 || ^18.0.0", "react": "^17.0.0 || ^18.0.0", "react-dom": "^17.0.0 || ^18.0.0" } }, "sha512-tk7R3clV6JVpQMcVJH58EZN0O294L2kUEQEwEw4abEAlhOkZ0LZMOl9eGDLTjHVzDQW61ZzH0k+YwHo2q0x2UQ=="],
+
+    "@refinedev/inferencer/prettier": ["prettier@2.8.8", "", { "bin": "bin-prettier.js" }, ""],
+
+    "@types/babel__core/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@types/babel__core/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@types/babel__generator/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@types/babel__template/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@types/babel__template/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@types/babel__traverse/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
 
     "@types/mdast/@types/unist": ["@types/unist@3.0.3", "", {}, ""],
 
@@ -2224,8 +2276,6 @@
     "cliui/wrap-ansi": ["wrap-ansi@7.0.0", "", { "dependencies": { "ansi-styles": "^4.0.0", "string-width": "^4.1.0", "strip-ansi": "^6.0.0" } }, ""],
 
     "clone-deep/is-plain-object": ["is-plain-object@2.0.4", "", { "dependencies": { "isobject": "^3.0.1" } }, ""],
-
-    "clone-deep/kind-of": ["kind-of@6.0.3", "", {}, ""],
 
     "clone-response/mimic-response": ["mimic-response@1.0.1", "", {}, "sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ=="],
 
@@ -2268,8 +2318,6 @@
     "fmin/rollup": ["rollup@0.25.8", "", { "dependencies": { "chalk": "^1.1.1", "minimist": "^1.2.0", "source-map-support": "^0.3.2" }, "bin": "bin/rollup" }, ""],
 
     "fmin/uglify-js": ["uglify-js@2.8.29", "", { "dependencies": { "source-map": "~0.5.1", "yargs": "~3.10.0" }, "optionalDependencies": { "uglify-to-browserify": "~1.0.0" }, "bin": { "uglifyjs": "bin/uglifyjs" } }, ""],
-
-    "foreground-child/signal-exit": ["signal-exit@4.1.0", "", {}, ""],
 
     "global-directory/ini": ["ini@4.1.1", "", {}, ""],
 
@@ -2395,6 +2443,8 @@
 
     "jest-util/chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, ""],
 
+    "jscodeshift/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
     "jscodeshift/chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, ""],
 
     "jscodeshift/temp": ["temp@0.8.4", "", { "dependencies": { "rimraf": "~2.6.2" } }, ""],
@@ -2418,10 +2468,6 @@
     "make-dir/semver": ["semver@5.7.2", "", { "bin": "bin/semver" }, ""],
 
     "marked-terminal/ansi-escapes": ["ansi-escapes@6.2.1", "", {}, ""],
-
-    "marked-terminal/chalk": ["chalk@5.4.1", "", {}, ""],
-
-    "mdast-util-definitions/unist-util-visit": ["unist-util-visit@2.0.3", "", { "dependencies": { "@types/unist": "^2.0.0", "unist-util-is": "^4.0.0", "unist-util-visit-parents": "^3.0.0" } }, ""],
 
     "mdast-util-from-markdown/@types/mdast": ["@types/mdast@3.0.15", "", { "dependencies": { "@types/unist": "^2" } }, ""],
 
@@ -2461,8 +2507,6 @@
 
     "mdast-util-to-hast/@types/mdast": ["@types/mdast@3.0.15", "", { "dependencies": { "@types/unist": "^2" } }, ""],
 
-    "mdast-util-to-hast/unist-util-visit": ["unist-util-visit@2.0.3", "", { "dependencies": { "@types/unist": "^2.0.0", "unist-util-is": "^4.0.0", "unist-util-visit-parents": "^3.0.0" } }, ""],
-
     "mdast-util-to-markdown/parse-entities": ["parse-entities@2.0.0", "", { "dependencies": { "character-entities": "^1.0.0", "character-entities-legacy": "^1.0.0", "character-reference-invalid": "^1.0.0", "is-alphanumerical": "^1.0.0", "is-decimal": "^1.0.0", "is-hexadecimal": "^1.0.0" } }, ""],
 
     "micromark/parse-entities": ["parse-entities@2.0.0", "", { "dependencies": { "character-entities": "^1.0.0", "character-entities-legacy": "^1.0.0", "character-reference-invalid": "^1.0.0", "is-alphanumerical": "^1.0.0", "is-decimal": "^1.0.0", "is-hexadecimal": "^1.0.0" } }, ""],
@@ -2490,8 +2534,6 @@
     "pkg-up/find-up": ["find-up@3.0.0", "", { "dependencies": { "locate-path": "^3.0.0" } }, ""],
 
     "prop-types/react-is": ["react-is@16.13.1", "", {}, ""],
-
-    "rc-util/react-is": ["react-is@18.3.1", "", {}, ""],
 
     "react-infinite-scroll-component/throttle-debounce": ["throttle-debounce@2.3.0", "", {}, ""],
 
@@ -2557,15 +2599,11 @@
 
     "safe-regex-test/is-regex": ["is-regex@1.2.1", "", { "dependencies": { "call-bound": "^1.0.2", "gopd": "^1.2.0", "has-tostringtag": "^1.0.2", "hasown": "^2.0.2" } }, ""],
 
-    "section-matter/kind-of": ["kind-of@6.0.3", "", {}, ""],
-
     "semver-diff/semver": ["semver@6.3.1", "", { "bin": "bin/semver.js" }, ""],
 
     "send/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, ""],
 
     "send/encodeurl": ["encodeurl@1.0.2", "", {}, ""],
-
-    "shallow-clone/kind-of": ["kind-of@6.0.3", "", {}, ""],
 
     "simple-swizzle/is-arrayish": ["is-arrayish@0.3.2", "", {}, ""],
 
@@ -2605,8 +2643,6 @@
 
     "which-builtin-type/is-regex": ["is-regex@1.2.1", "", { "dependencies": { "call-bound": "^1.0.2", "gopd": "^1.2.0", "has-tostringtag": "^1.0.2", "hasown": "^2.0.2" } }, ""],
 
-    "which-pm/path-exists": ["path-exists@4.0.0", "", {}, ""],
-
     "wrap-ansi/ansi-styles": ["ansi-styles@4.3.0", "", { "dependencies": { "color-convert": "^2.0.1" } }, ""],
 
     "wrap-ansi-cjs/ansi-styles": ["ansi-styles@4.3.0", "", { "dependencies": { "color-convert": "^2.0.1" } }, ""],
@@ -2618,6 +2654,50 @@
     "@ant-design/plots/react-dom/scheduler": ["scheduler@0.23.2", "", { "dependencies": { "loose-envify": "^1.1.0" } }, ""],
 
     "@babel/helper-compilation-targets/lru-cache/yallist": ["yallist@3.1.1", "", {}, ""],
+
+    "@babel/helper-create-class-features-plugin/@babel/traverse/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/helper-create-class-features-plugin/@babel/traverse/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/helper-create-class-features-plugin/@babel/traverse/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helper-create-class-features-plugin/@babel/traverse/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@babel/helper-member-expression-to-functions/@babel/traverse/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/helper-member-expression-to-functions/@babel/traverse/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/helper-member-expression-to-functions/@babel/traverse/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helper-module-imports/@babel/traverse/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/helper-module-imports/@babel/traverse/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/helper-module-imports/@babel/traverse/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helper-module-transforms/@babel/traverse/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/helper-module-transforms/@babel/traverse/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/helper-module-transforms/@babel/traverse/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helper-module-transforms/@babel/traverse/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@babel/helper-replace-supers/@babel/traverse/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/helper-replace-supers/@babel/traverse/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/helper-replace-supers/@babel/traverse/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helper-replace-supers/@babel/traverse/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
+    "@babel/helper-skip-transparent-expression-wrappers/@babel/traverse/@babel/generator": ["@babel/generator@7.26.3", "", { "dependencies": { "@babel/parser": "^7.26.3", "@babel/types": "^7.26.3", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, ""],
+
+    "@babel/helper-skip-transparent-expression-wrappers/@babel/traverse/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
+
+    "@babel/helper-skip-transparent-expression-wrappers/@babel/traverse/@babel/template": ["@babel/template@7.25.9", "", { "dependencies": { "@babel/code-frame": "^7.25.9", "@babel/parser": "^7.25.9", "@babel/types": "^7.25.9" } }, ""],
+
+    "@babel/helpers/@babel/template/@babel/parser": ["@babel/parser@7.26.3", "", { "dependencies": { "@babel/types": "^7.26.3" }, "bin": { "parser": "bin/babel-parser.js" } }, ""],
 
     "@commitlint/top-level/find-up/locate-path": ["locate-path@7.2.0", "", { "dependencies": { "p-locate": "^6.0.0" } }, ""],
 
@@ -2785,6 +2865,8 @@
 
     "jest-util/chalk/ansi-styles": ["ansi-styles@4.3.0", "", { "dependencies": { "color-convert": "^2.0.1" } }, ""],
 
+    "jscodeshift/@babel/parser/@babel/types": ["@babel/types@7.26.3", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, ""],
+
     "jscodeshift/chalk/ansi-styles": ["ansi-styles@4.3.0", "", { "dependencies": { "color-convert": "^2.0.1" } }, ""],
 
     "listr2/wrap-ansi/ansi-styles": ["ansi-styles@6.2.1", "", {}, ""],
@@ -2887,8 +2969,6 @@
 
     "mdast-util-phrasing/unist-util-is/@types/unist": ["@types/unist@3.0.3", "", {}, ""],
 
-    "mdast-util-to-markdown/parse-entities/character-entities": ["character-entities@1.2.4", "", {}, ""],
-
     "mdast-util-to-markdown/parse-entities/character-entities-legacy": ["character-entities-legacy@1.1.4", "", {}, ""],
 
     "mdast-util-to-markdown/parse-entities/character-reference-invalid": ["character-reference-invalid@1.1.4", "", {}, ""],
@@ -2898,8 +2978,6 @@
     "mdast-util-to-markdown/parse-entities/is-decimal": ["is-decimal@1.0.4", "", {}, ""],
 
     "mdast-util-to-markdown/parse-entities/is-hexadecimal": ["is-hexadecimal@1.0.4", "", {}, ""],
-
-    "micromark/parse-entities/character-entities": ["character-entities@1.2.4", "", {}, ""],
 
     "micromark/parse-entities/character-entities-legacy": ["character-entities-legacy@1.1.4", "", {}, ""],
 
@@ -2916,8 +2994,6 @@
     "ora/chalk/ansi-styles": ["ansi-styles@4.3.0", "", { "dependencies": { "color-convert": "^2.0.1" } }, ""],
 
     "pkg-dir/find-up/locate-path": ["locate-path@5.0.0", "", { "dependencies": { "p-locate": "^4.1.0" } }, ""],
-
-    "pkg-dir/find-up/path-exists": ["path-exists@4.0.0", "", {}, ""],
 
     "pkg-up/find-up/locate-path": ["locate-path@3.0.0", "", { "dependencies": { "p-locate": "^3.0.0", "path-exists": "^3.0.0" } }, ""],
 
@@ -3144,8 +3220,6 @@
     "listr2/wrap-ansi/strip-ansi/ansi-regex": ["ansi-regex@6.1.0", "", {}, ""],
 
     "log-update/cli-cursor/restore-cursor/onetime": ["onetime@7.0.0", "", { "dependencies": { "mimic-function": "^5.0.0" } }, ""],
-
-    "log-update/cli-cursor/restore-cursor/signal-exit": ["signal-exit@4.1.0", "", {}, ""],
 
     "log-update/wrap-ansi/string-width/emoji-regex": ["emoji-regex@10.4.0", "", {}, ""],
 

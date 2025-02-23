@@ -1,5 +1,5 @@
 import { AntdInferencer } from "@refinedev/inferencer/antd";
 
-export const ReportEdit = () => {
-    return <AntdInferencer />;
+export const PlanEdit = () => {
+  return <AntdInferencer />;
 };

@@ -1,18 +1,3 @@
-import React from "react";
-import { Authenticated, IResourceItem, Refine } from "@refinedev/core";
-import { RefineKbarProvider, RefineKbar } from "@refinedev/kbar";
-import {
-  useNotificationProvider,
-  ThemedLayoutV2,
-  ErrorComponent,
-} from "@refinedev/antd";
-import routerProvider, {
-  CatchAllNavigate,
-  NavigateToResource,
-  UnsavedChangesNotifier,
-  DocumentTitleHandler,
-} from "@refinedev/react-router";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 import {
   CalendarOutlined,
   CarOutlined,
@@ -22,36 +7,40 @@ import {
   FileTextOutlined,
   GoldOutlined,
   HddOutlined,
+  PaperClipOutlined,
+  PlaySquareOutlined,
   SearchOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import jsonServerDataProvider from "@refinedev/simple-rest";
-import { authProvider } from "./authProvider";
-
 import "dayjs/locale/vi";
 
-import { DashboardPage } from "./pages/dashboard";
-import { AuthPage } from "./pages/auth";
-import { CustomerShow, CustomerList } from "./pages/customers";
-import { useTranslation } from "react-i18next";
+import { liveProvider } from "@refinedev/ably";
+import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
+import "@refinedev/antd/dist/reset.css";
+import { Authenticated, IResourceItem, Refine } from "@refinedev/core";
+import { RefineKbarProvider, RefineKbar } from "@refinedev/kbar";
+import routerProvider, {
+  CatchAllNavigate,
+  NavigateToResource,
+  UnsavedChangesNotifier,
+  DocumentTitleHandler,
+} from "@refinedev/react-router";
+import jsonServerDataProvider from "@refinedev/simple-rest";
+
+import { authProvider } from "./authProvider";
 import { Header, Title } from "./components";
+import { ThemedSiderV2 } from "./components/layout/sider";
+import { themeConfig } from "./components/theme";
 import { ConfigProvider } from "./context";
 import { useAutoLoginForDemo } from "./hooks";
-
-import "@refinedev/antd/dist/reset.css";
-import {
-  FarmerManagementCreate,
-  FarmerManagementEdit,
-  FarmerManagementList,
-  FarmerManagementShow,
-} from "./pages/farmer-managements";
-import { DeviceList } from "./pages/devices";
-import { themeConfig } from "./components/theme";
-import { ThemedSiderV2 } from "./components/layout/sider";
-
-import { liveProvider } from "@refinedev/ably";
+import { AuthPage } from "./pages/auth";
+import { DashboardPage } from "./pages/dashboard";
+import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
 import { ablyClient } from "./utils/ablyClient";
 
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -100,10 +89,10 @@ const App: React.FC = () => {
             options={{
               syncWithLocation: true,
               warnWhenUnsavedChanges: true,
-              liveMode: "off"
+              liveMode: "off",
             }}
             notificationProvider={useNotificationProvider}
-            liveProvider={liveProvider(ablyClient)}
+            // liveProvider={liveProvider(ablyClient)}
             resources={[
               {
                 name: "dashboard",
@@ -114,112 +103,13 @@ const App: React.FC = () => {
                 },
               },
               {
-                name: "users",
-                list: "/customers",
-                show: "/customers/:id",
+                name: "plan",
+                list: "/plan",
+                create: "/plan/create",
+                edit: "/plan/edit/:id",
+                show: "/plan/show/:id",
                 meta: {
-                  label: "Farmer Management",
-                  icon: <UserOutlined />,
-                },
-              },
-              {
-                name: "device",
-                list: "/device",
-                create: "/device/create",
-                edit: "/device/edit/:id",
-                show: "/device/show/:id",
-                meta: {
-                  label: "Device",
-                  icon: <HddOutlined />,
-                },
-              },
-              {
-                name: "inspection",
-                list: "/inspection",
-                create: "/inspection/create",
-                edit: "/inspection/edit/:id",
-                show: "/inspection/show/:id",
-                meta: {
-                  label: "Inspection",
-                  icon: <SearchOutlined />,
-                },
-              },
-              {
-                name: "land-management",
-                list: "/land-management",
-                create: "/land-management/create",
-                edit: "/land-management/edit/:id",
-                show: "/land-management/show/:id",
-                meta: {
-                  label: "Land Management",
-                  icon: <EnvironmentOutlined />,
-                },
-              },
-              {
-                name: "material",
-                meta: {
-                  label: "Material",
-                  icon: <GoldOutlined />,
-                },
-              },
-              {
-                name: "fertilizers",
-                list: "/fertilizers",
-                create: "/fertilizers/create",
-                edit: "/fertilizers/edit/:id",
-                show: "/fertilizers/show/:id",
-                meta: { parent: "material", canDelete: true },
-              },
-              {
-                name: "pesticide",
-                list: "/pesticide",
-                create: "/pesticide/create",
-                edit: "/pesticide/edit/:id",
-                show: "/pesticide/show/:id",
-                meta: { parent: "material", canDelete: true },
-              },
-              {
-                name: "season-management",
-                list: "/season-management",
-                create: "/season-management/create",
-                edit: "/season-management/edit/:id",
-                show: "/season-management/show/:id",
-                meta: {
-                  label: "Season Management",
-                  icon: <CalendarOutlined />,
-                },
-              },
-              {
-                name: "report",
-                list: "/report",
-                create: "/report/create",
-                edit: "/report/edit/:id",
-                show: "/report/show/:id",
-                meta: {
-                  label: "Report",
-                  icon: <FileTextOutlined />,
-                },
-              },
-              {
-                name: "support",
-                list: "/support",
-                create: "/support/create",
-                edit: "/support/edit/:id",
-                show: "/support/show/:id",
-                meta: {
-                  label: "Support",
-                  icon: <CustomerServiceOutlined />,
-                },
-              },
-              {
-                name: "transport",
-                list: "/transport",
-                create: "/transport/create",
-                edit: "/transport/edit/:id",
-                show: "/transport/show/:id",
-                meta: {
-                  label: "Transport",
-                  icon: <CarOutlined />,
+                  icon: <PaperClipOutlined />,
                 },
               },
             ]}
@@ -250,21 +140,11 @@ const App: React.FC = () => {
               >
                 <Route index element={<DashboardPage />} />
 
-                <Route
-                  path="/customers"
-                  element={
-                    <CustomerList>
-                      <Outlet />
-                    </CustomerList>
-                  }
-                >
-                  <Route path=":id" element={<CustomerShow />} />
-                </Route>
-
-                <Route path="/device" element={<DeviceList />}>
-                  <Route path=":id" element={<FarmerManagementShow />} />
-                  <Route path="new" element={<FarmerManagementCreate />} />
-                  <Route path=":id/edit" element={<FarmerManagementEdit />} />
+                <Route path="/plan">
+                  <Route index element={<PlanList />} />
+                  <Route path="new" element={<PlanCreate />} />
+                  <Route path=":id" element={<PlanShow />} />
+                  <Route path=":id/edit" element={<PlanEdit />} />
                 </Route>
               </Route>
 
@@ -303,14 +183,8 @@ const App: React.FC = () => {
                     />
                   }
                 />
-                <Route
-                  path="/forgot-password"
-                  element={<AuthPage type="forgotPassword" />}
-                />
-                <Route
-                  path="/update-password"
-                  element={<AuthPage type="updatePassword" />}
-                />
+                <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
+                <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
               </Route>
 
               <Route

@@ -11,7 +11,12 @@
     "start": "refine start"
   },
   "lint-staged": {
+    "*.{ts,tsx}": [
+      "git add",
+      "prettier --write"
+    ],
     "package.json": [
+      "git add",
       "sort-package-json"
     ]
   },
@@ -32,7 +37,7 @@
     "@refinedev/antd": "latest",
     "@refinedev/cli": "latest",
     "@refinedev/core": "latest",
-    "@refinedev/inferencer": "^5.0.1",
+    "@refinedev/inferencer": "latest",
     "@refinedev/kbar": "latest",
     "@refinedev/react-router": "latest",
     "@refinedev/simple-rest": "latest",
@@ -59,6 +64,7 @@
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "@commitlint/cz-commitlint": "latest",
+    "@trivago/prettier-plugin-sort-imports": "latest",
     "@types/google.maps": "latest",
     "@types/jest": "latest",
     "@types/lodash": "latest",
@@ -69,6 +75,7 @@
     "@vitejs/plugin-react": "latest",
     "husky": "latest",
     "lint-staged": "latest",
+    "prettier": "latest",
     "sort-package-json": "latest",
     "typescript": "latest",
     "vite": "latest"

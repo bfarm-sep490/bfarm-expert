@@ -1,0 +1,10 @@
+build/
+dist/
+node_modules/
+
+.snapshots/
+coverage/
+
+*.min.js
+
+CHANGELOG.md
