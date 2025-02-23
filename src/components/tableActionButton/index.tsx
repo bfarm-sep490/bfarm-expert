@@ -1,4 +1,6 @@
 import { MoreOutlined } from "@ant-design/icons";
+import React from "react";
+
 import { useStyles } from "./styled";
 
 type Props = {

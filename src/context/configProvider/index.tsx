@@ -4,7 +4,6 @@ import "./config.css";
 
 import { ConfigProvider as AntdConfigProvider, theme, type ThemeConfig } from "antd";
 import { ThemeProvider } from "antd-style";
-
 import { createContext, type PropsWithChildren, useContext, useEffect, useState } from "react";
 
 type Mode = "light" | "dark";

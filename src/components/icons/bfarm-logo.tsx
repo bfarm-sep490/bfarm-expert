@@ -1,8 +1,6 @@
 import React from "react";
 
-export const BFarmLogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
-  props,
-) => (
+export const BFarmLogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
@@ -11,7 +9,6 @@ export const BFarmLogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
     fill="none"
     {...props}
   >
-
     <circle cx="12" cy="12" r="11" fill="url(#bfarm-logo-gradient)" />
 
     <path
@@ -37,9 +34,7 @@ export const BFarmLogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
   </svg>
 );
 
-export const BFarmLogoText: React.FC<React.SVGProps<SVGSVGElement>> = (
-  props,
-) => (
+export const BFarmLogoText: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={120}

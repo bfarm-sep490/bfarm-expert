@@ -6,9 +6,11 @@ import {
   LeftOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-
-import { ThemedTitleV2, useThemedLayoutContext } from "@refinedev/antd";
-import type { RefineThemedLayoutV2SiderProps } from "@refinedev/antd";
+import {
+  RefineThemedLayoutV2SiderProps,
+  ThemedTitleV2,
+  useThemedLayoutContext,
+} from "@refinedev/antd";
 import {
   useTranslate,
   useLogout,
@@ -25,11 +27,8 @@ import {
   pickNotDeprecated,
   useWarnAboutChange,
 } from "@refinedev/core";
-
 import { Layout, Menu, Grid, Drawer, Button, theme, ConfigProvider } from "antd";
-
-import React, { useContext } from "react";
-import type { CSSProperties } from "react";
+import React, { CSSProperties, useContext } from "react";
 
 const modernStyles = {
   sider: (token: any): CSSProperties => ({

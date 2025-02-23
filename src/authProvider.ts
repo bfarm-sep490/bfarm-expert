@@ -1,8 +1,8 @@
-import type { AuthProvider } from "@refinedev/core";
+import { notification } from "antd";
 
 import { disableAutoLogin, enableAutoLogin } from "./hooks";
 
-import { notification } from "antd";
+import type { AuthProvider } from "@refinedev/core";
 
 export const TOKEN_KEY = "bfarm-auth";
 

@@ -1,21 +1,13 @@
-import { Row, Col, theme, Dropdown, type MenuProps, Button, Flex } from "antd";
-import { useTranslation } from "react-i18next";
-import {
-  CardWithPlot,
-  QuickStatsChart,
-} from "../../components";
-import {
-  DownOutlined,
-  RiseOutlined,
-  ShoppingOutlined,
-} from "@ant-design/icons";
-import { useMemo, useState } from "react";
+import { DownOutlined, RiseOutlined, ShoppingOutlined } from "@ant-design/icons";
 import { List, NumberField } from "@refinedev/antd";
 import { useApiUrl, useCustom } from "@refinedev/core";
+import { Row, Col, theme, Dropdown, type MenuProps, Button, Flex } from "antd";
 import dayjs from "dayjs";
-import {
-  IQuickStatsEntry,
-} from "../../interfaces";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import { CardWithPlot, QuickStatsChart } from "../../components";
+import { IQuickStatsEntry } from "../../interfaces";
 
 type DateFilter = "lastWeek" | "lastMonth";
 
@@ -42,7 +34,7 @@ export const DashboardPage: React.FC = () => {
   const API_URL = useApiUrl();
 
   const [selecetedDateFilter, setSelectedDateFilter] = useState<DateFilter>(
-    DATE_FILTERS.lastWeek.value
+    DATE_FILTERS.lastWeek.value,
   );
 
   const dateFilters: MenuProps["items"] = useMemo(() => {
@@ -116,9 +108,7 @@ export const DashboardPage: React.FC = () => {
       headerButtons={() => (
         <Dropdown menu={{ items: dateFilters }}>
           <Button>
-            {t(
-              `dashboard.filter.date.${DATE_FILTERS[selecetedDateFilter].text}`
-            )}
+            {t(`dashboard.filter.date.${DATE_FILTERS[selecetedDateFilter].text}`)}
             <DownOutlined />
           </Button>
         </Dropdown>

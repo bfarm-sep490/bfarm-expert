@@ -1,4 +1,5 @@
 import { Flex, Avatar, Typography } from "antd";
+
 import type { IUser } from "../../../interfaces";
 
 type Props = {

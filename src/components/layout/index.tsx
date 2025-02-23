@@ -1,12 +1,10 @@
-import { ThemedLayoutContextProvider } from "@refinedev/antd";
-import type { RefineThemedLayoutV2Props } from "@refinedev/antd";
+import { RefineThemedLayoutV2Props, ThemedLayoutContextProvider } from "@refinedev/antd";
+import { Grid, Layout as AntdLayout } from "antd";
+import React from "react";
 
 import { Header as DefaultHeader } from "../header";
+
 import { ThemedSiderV2 as DefaultSider } from "./sider";
-
-import { Grid, Layout as AntdLayout } from "antd";
-
-import React from "react";
 
 export const ThemedLayoutV2: React.FC<RefineThemedLayoutV2Props> = ({
   children,

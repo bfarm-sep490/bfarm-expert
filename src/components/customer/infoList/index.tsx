@@ -1,14 +1,11 @@
 import { PhoneOutlined, UserOutlined, CalendarOutlined } from "@ant-design/icons";
+import { useTranslate } from "@refinedev/core";
+import { List, Typography, Card } from "antd";
 import dayjs from "dayjs";
 
-import { useTranslate } from "@refinedev/core";
-
-import type { IUser } from "../../../interfaces";
 import { UserStatus } from "../userStatus";
 
-import { List, Typography, Card } from "antd";
-
-import React from "react";
+import type { IUser } from "../../../interfaces";
 
 type Props = {
   customer?: IUser;

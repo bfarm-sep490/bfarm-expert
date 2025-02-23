@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc && refine build",
     "dev": "refine dev",
-    "lint": "eslint src/**/*.{ts,tsx} --fix",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
     "prepare": "husky",
     "refine": "refine",
     "start": "refine start"
@@ -14,8 +14,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
-      "git add",
-      "prettier --write"
+      "git add"
     ],
     "package.json": [
       "git add",
@@ -79,11 +78,12 @@
     "@vitejs/plugin-react": "latest",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
     "husky": "latest",
     "lint-staged": "latest",
-    "prettier": "latest",
+    "prettier": "^3.5.2",
     "sort-package-json": "latest",
     "typescript": "latest",
     "vite": "latest"

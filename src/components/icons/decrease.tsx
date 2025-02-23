@@ -1,6 +1,4 @@
-export const DecreaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
-  props,
-) => (
+export const DecreaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     width="12"
     height="8"

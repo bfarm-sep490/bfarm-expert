@@ -1,8 +1,10 @@
-import { Tag, Typography, theme } from "antd";
-import type { IUser } from "../../../interfaces";
 import { CheckCircleOutlined, PauseCircleOutlined } from "@ant-design/icons";
 import { useTranslate } from "@refinedev/core";
+import { Tag, Typography, theme } from "antd";
+
 import { useConfigProvider } from "../../../context";
+
+import type { IUser } from "../../../interfaces";
 
 type Props = {
   value: IUser["isActive"];

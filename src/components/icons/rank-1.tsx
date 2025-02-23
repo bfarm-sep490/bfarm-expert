@@ -1,5 +1,6 @@
-import type { SVGProps } from "react";
 import { useConfigProvider } from "../../context";
+
+import type { SVGProps } from "react";
 
 export const Rank1Icon = (props: SVGProps<SVGSVGElement>) => {
   const { mode } = useConfigProvider();
@@ -53,14 +54,7 @@ export const Rank1Icon = (props: SVGProps<SVGSVGElement>) => {
           <stop stopColor="#FFC53D" />
           <stop offset={1} stopColor="#FAAD14" />
         </radialGradient>
-        <linearGradient
-          id="rank-1-c"
-          x1={23}
-          x2={23}
-          y1={3}
-          y2={43}
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="rank-1-c" x1={23} x2={23} y1={3} y2={43} gradientUnits="userSpaceOnUse">
           <stop stopColor="#FFD666" />
           <stop offset={1} stopColor="#D48806" />
         </linearGradient>
@@ -82,15 +76,8 @@ export const Rank1Icon = (props: SVGProps<SVGSVGElement>) => {
           <feOffset dy={0.625} />
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix values="0 0 0 0 1 0 0 0 0 0.898039 0 0 0 0 0.560784 0 0 0 1 0" />
-          <feBlend
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_917_3659"
-          />
-          <feBlend
-            in="SourceGraphic"
-            in2="effect1_dropShadow_917_3659"
-            result="shape"
-          />
+          <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_917_3659" />
+          <feBlend in="SourceGraphic" in2="effect1_dropShadow_917_3659" result="shape" />
         </filter>
       </defs>
     </svg>

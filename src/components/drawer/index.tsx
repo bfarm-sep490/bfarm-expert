@@ -1,11 +1,6 @@
 import { CloseOutlined } from "@ant-design/icons";
-import {
-  Drawer as AntdDrawer,
-  Button,
-  type DrawerProps,
-  Typography,
-  theme,
-} from "antd";
+import { Drawer as AntdDrawer, Button, type DrawerProps, Typography, theme } from "antd";
+
 import type { PropsWithChildren } from "react";
 
 type Props = {} & DrawerProps;

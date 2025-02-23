@@ -1,7 +1,5 @@
 // import { Link } from "react-router";
 import { SearchOutlined, DownOutlined } from "@ant-design/icons";
-import debounce from "lodash/debounce";
-
 import { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 import {
   useGetLocale,
@@ -10,12 +8,6 @@ import {
   useTranslate,
   pickNotDeprecated,
 } from "@refinedev/core";
-
-import { IconMoon, IconSun } from "../../components/icons";
-import { useConfigProvider } from "../../context";
-import type { IIdentity } from "../../interfaces";
-import { useStyles } from "./styled";
-
 import {
   Dropdown,
   Input,
@@ -31,9 +23,16 @@ import {
   theme,
   type MenuProps,
 } from "antd";
-
-import { useState, useEffect } from "react";
+import debounce from "lodash/debounce";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+
+import { IconMoon, IconSun } from "../../components/icons";
+import { useConfigProvider } from "../../context";
+
+import { useStyles } from "./styled";
+
+import type { IIdentity } from "../../interfaces";
 
 const { Header: AntdHeader } = AntdLayout;
 const { useToken } = theme;

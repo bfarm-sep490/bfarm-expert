@@ -1,5 +1,6 @@
-import type { SVGProps } from "react";
 import { useConfigProvider } from "../../context";
+
+import type { SVGProps } from "react";
 
 export const Rank4Icon = (props: SVGProps<SVGSVGElement>) => {
   const { mode } = useConfigProvider();

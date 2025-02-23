@@ -9,10 +9,10 @@ export const useStyles = createStyles(({ token }) => ({
     backgroundColor: token.colorBgElevated,
     borderBottom: `1px solid ${token.colorBorderSecondary}`,
     transition: "box-shadow 0.2s ease-in-out",
-    
+
     "&.scrolled": {
       boxShadow: token.boxShadowSecondary,
-    }
+    },
   },
   headerTitle: {
     display: "flex",

@@ -12,6 +12,9 @@ import routerProvider, {
   DocumentTitleHandler,
 } from "@refinedev/react-router";
 import jsonServerDataProvider from "@refinedev/simple-rest";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 
 import { authProvider } from "./authProvider";
 import { Header, Title } from "./components";
@@ -23,17 +26,13 @@ import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
 
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router";
-
 interface TitleHandlerOptions {
   resource?: IResourceItem;
 }
 
 const customTitleHandler = ({ resource }: TitleHandlerOptions): string => {
   const baseTitle = "BFarm";
-  let titleSegment = resource?.meta?.label;
+  const titleSegment = resource?.meta?.label;
 
   const title = titleSegment ? `${titleSegment} | ${baseTitle}` : baseTitle;
   return title;

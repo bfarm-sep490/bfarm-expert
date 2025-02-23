@@ -1,6 +1,8 @@
 import { AuthPage as AntdAuthPage, type AuthProps } from "@refinedev/antd";
 import { Flex } from "antd";
+import React from "react";
 import { Link } from "react-router";
+
 import { BFarmLogoIcon, BFarmLogoText } from "../../components";
 
 const authWrapperProps = {

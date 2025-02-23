@@ -1,13 +1,8 @@
-import type { PropsWithChildren, ReactNode } from "react";
-import {
-  Flex,
-  Typography,
-  Form,
-  theme,
-  type FormItemProps,
-  type FlexProps,
-} from "antd";
+import { Flex, Typography, Form, theme, type FormItemProps, type FlexProps } from "antd";
+
 import { useStyles } from "./styled";
+
+import type { PropsWithChildren, ReactNode } from "react";
 
 type Props = {
   icon: ReactNode;
