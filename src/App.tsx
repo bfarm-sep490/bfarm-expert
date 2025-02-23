@@ -1,20 +1,6 @@
-import {
-  CalendarOutlined,
-  CarOutlined,
-  CustomerServiceOutlined,
-  DashboardOutlined,
-  EnvironmentOutlined,
-  FileTextOutlined,
-  GoldOutlined,
-  HddOutlined,
-  PaperClipOutlined,
-  PlaySquareOutlined,
-  SearchOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { DashboardOutlined, PaperClipOutlined } from "@ant-design/icons";
 import "dayjs/locale/vi";
 
-import { liveProvider } from "@refinedev/ably";
 import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 import { Authenticated, IResourceItem, Refine } from "@refinedev/core";
@@ -36,7 +22,6 @@ import { useAutoLoginForDemo } from "./hooks";
 import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
-import { ablyClient } from "./utils/ablyClient";
 
 import React from "react";
 import { useTranslation } from "react-i18next";

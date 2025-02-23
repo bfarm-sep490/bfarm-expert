@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
 import { authProvider } from "../../authProvider";
+
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * This hook is used to automatically login the user.
@@ -14,7 +15,8 @@ export const useAutoLoginForDemo = () => {
         email: "demo@bfarm.dev",
         password: "demodemo",
       });
-    } catch (_error) {
+    } catch {
+      /* empty */
     } finally {
       setIsLoading(false);
     }

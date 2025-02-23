@@ -1,14 +1,20 @@
-import { useState, useEffect } from "react";
+// import { Link } from "react-router";
+import { SearchOutlined, DownOutlined } from "@ant-design/icons";
+import debounce from "lodash/debounce";
+
+import { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 import {
   useGetLocale,
   useSetLocale,
   useGetIdentity,
   useTranslate,
-  useList,
   pickNotDeprecated,
 } from "@refinedev/core";
-import { Link } from "react-router";
-import { SearchOutlined, DownOutlined } from "@ant-design/icons";
+
+import { IconMoon, IconSun } from "../../components/icons";
+import { useConfigProvider } from "../../context";
+import type { IIdentity } from "../../interfaces";
+import { useStyles } from "./styled";
 
 import {
   Dropdown,
@@ -26,14 +32,8 @@ import {
   type MenuProps,
 } from "antd";
 
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash/debounce";
-
-import { useConfigProvider } from "../../context";
-import { IconMoon, IconSun } from "../../components/icons";
-import type { IIdentity } from "../../interfaces";
-import { useStyles } from "./styled";
-import { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 
 const { Header: AntdHeader } = AntdLayout;
 const { useToken } = theme;
@@ -50,10 +50,7 @@ interface IOptions {
   options: IOptionGroup[];
 }
 
-export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
-  isSticky,
-  sticky,
-}) => {
+export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, sticky }) => {
   const { token } = useToken();
   const { styles } = useStyles();
   const { mode, setMode } = useConfigProvider();
@@ -73,21 +70,21 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   //   </div>
   // );
 
-  const renderItem = (title: string, imageUrl: string, link: string) => ({
-    value: title,
-    label: (
-      <Link to={link} style={{ display: "flex", alignItems: "center" }}>
-        {imageUrl && (
-          <Avatar
-            size={32}
-            src={imageUrl}
-            style={{ minWidth: "32px", marginRight: "16px" }}
-          />
-        )}
-        <Text>{title}</Text>
-      </Link>
-    ),
-  });
+  // const renderItem = (title: string, imageUrl: string, link: string) => ({
+  //   value: title,
+  //   label: (
+  //     <Link to={link} style={{ display: "flex", alignItems: "center" }}>
+  //       {imageUrl && (
+  //         <Avatar
+  //           size={32}
+  //           src={imageUrl}
+  //           style={{ minWidth: "32px", marginRight: "16px" }}
+  //         />
+  //       )}
+  //       <Text>{title}</Text>
+  //     </Link>
+  //   ),
+  // });
 
   const [value, setValue] = useState<string>("");
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -96,19 +93,17 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     setOptions([]);
   }, [value]);
 
-  const menuItems: MenuProps["items"] = [...(i18n.languages || [])]
-    .sort()
-    .map((lang: string) => ({
-      key: lang,
-      onClick: () => changeLanguage(lang),
-      icon: (
-        <span style={{ marginRight: 8 }}>
-          <Avatar size={16} src={`/images/flags/${lang}.svg`} />
-        </span>
-      ),
-      label: lang === "en" ? "English" : "Tiếng Việt",
-    }));
-const headerStyles: React.CSSProperties = {
+  const menuItems: MenuProps["items"] = [...(i18n.languages || [])].sort().map((lang: string) => ({
+    key: lang,
+    onClick: () => changeLanguage(lang),
+    icon: (
+      <span style={{ marginRight: 8 }}>
+        <Avatar size={16} src={`/images/flags/${lang}.svg`} />
+      </span>
+    ),
+    label: lang === "en" ? "English" : "Tiếng Việt",
+  }));
+  const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
     padding: "0px 24px",
   };
@@ -119,9 +114,7 @@ const headerStyles: React.CSSProperties = {
     headerStyles.zIndex = 1000;
   }
   return (
-    <AntdHeader
-    style={headerStyles}
-  >
+    <AntdHeader style={headerStyles}>
       <Row
         align="middle"
         style={{

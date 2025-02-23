@@ -1,14 +1,8 @@
-import {
-  useState,
-  useEffect,
-  memo,
-  useRef,
-  type PropsWithChildren,
-} from "react";
+import { useState, useEffect, memo, useRef, type PropsWithChildren } from "react";
 import { type Root, createRoot } from "react-dom/client";
 
 type AdvancedMarkerProps = {
-  onClick?: Function;
+  onClick?: (event: google.maps.MapMouseEvent) => void;
   map?: google.maps.Map;
 } & google.maps.marker.AdvancedMarkerElementOptions;
 
@@ -20,8 +14,7 @@ const AdvancedMarker: React.FC<PropsWithChildren<AdvancedMarkerProps>> = ({
   ...options
 }) => {
   const rootRef = useRef<Root | null>(null);
-  const [marker, setMarker] =
-    useState<google.maps.marker.AdvancedMarkerElement>();
+  const [marker, setMarker] = useState<google.maps.marker.AdvancedMarkerElement>();
 
   useEffect(() => {
     if (!map) return;

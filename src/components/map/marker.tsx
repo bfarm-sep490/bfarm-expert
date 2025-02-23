@@ -1,8 +1,8 @@
 import { useState, useEffect, memo } from "react";
 
 interface MarkerProps extends google.maps.MarkerOptions {
-  onClick?: Function;
-  onDragEnd?: Function;
+  onClick?: () => void;
+  onDragEnd?: (event: google.maps.KmlMouseEvent) => void;
 }
 
 const Marker: React.FC<MarkerProps> = ({ onClick, onDragEnd, ...options }) => {

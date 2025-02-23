@@ -39,7 +39,7 @@ export const getAddressWithLatLng = async ({ lat, lng }: LatLng) => {
     return {
       address: data.display_name,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -60,7 +60,7 @@ export const getLatLngWithAddress = async (address: string) => {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

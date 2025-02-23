@@ -6,12 +6,14 @@
   "scripts": {
     "build": "tsc && refine build",
     "dev": "refine dev",
+    "lint": "eslint src/**/*.{ts,tsx} --fix",
     "prepare": "husky",
     "refine": "refine",
     "start": "refine start"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
+      "eslint --fix",
       "git add",
       "prettier --write"
     ],
@@ -72,7 +74,13 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/react-input-mask": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.24.1",
+    "@typescript-eslint/parser": "^8.24.1",
     "@vitejs/plugin-react": "latest",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "husky": "latest",
     "lint-staged": "latest",
     "prettier": "latest",

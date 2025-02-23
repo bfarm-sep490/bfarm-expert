@@ -1,29 +1,22 @@
-import {
-  createContext,
-  type PropsWithChildren,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import {
-  ConfigProvider as AntdConfigProvider,
-  theme,
-  type ThemeConfig,
-} from "antd";
-import { ThemeProvider } from "antd-style";
 import { RefineThemes } from "@refinedev/antd";
+
 import "./config.css";
+
+import { ConfigProvider as AntdConfigProvider, theme, type ThemeConfig } from "antd";
+import { ThemeProvider } from "antd-style";
+
+import { createContext, type PropsWithChildren, useContext, useEffect, useState } from "react";
 
 type Mode = "light" | "dark";
 
-type ConfigProviderContext = {
+type ConfigProviderContextType = {
   mode: Mode;
   setMode: (mode: Mode) => void;
 };
 
-export const ConfigProviderContext = createContext<
-  ConfigProviderContext | undefined
->(undefined);
+export const ConfigProviderContext = createContext<ConfigProviderContextType | undefined>(
+  undefined,
+);
 
 const defaultMode: Mode = (localStorage.getItem("theme") as Mode) || "light";
 
@@ -55,8 +48,7 @@ export const ConfigProvider = ({
       <AntdConfigProvider
         theme={{
           ...RefineThemes.Orange,
-          algorithm:
-            mode === "light" ? theme.defaultAlgorithm : theme.darkAlgorithm,
+          algorithm: mode === "light" ? theme.defaultAlgorithm : theme.darkAlgorithm,
           ...themeFromProps,
         }}
       >

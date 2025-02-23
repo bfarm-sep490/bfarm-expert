@@ -8,7 +8,7 @@ export const TOKEN_KEY = "bfarm-auth";
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
-    // enableAutoLogin();
+    enableAutoLogin();
     localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
     return {
       success: true,
@@ -21,7 +21,7 @@ export const authProvider: AuthProvider = {
       return {
         success: true,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: {

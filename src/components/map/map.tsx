@@ -1,3 +1,5 @@
+import { Wrapper } from "@googlemaps/react-wrapper";
+
 import {
   Children,
   cloneElement,
@@ -10,12 +12,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { Wrapper } from "@googlemaps/react-wrapper";
 
 interface MapProps extends Exclude<google.maps.MapOptions, "center"> {
   setMap?: Dispatch<SetStateAction<google.maps.Map | undefined>>;
   center?: google.maps.LatLngLiteral;
-  onDragStart?: Function;
+  onDragStart?: (event: google.maps.MapMouseEvent) => void;
 }
 
 const MapComponent: FC<PropsWithChildren<MapProps>> = ({
@@ -64,7 +65,6 @@ const MapComponent: FC<PropsWithChildren<MapProps>> = ({
       <div ref={ref} style={{ flexGrow: "1", height: "100%" }} />
       {Children.map(children, (child) => {
         if (isValidElement(child)) {
-          // eslint-disable-next-line
           return cloneElement<any>(child, { map });
         }
       })}
@@ -76,10 +76,7 @@ type MapWrapperProps = {
   mapProps?: MapProps;
 };
 
-const MapWrapper: FC<PropsWithChildren<MapWrapperProps>> = ({
-  children,
-  mapProps,
-}) => {
+const MapWrapper: FC<PropsWithChildren<MapWrapperProps>> = ({ children, mapProps }) => {
   return (
     <Wrapper
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
