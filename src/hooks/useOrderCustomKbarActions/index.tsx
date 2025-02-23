@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
-import { useTranslate, useUpdate } from "@refinedev/core";
-import {
-  type Action,
-  createAction,
-  Priority,
-  useRegisterActions,
-} from "@refinedev/kbar";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
+import { useTranslate, useUpdate } from "@refinedev/core";
+import { type Action, createAction, Priority, useRegisterActions } from "@refinedev/kbar";
+
 import type { IOrder } from "../../interfaces";
+
+import { useEffect, useState } from "react";
 
 export const useOrderCustomKbarActions = (order?: IOrder): void => {
   const t = useTranslate();
@@ -20,9 +17,9 @@ export const useOrderCustomKbarActions = (order?: IOrder): void => {
     },
   });
 
-  const canAcceptOrder = order?.status.text === "Pending";
+  const canAcceptOrder = order?.status?.text === "Pending";
   const canRejectOrder =
-    order?.status.text === "Pending" ||
+    order?.status?.text === "Pending" ||
     order?.status.text === "Ready" ||
     order?.status.text === "On The Way";
 

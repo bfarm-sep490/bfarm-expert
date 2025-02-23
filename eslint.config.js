@@ -39,7 +39,7 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       ...prettierConfig.rules,
       'no-undef': 'off',
-      '@typescript-eslint/no-explicit-any': 'off', 
+      '@typescript-eslint/no-explicit-any': 'off',
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],

@@ -25,6 +25,8 @@ export interface IUser {
   gsm: string;
   createdAt: string;
   isActive: boolean;
+  avatar: IFile[];
+  addresses: IAddress[];
 }
 
 export interface IIdentity {
@@ -33,12 +35,31 @@ export interface IIdentity {
   avatar: string;
 }
 
+export interface IOrder {
+  id: number;
+  user: IUser;
+  createdAt: string;
+  products: IProduct[];
+  status: IOrderStatus;
+  adress: IAddress;
+  store: IStore;
+  courier: ICourier;
+  events: IEvent[];
+  orderNumber: number;
+  amount: number;
+}
 export interface IUserFilterVariables {
   q: string;
   status: boolean;
   createdAt: [Dayjs, Dayjs];
   gender: string;
   isActive: boolean;
+}
+
+export interface ITrendingProducts {
+  id: number;
+  product: IProduct;
+  orderCount: number;
 }
 
 export interface IProductivityOverTimeEntry {
