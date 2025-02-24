@@ -31,6 +31,7 @@
     "@ant-design/icons": "latest",
     "@ant-design/plots": "latest",
     "@ant-design/use-emotion-css": "latest",
+    "@ant-design/x": "latest",
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@googlemaps/react-wrapper": "latest",
