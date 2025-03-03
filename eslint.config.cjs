@@ -26,6 +26,7 @@ module.exports = [
         ecmaFeatures: {
           jsx: true,
         },
+        projectService: true,
         project: './tsconfig.json',
       },
     },
@@ -70,6 +71,7 @@ module.exports = [
         trailingComma: 'all',
         jsxSingleQuote: false,
         bracketSpacing: true,
+        endOfLine: "auto"
       }],
     },
   },

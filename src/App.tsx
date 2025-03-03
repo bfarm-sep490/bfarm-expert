@@ -1,4 +1,4 @@
-import { DashboardOutlined, PaperClipOutlined } from "@ant-design/icons";
+import { DashboardOutlined, ExperimentOutlined, ScheduleOutlined } from "@ant-design/icons";
 import "dayjs/locale/vi";
 
 import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
@@ -11,7 +11,6 @@ import routerProvider, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
-import jsonServerDataProvider from "@refinedev/simple-rest";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
@@ -25,6 +24,7 @@ import { useAutoLoginForDemo } from "./hooks";
 import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
+import { dataProvider } from "./rest-data-provider";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -44,7 +44,7 @@ const App: React.FC = () => {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
-  const dataProvider = jsonServerDataProvider(API_URL);
+  const appDataProvider = dataProvider(API_URL);
 
   const { t, i18n } = useTranslation();
   interface TranslationParams {
@@ -67,7 +67,7 @@ const App: React.FC = () => {
         <RefineKbarProvider>
           <Refine
             routerProvider={routerProvider}
-            dataProvider={dataProvider}
+            dataProvider={appDataProvider}
             authProvider={authProvider}
             i18nProvider={i18nProvider}
             options={{
@@ -89,11 +89,21 @@ const App: React.FC = () => {
               {
                 name: "plan",
                 list: "/plan",
-                create: "/plan/create",
+                create: "/plan/new",
                 edit: "/plan/edit/:id",
-                show: "/plan/show/:id",
+                show: "/plan/:id",
                 meta: {
-                  icon: <PaperClipOutlined />,
+                  icon: <ScheduleOutlined />,
+                },
+              },
+              {
+                name: "plant",
+                list: "/plant",
+                create: "/plant/create",
+                edit: "/plant/edit/:id",
+                show: "/plant/show/:id",
+                meta: {
+                  icon: <ExperimentOutlined />,
                 },
               },
             ]}
