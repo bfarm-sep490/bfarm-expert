@@ -46,7 +46,7 @@ export const PlanListTable = () => {
     <Table
       {...tableProps}
       rowKey="plan_id"
-      scroll={{ x: true }}
+      scroll={{ x: "max-content", y: 55 * 10 }}
       pagination={{
         ...tableProps.pagination,
         showTotal: (total) => <PaginationTotal total={total} entityName="plan" />,
@@ -111,7 +111,7 @@ export const PlanListTable = () => {
       />
       <Table.Column
         title={t("plans.fields.plant")}
-        dataIndex={["plant", "plant_name"]}
+        dataIndex={["plants", "plant_name"]}
         render={(value: string) => (
           <Typography.Text
             style={{
@@ -196,7 +196,7 @@ export const PlanListTable = () => {
             icon={<EyeOutlined />}
             onClick={() =>
               go({
-                to: `${showUrl("plan", record.id)}`,
+                to: `${showUrl("plans", record.id)}`,
                 query: { to: pathname },
                 options: { keepQuery: true },
                 type: "replace",

@@ -1,4 +1,4 @@
-import { useTranslate, useGo } from "@refinedev/core";
+import { useTranslate, useGetToPath, useGo } from "@refinedev/core";
 import { SaveButton, useStepsForm, useSelect } from "@refinedev/antd";
 import {
   Form,
@@ -6,399 +6,1016 @@ import {
   Input,
   Button,
   Steps,
-  Card,
   Flex,
-  Typography,
-  Calendar,
-  Badge,
-  Modal,
   DatePicker,
+  Table,
+  Typography,
   InputNumber,
+  FormProps,
+  Tabs,
+  Card,
+  Badge,
   Space,
-  Alert,
-  Divider,
-  Tooltip,
-  SelectProps,
+  Dropdown,
+  Col,
+  Row,
+  Modal,
 } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
-import type { IPlan, IPlant, IYield } from "../../interfaces";
-import { useState } from "react";
-import { Dayjs } from "dayjs";
-import { useNavigate } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router";
+import {
+  IPlan,
+  IPlant,
+  IYield,
+  ICaringTask,
+  IHarvestingTask,
+  IInspectingForm,
+  IPesticide,
+  IItem,
+  IFertilizer,
+} from "../../interfaces";
+import { DownOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-const { RangePicker } = DatePicker;
+const { Title, Text } = Typography;
+const { TabPane } = Tabs;
 
+/**
+ * Main component for creating a new plan with a multi-step form
+ */
 export const PlanCreate = () => {
   const t = useTranslate();
-  const navigate = useNavigate();
+  const getToPath = useGetToPath();
+  const [searchParams] = useSearchParams();
   const go = useGo();
 
   const { current, gotoStep, stepsProps, formProps, saveButtonProps } = useStepsForm<IPlan>({
     resource: "plans",
     action: "create",
-    redirect: false,
-    onMutationSuccess: () => {
-      go({ to: "/plan", type: "push" });
-    },
   });
 
+  const { formList } = useFormList({ formProps });
+
+  const handleCancel = () => {
+    go({
+      to: searchParams.get("to") ?? getToPath({ action: "list" }) ?? "",
+      query: { to: undefined },
+      options: { keepQuery: true },
+      type: "replace",
+    });
+  };
+
+  const isLastStep = current === formList.length - 1;
+  const isFirstStep = current === 0;
+
+  return (
+    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto" }}>
+      <h2 style={{ marginBottom: "24px" }}>{t("plans.actions.create")}</h2>
+
+      <Steps {...stepsProps} responsive style={{ marginBottom: "24px" }}>
+        <Steps.Step title={t("plans.steps.plant")} />
+        <Steps.Step title={t("plans.steps.yield")} />
+        <Steps.Step title={t("plans.steps.details")} />
+        <Steps.Step title={t("plans.steps.tasks")} />
+        <Steps.Step title={t("plans.steps.review")} />
+      </Steps>
+
+      <Form {...formProps} layout="vertical">
+        {formList[current]}
+      </Form>
+
+      <Flex align="center" justify="space-between" style={{ marginTop: "24px" }}>
+        <Button onClick={handleCancel}>{t("buttons.cancel")}</Button>
+        <Flex align="center" gap={16}>
+          <Button disabled={isFirstStep} onClick={() => gotoStep(current - 1)}>
+            {t("buttons.previousStep")}
+          </Button>
+          {isLastStep ? (
+            <SaveButton icon={false} {...saveButtonProps} />
+          ) : (
+            <Button type="primary" onClick={() => gotoStep(current + 1)}>
+              {t("buttons.nextStep")}
+            </Button>
+          )}
+        </Flex>
+      </Flex>
+    </div>
+  );
+};
+
+/**
+ * Hook that manages the form steps and form data
+ */
+const useFormList = ({ formProps }: { formProps: FormProps }) => {
+  const t = useTranslate();
+
+  // Select components for different resources
   const { selectProps: plantSelectProps } = useSelect<IPlant>({
-    resource: "plant",
+    resource: "plants",
     optionLabel: "plant_name",
-    optionValue: "plant_id",
-    meta: {
-      fields: [
-        "plant_id",
-        "plant_name",
-        "description",
-        "min_temp",
-        "max_temp",
-        "min_humid",
-        "max_humid",
-        "min_moisture",
-        "max_moisture",
-      ],
-    },
+    optionValue: "id",
+    filters: [{ field: "isAvailable", operator: "eq", value: true }],
   });
 
   const { selectProps: yieldSelectProps } = useSelect<IYield>({
-    resource: "yield",
+    resource: "yields",
     optionLabel: "yield_name",
-    optionValue: "yield_id",
-    meta: {
-      fields: ["yield_id", "yield_name", "area", "area_unit", "description"],
-    },
+    optionValue: "id",
+    filters: [{ field: "isAvailable", operator: "eq", value: true }],
   });
 
-  const [selectedPlant, setSelectedPlant] = useState<IPlant | null>(null);
-  const [selectedYield, setSelectedYield] = useState<IYield | null>(null);
-  const [events, setEvents] = useState<{ date: Dayjs; title: string; description: string }[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-  const [taskTitle, setTaskTitle] = useState("");
-  const [taskDescription, setTaskDescription] = useState("");
+  const { selectProps: fertilizerSelectProps } = useSelect<IFertilizer>({
+    resource: "fertilizers",
+    optionLabel: "name",
+    optionValue: "id",
+  });
 
-  const handlePlantSelect = (plantId: number) => {
-    const plant = plantSelectProps.options?.find((p) => p.value === plantId)?.option as IPlant;
-    setSelectedPlant(plant);
-    formProps?.form?.setFieldsValue({ plant: { plant_id: plantId } });
+  const { selectProps: pesticideSelectProps } = useSelect<IPesticide>({
+    resource: "pesticides",
+    optionLabel: "name",
+    optionValue: "id",
+  });
+
+  const { selectProps: itemSelectProps } = useSelect<IItem>({
+    resource: "items",
+    optionLabel: "name",
+    optionValue: "id",
+  });
+
+  // Tasks state
+  const [caringTasks, setCaringTasks] = useState<Partial<ICaringTask>[]>([]);
+  const [harvestingTasks, setHarvestingTasks] = useState<Partial<IHarvestingTask>[]>([]);
+  const [inspectingTasks, setInspectingTasks] = useState<Partial<IInspectingForm>[]>([]);
+
+  // Form steps
+  const formList = useMemo(
+    () => [
+      // Step 1: Plant Selection
+      <PlantSelectionStep key="plant" t={t} plantSelectProps={plantSelectProps} />,
+
+      // Step 2: Yield Selection
+      <YieldSelectionStep key="yield" t={t} yieldSelectProps={yieldSelectProps} />,
+
+      // Step 3: Basic Details
+      <DetailsStep key="details" t={t} />,
+
+      // Step 4: Task Management
+      <TasksStep
+        key="tasks"
+        t={t}
+        caringTasks={caringTasks}
+        setCaringTasks={setCaringTasks}
+        harvestingTasks={harvestingTasks}
+        setHarvestingTasks={setHarvestingTasks}
+        inspectingTasks={inspectingTasks}
+        setInspectingTasks={setInspectingTasks}
+        fertilizerSelectProps={fertilizerSelectProps}
+        pesticideSelectProps={pesticideSelectProps}
+        itemSelectProps={itemSelectProps}
+      />,
+
+      // Step 5: Review
+      <ReviewStep
+        key="review"
+        t={t}
+        formProps={formProps}
+        caringTasks={caringTasks}
+        harvestingTasks={harvestingTasks}
+        inspectingTasks={inspectingTasks}
+      />,
+    ],
+    [
+      t,
+      plantSelectProps,
+      yieldSelectProps,
+      caringTasks,
+      harvestingTasks,
+      inspectingTasks,
+      fertilizerSelectProps,
+      pesticideSelectProps,
+      itemSelectProps,
+      formProps,
+    ],
+  );
+
+  return {
+    formList,
+    caringTasks,
+    setCaringTasks,
+    harvestingTasks,
+    setHarvestingTasks,
+    inspectingTasks,
+    setInspectingTasks,
+  };
+};
+
+/**
+ * Step 1: Plant Selection
+ */
+const PlantSelectionStep = ({
+  t,
+  plantSelectProps,
+}: {
+  t: (key: string) => string;
+  plantSelectProps: any;
+}) => (
+  <Flex vertical>
+    <Form.Item
+      label={t("plans.fields.plant.label")}
+      name="plantId"
+      rules={[{ required: true, message: t("plans.fields.plant.required") }]}
+    >
+      <Select {...plantSelectProps} placeholder={t("plans.fields.plant.placeholder")} />
+    </Form.Item>
+  </Flex>
+);
+
+/**
+ * Step 2: Yield Selection
+ */
+const YieldSelectionStep = ({
+  t,
+  yieldSelectProps,
+}: {
+  t: (key: string) => string;
+  yieldSelectProps: any;
+}) => (
+  <Flex vertical>
+    <Form.Item
+      label={t("plans.fields.yield.label")}
+      name="yieldId"
+      rules={[{ required: true, message: t("plans.fields.yield.required") }]}
+    >
+      <Select {...yieldSelectProps} placeholder={t("plans.fields.yield.placeholder")} />
+    </Form.Item>
+  </Flex>
+);
+
+/**
+ * Step 3: Basic Details
+ */
+const DetailsStep = ({ t }: { t: (key: string) => string }) => (
+  <Flex vertical>
+    <Form.Item
+      label={t("plans.fields.planName.label")}
+      name="plan_name" // Changed to match interface field name
+      rules={[{ required: true, message: t("plans.fields.planName.required") }]}
+    >
+      <Input placeholder={t("plans.fields.planName.placeholder")} />
+    </Form.Item>
+
+    <Form.Item label={t("plans.fields.description.label")} name="description">
+      <Input.TextArea rows={3} placeholder={t("plans.fields.description.placeholder")} />
+    </Form.Item>
+
+    <Form.Item
+      label={t("plans.fields.startedDate.label")}
+      name="startedDate"
+      rules={[{ required: true, message: t("plans.fields.startedDate.required") }]}
+    >
+      <DatePicker
+        showTime
+        format="YYYY-MM-DD HH:mm:ss"
+        style={{ width: "100%" }}
+        placeholder={t("plans.fields.startedDate.placeholder")}
+      />
+    </Form.Item>
+
+    <Form.Item
+      label={t("plans.fields.endedDate.label")}
+      name="endedDate"
+      rules={[{ required: true, message: t("plans.fields.endedDate.required") }]}
+    >
+      <DatePicker
+        showTime
+        format="YYYY-MM-DD HH:mm:ss"
+        style={{ width: "100%" }}
+        placeholder={t("plans.fields.endedDate.placeholder")}
+      />
+    </Form.Item>
+
+    <Form.Item label={t("plans.fields.estimatedProduct.label")} name="estimatedProduct">
+      <InputNumber min={0} placeholder={t("plans.fields.estimatedProduct.placeholder")} />
+    </Form.Item>
+
+    <Form.Item label={t("plans.fields.estimatedUnit.label")} name="estimatedUnit">
+      <Select
+        options={[
+          { label: "kg", value: "kg" },
+          { label: "ton", value: "ton" },
+        ]}
+        placeholder={t("plans.fields.estimatedUnit.placeholder")}
+      />
+    </Form.Item>
+
+    <Form.Item
+      label={t("plans.fields.status.label")}
+      name="status"
+      initialValue="Draft"
+      rules={[{ required: true }]}
+    >
+      <Select
+        options={[
+          { label: "Draft", value: "Draft" },
+          { label: "Pending", value: "Pending" },
+          { label: "Ongoing", value: "Ongoing" },
+          { label: "Completed", value: "Completed" },
+          { label: "Cancelled", value: "Cancelled" },
+        ]}
+        placeholder={t("plans.fields.status.placeholder")}
+      />
+    </Form.Item>
+  </Flex>
+);
+
+/**
+ * Modal for Adding/Editing Tasks
+ */
+const TaskFormModal = ({
+  taskType,
+  onTaskAdded,
+  initialValues = null,
+  fertilizerSelectProps,
+  pesticideSelectProps,
+  itemSelectProps,
+  t,
+}) => {
+  const [form] = Form.useForm();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (visible && initialValues) {
+      form.setFieldsValue(initialValues);
+    }
+  }, [visible, form, initialValues]);
+
+  const handleModalOpen = () => {
+    form.resetFields();
+    setVisible(true);
   };
 
-  const handleYieldSelect = (yieldId: number) => {
-    const yieldData = yieldSelectProps.options?.find((y) => y.value === yieldId)?.option as IYield;
-    setSelectedYield(yieldData);
-    formProps?.form?.setFieldsValue({ yield: { yield_id: yieldId } });
+  const handleModalClose = () => {
+    setVisible(false);
   };
 
-  const steps = [
-    {
-      title: t("plans.steps.selectPlant"),
-      content: (
-        <Flex vertical gap={16}>
-          <Typography.Title level={4}>{t("plans.fields.selectPlant")}</Typography.Title>
-          <Flex wrap="wrap" gap={16}>
-            {plantSelectProps.options?.map((plant) => (
-              <Card
-                key={plant.value}
-                hoverable
-                style={{ width: 300 }}
-                onClick={() => handlePlantSelect(plant.value as number)}
-                className={selectedPlant?.plant_id === plant.value ? "selected-card" : ""}
-              >
-                <Card.Meta
-                  title={plant.label}
-                  description={
-                    <Space direction="vertical" size="small">
-                      <Typography.Text type="secondary">
-                        {plant.option?.description}
-                      </Typography.Text>
-                      <Divider style={{ margin: "8px 0" }} />
-                      <Typography.Text>
-                        Temperature: {plant.option?.min_temp}°C - {plant.option?.max_temp}°C
-                      </Typography.Text>
-                      <Typography.Text>
-                        Humidity: {plant.option?.min_humid}% - {plant.option?.max_humid}%
-                      </Typography.Text>
-                    </Space>
-                  }
-                />
-              </Card>
-            ))}
-            <Card
-              hoverable
-              style={{ width: 300 }}
-              onClick={() => navigate("/plants/create?to=/plans/create")}
-            >
-              <Card.Meta
-                title={t("plans.actions.createNewPlant")}
-                description={t("plans.actions.createNewPlantDesc")}
-              />
-            </Card>
-          </Flex>
-          {selectedPlant && (
-            <Alert
-              message="Plant Requirements"
-              description={
-                <Space direction="vertical">
-                  <Typography.Text>
-                    Moisture: {selectedPlant.min_moisture}% - {selectedPlant.max_moisture}%
-                  </Typography.Text>
-                  <Typography.Text>
-                    Fertilizer: {selectedPlant.min_fertilizer_quantity} -{" "}
-                    {selectedPlant.max_fertilizer_quantity} {selectedPlant.fertilizer_unit}
-                  </Typography.Text>
-                  <Typography.Text>
-                    Brix Point: {selectedPlant.min_brix_point} - {selectedPlant.max_brix_point}
-                  </Typography.Text>
-                </Space>
-              }
-              type="info"
-              showIcon
-            />
-          )}
-        </Flex>
-      ),
-    },
-    {
-      title: t("plans.steps.selectYield"),
-      content: (
-        <Flex vertical gap={16}>
-          <Form.Item
-            label={t("plans.fields.yield")}
-            name={["yield", "yield_id"]}
-            rules={[{ required: true }]}
-          >
-            <Select<number>
-              {...(yieldSelectProps as SelectProps<number>)}
-              placeholder={t("plans.fields.yieldPlaceholder")}
-              onChange={handleYieldSelect}
-            />
-          </Form.Item>
-          {selectedYield && (
-            <Card>
-              <Flex vertical gap={8}>
-                <Typography.Text strong>Selected Yield Area Details:</Typography.Text>
-                <Typography.Text>
-                  Area: {selectedYield.area} {selectedYield.area_unit}
-                </Typography.Text>
-                <Typography.Text>Type: {selectedYield.type}</Typography.Text>
-                <Typography.Text>Size: {selectedYield.size}</Typography.Text>
-              </Flex>
-            </Card>
-          )}
-        </Flex>
-      ),
-    },
-    {
-      title: t("plans.steps.planDetails"),
-      content: (
-        <Flex vertical gap={16}>
-          <Form.Item
-            label={t("plans.fields.planName")}
-            name="plan_name"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder={t("plans.fields.planNamePlaceholder")} />
-          </Form.Item>
+  const handleFormSubmit = () => {
+    form.validateFields().then((values) => {
+      // Format dates to string if they're date objects
+      const formattedValues = {
+        ...values,
+        start_date:
+          values.start_date instanceof Date ? values.start_date.toISOString() : values.start_date,
+        end_date: values.end_date instanceof Date ? values.end_date.toISOString() : values.end_date,
+        status: values.status || "pending",
+      };
 
-          <Form.Item
-            label={t("plans.fields.dateRange")}
-            name="date_range"
-            rules={[{ required: true }]}
-          >
-            <RangePicker
-              style={{ width: "100%" }}
-              onChange={(dates) => {
-                if (dates) {
-                  formProps?.form?.setFieldsValue({
-                    started_date: dates[0],
-                    ended_date: dates[1],
-                  });
-                }
-              }}
-            />
-          </Form.Item>
+      onTaskAdded(formattedValues);
+      setVisible(false);
+    });
+  };
 
-          <Form.Item label={t("plans.fields.estimatedProduct")} required>
-            <Flex gap={8}>
+  const getTaskTypeOptions = () => {
+    if (taskType === "caring") {
+      return [
+        { label: "Planting", value: "Planting" },
+        { label: "Nurturing", value: "Nurturing" },
+        { label: "Watering", value: "Watering" },
+        { label: "Fertilizing", value: "Fertilizing" },
+        { label: "PestControl", value: "PestControl" },
+      ];
+    } else if (taskType === "harvesting") {
+      return [{ label: "Harvesting", value: "Harvesting" }];
+    } else {
+      return [
+        { label: "SoilInspection", value: "SoilInspection" },
+        { label: "PlantInspection", value: "PlantInspection" },
+      ];
+    }
+  };
+
+  return (
+    <>
+      <Button type="primary" icon={<PlusOutlined />} onClick={handleModalOpen}>
+        {t("buttons.addTask")}
+      </Button>
+      <Modal
+        title={initialValues ? t("plans.tasks.editTask") : t("plans.tasks.addTask")}
+        open={visible}
+        onOk={handleFormSubmit}
+        onCancel={handleModalClose}
+        width={800}
+        destroyOnClose
+      >
+        <Form form={form} layout="vertical">
+          <Row gutter={16}>
+            <Col span={12}>
               <Form.Item
-                name="estimated_product"
-                rules={[{ required: true }]}
-                style={{ marginBottom: 0 }}
+                label={t("plans.fields.taskName.label")}
+                name="task_name"
+                rules={[{ required: true, message: t("plans.fields.taskName.required") }]}
               >
-                <InputNumber min={0} style={{ width: "100%" }} />
+                <Input placeholder={t("plans.fields.taskName.placeholder")} />
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
-                name="estimated_unit"
-                rules={[{ required: true }]}
-                style={{ marginBottom: 0 }}
+                label={t("plans.fields.taskType.label")}
+                name="task_type"
+                rules={[{ required: true, message: t("plans.fields.taskType.required") }]}
               >
                 <Select
-                  style={{ width: 120 }}
+                  options={getTaskTypeOptions()}
+                  placeholder={t("plans.fields.taskType.placeholder")}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label={t("plans.fields.startDate.label")}
+                name="start_date"
+                rules={[{ required: true, message: t("plans.fields.startDate.required") }]}
+              >
+                <DatePicker
+                  showTime
+                  format="YYYY-MM-DD HH:mm:ss"
+                  style={{ width: "100%" }}
+                  placeholder={t("plans.fields.startDate.placeholder")}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t("plans.fields.endDate.label")}
+                name="end_date"
+                rules={[{ required: true, message: t("plans.fields.endDate.required") }]}
+              >
+                <DatePicker
+                  showTime
+                  format="YYYY-MM-DD HH:mm:ss"
+                  style={{ width: "100%" }}
+                  placeholder={t("plans.fields.endDate.placeholder")}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="status"
+                label={t("plans.fields.status.label")}
+                initialValue="pending"
+              >
+                <Select
                   options={[
-                    { label: "kg", value: "kg" },
-                    { label: "ton", value: "ton" },
-                    { label: "pieces", value: "pieces" },
+                    { label: t("plans.status.pending"), value: "pending" },
+                    { label: t("plans.status.inProgress"), value: "in-progress" },
+                    { label: t("plans.status.completed"), value: "completed" },
                   ]}
                 />
               </Form.Item>
-            </Flex>
+            </Col>
+            <Col span={12}>
+              {taskType !== "inspecting" ? (
+                <Form.Item
+                  label={t("plans.fields.farmerId.label")}
+                  name="farmer_id"
+                  rules={[{ required: true, message: t("plans.fields.farmerId.required") }]}
+                >
+                  <InputNumber
+                    min={1}
+                    style={{ width: "100%" }}
+                    placeholder={t("plans.fields.farmerId.placeholder")}
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item
+                  label={t("plans.fields.inspectorId.label")}
+                  name="inspector_id"
+                  rules={[{ required: true, message: t("plans.fields.inspectorId.required") }]}
+                >
+                  <InputNumber
+                    min={1}
+                    style={{ width: "100%" }}
+                    placeholder={t("plans.fields.inspectorId.placeholder")}
+                  />
+                </Form.Item>
+              )}
+            </Col>
+          </Row>
+
+          {taskType === "caring" && (
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label={t("plans.fields.fertilizers.label")} name="fertilizers">
+                  <Select
+                    {...fertilizerSelectProps}
+                    mode="multiple"
+                    placeholder={t("plans.fields.fertilizers.placeholder")}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label={t("plans.fields.pesticides.label")} name="pesticides">
+                  <Select
+                    {...pesticideSelectProps}
+                    mode="multiple"
+                    placeholder={t("plans.fields.pesticides.placeholder")}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+
+          {taskType === "harvesting" && (
+            <Form.Item label={t("plans.fields.estimatedYield.label")} name="estimated_yield">
+              <InputNumber
+                min={0}
+                style={{ width: "100%" }}
+                placeholder={t("plans.fields.estimatedYield.placeholder")}
+                addonAfter="kg"
+              />
+            </Form.Item>
+          )}
+
+          {taskType === "inspecting" && (
+            <Form.Item label={t("plans.fields.inspectionResult.label")} name="inspection_result">
+              <Select
+                placeholder={t("plans.fields.inspectionResult.placeholder")}
+                options={[
+                  { label: t("plans.inspection.passed"), value: "passed" },
+                  { label: t("plans.inspection.failed"), value: "failed" },
+                  { label: t("plans.inspection.needsWork"), value: "needs-work" },
+                ]}
+              />
+            </Form.Item>
+          )}
+
+          <Form.Item label={t("plans.fields.items.label")} name="items">
+            <Select
+              {...itemSelectProps}
+              mode="multiple"
+              placeholder={t("plans.fields.items.placeholder")}
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
-          <Form.Item label={t("plans.fields.description")} name="description">
-            <Input.TextArea rows={3} placeholder={t("plans.fields.descriptionPlaceholder")} />
+          <Form.Item label={t("plans.fields.notes.label")} name="notes">
+            <Input.TextArea rows={3} placeholder={t("plans.fields.notes.placeholder")} />
           </Form.Item>
-        </Flex>
-      ),
+        </Form>
+      </Modal>
+    </>
+  );
+};
+/**
+ * Task Table with Expandable Rows
+ */
+const TaskTable = ({
+  tasks,
+  setTasks,
+  taskType,
+  fertilizerSelectProps,
+  pesticideSelectProps,
+  itemSelectProps,
+  t,
+}) => {
+  // Main action menu items
+  const actionMenuItems = [
+    {
+      key: "view",
+      label: t("actions.view"),
     },
     {
-      title: t("plans.steps.addTasks"),
-      content: (
-        <Flex vertical gap={16}>
-          <Typography.Title level={4}>
-            {t("plans.fields.tasks")}
-            <Tooltip title="Add tasks by clicking on calendar dates">
-              <InfoCircleOutlined style={{ marginLeft: 8 }} />
-            </Tooltip>
-          </Typography.Title>
-          <Calendar
-            style={{ border: "1px solid #d9d9d9", borderRadius: "6px" }}
-            onSelect={(date) => {
-              setSelectedDate(date);
-              setIsModalVisible(true);
+      key: "delete",
+      label: t("actions.delete"),
+      danger: true,
+    },
+  ];
+
+  // Handler for editing a task
+  const handleEditTask = (task) => {
+    // Implementation for edit action
+    console.log("Edit task:", task);
+  };
+
+  // Handler for deleting a task
+  const handleDeleteTask = (key) => {
+    setTasks(tasks.filter((task) => task.key !== key));
+  };
+
+  // Handler for dropdown menu actions
+  const handleMenuClick = (key, task) => {
+    if (key === "delete") {
+      handleDeleteTask(task.key);
+    } else if (key === "view") {
+      // Implementation for view action
+      console.log("View details for:", task);
+    }
+  };
+
+  // Define expandable rows content
+  const expandedRowRender = (record) => {
+    // Define columns for expanded row based on task type
+    let detailColumns;
+
+    if (taskType === "caring") {
+      detailColumns = [
+        { title: t("plans.fields.taskType.label"), dataIndex: "task_type", key: "task_type" },
+        { title: t("plans.fields.farmerId.label"), dataIndex: "farmer_id", key: "farmer_id" },
+        {
+          title: t("plans.fields.fertilizers.label"),
+          key: "fertilizers",
+          render: (_, record) =>
+            record.fertilizers?.length > 0
+              ? `${record.fertilizers.length} ${t("plans.fields.selected")}`
+              : "-",
+        },
+        {
+          title: t("plans.fields.pesticides.label"),
+          key: "pesticides",
+          render: (_, record) =>
+            record.pesticides?.length > 0
+              ? `${record.pesticides.length} ${t("plans.fields.selected")}`
+              : "-",
+        },
+        {
+          title: t("plans.fields.action.label"),
+          key: "operation",
+          render: () => (
+            <Space size="middle">
+              <a>{t("actions.start")}</a>
+              <a>{t("actions.reschedule")}</a>
+              <a>{t("actions.complete")}</a>
+            </Space>
+          ),
+        },
+      ];
+    } else if (taskType === "harvesting") {
+      detailColumns = [
+        { title: t("plans.fields.taskType.label"), dataIndex: "task_type", key: "task_type" },
+        { title: t("plans.fields.farmerId.label"), dataIndex: "farmer_id", key: "farmer_id" },
+        {
+          title: t("plans.fields.estimatedYield.label"),
+          dataIndex: "estimated_yield",
+          key: "estimated_yield",
+        },
+        {
+          title: t("plans.fields.action.label"),
+          key: "operation",
+          render: () => (
+            <Space size="middle">
+              <a>{t("actions.start")}</a>
+              <a>{t("actions.reschedule")}</a>
+              <a>{t("actions.complete")}</a>
+            </Space>
+          ),
+        },
+      ];
+    } else {
+      detailColumns = [
+        { title: t("plans.fields.taskType.label"), dataIndex: "task_type", key: "task_type" },
+        {
+          title: t("plans.fields.inspectorId.label"),
+          dataIndex: "inspector_id",
+          key: "inspector_id",
+        },
+        {
+          title: t("plans.fields.inspectionResult.label"),
+          dataIndex: "inspection_result",
+          key: "inspection_result",
+        },
+        {
+          title: t("plans.fields.action.label"),
+          key: "operation",
+          render: () => (
+            <Space size="middle">
+              <a>{t("actions.start")}</a>
+              <a>{t("actions.reschedule")}</a>
+              <a>{t("actions.complete")}</a>
+            </Space>
+          ),
+        },
+      ];
+    }
+
+    // Common detail columns for all task types
+    const commonDetailColumns = [
+      {
+        title: t("plans.fields.notes.label"),
+        dataIndex: "notes",
+        key: "notes",
+        render: (notes) => notes || "-",
+      },
+      {
+        title: t("plans.fields.items.label"),
+        key: "items",
+        render: (_, record) =>
+          record.items?.length > 0 ? `${record.items.length} ${t("plans.fields.selected")}` : "-",
+      },
+    ];
+
+    // Create a single row of data based on the record
+    const detailData = [{ ...record, key: `${record.key}-detail` }];
+
+    return (
+      <div style={{ margin: "0 16px" }}>
+        <Table
+          columns={[...detailColumns, ...commonDetailColumns]}
+          dataSource={detailData}
+          pagination={false}
+          size="small"
+        />
+      </div>
+    );
+  };
+
+  // Define main table columns
+  const columns = [
+    {
+      title: t("plans.fields.taskName.label"),
+      dataIndex: "task_name",
+      key: "task_name",
+    },
+    {
+      title: t("plans.fields.startDate.label"),
+      dataIndex: "start_date",
+      key: "start_date",
+      render: (date) => new Date(date).toLocaleString(),
+      width: 180,
+    },
+    {
+      title: t("plans.fields.endDate.label"),
+      dataIndex: "end_date",
+      key: "end_date",
+      render: (date) => new Date(date).toLocaleString(),
+      width: 180,
+    },
+    {
+      title: t("plans.fields.status.label"),
+      key: "status",
+      dataIndex: "status",
+      width: 120,
+      render: (status) => {
+        let statusBadge;
+        switch (status) {
+          case "completed":
+            statusBadge = <Badge status="success" text={t("plans.status.completed")} />;
+            break;
+          case "in-progress":
+            statusBadge = <Badge status="processing" text={t("plans.status.inProgress")} />;
+            break;
+          default:
+            statusBadge = <Badge status="default" text={t("plans.status.pending")} />;
+        }
+        return statusBadge;
+      },
+    },
+    {
+      title: t("plans.fields.action.label"),
+      key: "action",
+      width: 150,
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type="text" icon={<EditOutlined />} onClick={() => handleEditTask(record)} />
+          <Dropdown
+            menu={{
+              items: actionMenuItems,
+              onClick: ({ key }) => handleMenuClick(key, record),
             }}
-            dateCellRender={(date) => {
-              const dayEvents = events.filter((event) => event.date.isSame(date, "day"));
-              return (
-                <ul className="events">
-                  {dayEvents.map((event, index) => (
-                    <li key={index}>
-                      <Badge
-                        status="processing"
-                        text={<Tooltip title={event.description}>{event.title}</Tooltip>}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              );
-            }}
-          />
-        </Flex>
+          >
+            <Button type="text">
+              <Space>
+                {t("actions.more")}
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
+        </Space>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto" }}>
-      <Flex vertical gap={24}>
-        <Card>
-          <Typography.Title level={2}>{t("plans.actions.create")}</Typography.Title>
-          <Steps {...stepsProps} current={current}>
-            {steps.map((step) => (
-              <Steps.Step key={step.title} title={step.title} />
-            ))}
-          </Steps>
-        </Card>
-
-        <Form
-          {...formProps}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={(values) => {
-            formProps.onFinish?.({
-              ...values,
-              tasks: events.map((event) => ({
-                title: event.title,
-                description: event.description,
-                date: event.date.toISOString(),
-              })),
-              status: "Pending",
-            });
-          }}
-        >
-          <Card>{steps[current].content}</Card>
-
-          <Flex justify="space-between" style={{ marginTop: 24 }}>
-            <Button onClick={() => go({ to: "/plans", type: "push" })}>
-              {t("buttons.cancel")}
-            </Button>
-            <Space>
-              {current > 0 && (
-                <Button onClick={() => gotoStep(current - 1)}>{t("buttons.previousStep")}</Button>
-              )}
-              {current < steps.length - 1 ? (
-                <Button
-                  type="primary"
-                  onClick={() => gotoStep(current + 1)}
-                  disabled={(current === 0 && !selectedPlant) || (current === 1 && !selectedYield)}
-                >
-                  {t("buttons.nextStep")}
-                </Button>
-              ) : (
-                <SaveButton {...saveButtonProps} />
-              )}
-            </Space>
-          </Flex>
-        </Form>
-      </Flex>
-
-      <Modal
-        title={t("plans.fields.addTask")}
-        open={isModalVisible}
-        onOk={() => {
-          if (selectedDate && taskTitle) {
-            setEvents([
-              ...events,
-              { date: selectedDate, title: taskTitle, description: taskDescription },
-            ]);
-            setTaskTitle("");
-            setTaskDescription("");
-            setIsModalVisible(false);
-          }
+    <div style={{ marginTop: 16 }}>
+      <Table
+        columns={columns}
+        dataSource={tasks}
+        expandable={{
+          expandedRowRender,
+          expandRowByClick: true,
         }}
-        onCancel={() => setIsModalVisible(false)}
-        okButtonProps={{ disabled: !taskTitle }}
-      >
-        <Form layout="vertical">
-          <Form.Item
-            label={t("plans.fields.taskTitle")}
-            required
-            tooltip="Enter a clear and concise task title"
-          >
-            <Input
-              value={taskTitle}
-              onChange={(e) => setTaskTitle(e.target.value)}
-              placeholder={t("plans.fields.taskTitlePlaceholder")}
-            />
-          </Form.Item>
-          <Form.Item
-            label={t("plans.fields.taskDescription")}
-            tooltip="Add detailed instructions or notes for the task"
-          >
-            <Input.TextArea
-              value={taskDescription}
-              onChange={(e) => setTaskDescription(e.target.value)}
-              placeholder={t("plans.fields.taskDescriptionPlaceholder")}
-              rows={4}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <style>{`
-        .selected-card {
-          border-color: #1890ff;
-          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-        }
-        .events {
-          margin: 0;
-          padding: 0;
-          list-style: none;
-        }
-        .events li {
-          margin-bottom: 4px;
-        }
-      `}</style>
+        size="middle"
+        locale={{ emptyText: t("plans.tasks.noTasks") }}
+      />
     </div>
   );
 };
+/**
+ * Step 4: Task Management
+ */
+const TasksStep = ({
+  t,
+  caringTasks,
+  setCaringTasks,
+  harvestingTasks,
+  setHarvestingTasks,
+  inspectingTasks,
+  setInspectingTasks,
+  fertilizerSelectProps,
+  pesticideSelectProps,
+  itemSelectProps,
+}) => {
+  // State for the active tab
+  const [activeTab, setActiveTab] = useState("caring");
+
+  return (
+    <Card className="task-step-card">
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        type="card"
+        tabBarExtraContent={
+          <TaskFormModal
+            taskType={activeTab}
+            onTaskAdded={(task) => {
+              if (activeTab === "caring") {
+                setCaringTasks([...caringTasks, { ...task, key: `caring-${caringTasks.length}` }]);
+              } else if (activeTab === "harvesting") {
+                setHarvestingTasks([
+                  ...harvestingTasks,
+                  { ...task, key: `harvesting-${harvestingTasks.length}` },
+                ]);
+              } else if (activeTab === "inspecting") {
+                setInspectingTasks([
+                  ...inspectingTasks,
+                  { ...task, key: `inspecting-${inspectingTasks.length}` },
+                ]);
+              }
+            }}
+            fertilizerSelectProps={fertilizerSelectProps}
+            pesticideSelectProps={pesticideSelectProps}
+            itemSelectProps={itemSelectProps}
+            t={t}
+          />
+        }
+      >
+        <TabPane
+          tab={
+            <span>
+              <Badge count={caringTasks.length} size="small" offset={[10, 0]}>
+                {t("plans.tasks.caring")}
+              </Badge>
+            </span>
+          }
+          key="caring"
+        >
+          <TaskTable
+            tasks={caringTasks}
+            setTasks={setCaringTasks}
+            taskType="caring"
+            fertilizerSelectProps={fertilizerSelectProps}
+            pesticideSelectProps={pesticideSelectProps}
+            itemSelectProps={itemSelectProps}
+            t={t}
+          />
+        </TabPane>
+        <TabPane
+          tab={
+            <span>
+              <Badge count={harvestingTasks.length} size="small" offset={[10, 0]}>
+                {t("plans.tasks.harvesting")}
+              </Badge>
+            </span>
+          }
+          key="harvesting"
+        >
+          <TaskTable
+            tasks={harvestingTasks}
+            setTasks={setHarvestingTasks}
+            taskType="harvesting"
+            itemSelectProps={itemSelectProps}
+            t={t}
+          />
+        </TabPane>
+        <TabPane
+          tab={
+            <span>
+              <Badge count={inspectingTasks.length} size="small" offset={[10, 0]}>
+                {t("plans.tasks.inspecting")}
+              </Badge>
+            </span>
+          }
+          key="inspecting"
+        >
+          <TaskTable
+            tasks={inspectingTasks}
+            setTasks={setInspectingTasks}
+            taskType="inspecting"
+            itemSelectProps={itemSelectProps}
+            t={t}
+          />
+        </TabPane>
+      </Tabs>
+    </Card>
+  );
+};
+
+/**
+ * Step 5: Review
+ */
+const ReviewStep = ({
+  t,
+  formProps,
+  caringTasks,
+  harvestingTasks,
+  inspectingTasks,
+}: {
+  t: (key: string) => string;
+  formProps: any;
+  caringTasks: Partial<ICaringTask>[];
+  harvestingTasks: Partial<IHarvestingTask>[];
+  inspectingTasks: Partial<IInspectingForm>[];
+}) => (
+  <Flex vertical>
+    <Title level={4}>{t("plans.steps.review")}</Title>
+
+    {/* Plan Details Section */}
+    <ReviewSection
+      fields={[
+        { label: t("plans.fields.plant.label"), value: formProps.form.getFieldValue("plantId") },
+        { label: t("plans.fields.yield.label"), value: formProps.form.getFieldValue("yieldId") },
+        {
+          label: t("plans.fields.planName.label"),
+          value: formProps.form.getFieldValue("planName"),
+        },
+        {
+          label: t("plans.fields.description.label"),
+          value: formProps.form.getFieldValue("description"),
+        },
+        {
+          label: t("plans.fields.startedDate.label"),
+          value: formProps.form.getFieldValue("startedDate")?.toLocaleString(),
+        },
+        {
+          label: t("plans.fields.endedDate.label"),
+          value: formProps.form.getFieldValue("endedDate")?.toLocaleString(),
+        },
+        {
+          label: t("plans.fields.estimatedProduct.label"),
+          value: `${formProps.form.getFieldValue("estimatedProduct")} ${formProps.form.getFieldValue("estimatedUnit")}`,
+        },
+        { label: t("plans.fields.status.label"), value: formProps.form.getFieldValue("status") },
+      ]}
+    />
+
+    {/* Tasks Review */}
+    <Title level={5} style={{ marginTop: "16px" }}>
+      {t("plans.tasks.caring")}
+    </Title>
+    <TasksTable tasks={caringTasks} />
+
+    <Title level={5}>{t("plans.tasks.harvesting")}</Title>
+    <TasksTable tasks={harvestingTasks} />
+
+    <Title level={5}>{t("plans.tasks.inspecting")}</Title>
+    <TasksTable tasks={inspectingTasks} />
+  </Flex>
+);
+
+/**
+ * Review Section component for displaying field values
+ */
+const ReviewSection = ({ fields }: { fields: { label: string; value: any }[] }) => (
+  <>
+    {fields.map((field, index) => (
+      <div key={index}>
+        <Text strong>{field.label}: </Text>
+        <Text>{field.value}</Text>
+      </div>
+    ))}
+  </>
+);
+
+/**
+ * Tasks Table component for the review step
+ */
+const TasksTable = ({ tasks }: { tasks: any[] }) => (
+  <Table
+    dataSource={tasks}
+    columns={[
+      { title: "Task Name", dataIndex: "taskName" },
+      { title: "Type", dataIndex: "taskType" },
+      {
+        title: "Start Date",
+        dataIndex: "startDate",
+        render: (val) => new Date(val).toLocaleString(),
+      },
+    ]}
+    pagination={false}
+  />
+);

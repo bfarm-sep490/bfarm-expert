@@ -39,7 +39,7 @@ export const PlanListCard = () => {
   });
 
   const { data: plantData, isLoading: plantIsLoading } = useList<IPlant, HttpError>({
-    resource: "plant",
+    resource: "plants",
     pagination: {
       mode: "off",
     },
@@ -201,7 +201,7 @@ export const PlanListCard = () => {
                   }}
                 >
                   <Typography.Text key="plant.name">
-                    {plants.find((plant) => plant.id === item.plant?.id)?.plant_name}
+                    {plants.find((plant) => plant.id === item.plant_id)?.plant_name}
                   </Typography.Text>
                   <PlanStatus key="status" value={item.status} />
                 </Flex>,
