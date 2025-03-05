@@ -42,7 +42,7 @@ export const PlanStatus = ({ value }: Props) => {
     },
   };
 
-  const currentStyle = statusStyles[value];
+  const currentStyle = statusStyles[value as keyof typeof statusStyles];
 
   return (
     <Tag
