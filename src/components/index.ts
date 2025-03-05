@@ -4,7 +4,5 @@ export * from "./icons";
 export * from "./dashboard";
 export * from "./map";
 export * from "./paginationTotal";
-export * from "./customer/userStatus";
-export * from "./customer";
 export * from "./drawer";
 export * from "./form";

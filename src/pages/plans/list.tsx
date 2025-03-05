@@ -55,7 +55,7 @@ export const PlanList = () => {
           size="large"
           onClick={() => {
             return go({
-              to: `${createUrl("plan")}`,
+              to: `${createUrl("plans")}`,
               query: {
                 to: pathname,
               },
@@ -66,7 +66,7 @@ export const PlanList = () => {
             });
           }}
         >
-          {t("plans.actions.add")}
+          {t("plans.actions.add", "Add Plan")}
         </CreateButton>,
       ]}
     >

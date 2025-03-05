@@ -25,6 +25,7 @@ import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
+import { PlantCreate, PlantEdit, PlantList, PlantShow } from "./pages/plants";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -87,21 +88,21 @@ const App: React.FC = () => {
                 },
               },
               {
-                name: "plan",
-                list: "/plan",
-                create: "/plan/new",
-                edit: "/plan/edit/:id",
-                show: "/plan/:id",
+                name: "plans",
+                list: "/plans",
+                create: "/plans/new",
+                edit: "/plans/edit/:id",
+                show: "/plans/:id",
                 meta: {
                   icon: <ScheduleOutlined />,
                 },
               },
               {
-                name: "plant",
-                list: "/plant",
-                create: "/plant/create",
-                edit: "/plant/edit/:id",
-                show: "/plant/show/:id",
+                name: "plants",
+                list: "/plants",
+                create: "/plants/new",
+                edit: "/plants/:id/edit",
+                show: "/plants/show/:id",
                 meta: {
                   icon: <ExperimentOutlined />,
                 },
@@ -134,11 +135,26 @@ const App: React.FC = () => {
               >
                 <Route index element={<DashboardPage />} />
 
-                <Route path="/plan">
+                <Route path="/plans">
                   <Route index element={<PlanList />} />
                   <Route path="new" element={<PlanCreate />} />
                   <Route path=":id" element={<PlanShow />} />
                   <Route path=":id/edit" element={<PlanEdit />} />
+                </Route>
+
+                <Route path="/plants">
+                  <Route
+                    path=""
+                    element={
+                      <PlantList>
+                        <Outlet />
+                      </PlantList>
+                    }
+                  >
+                    <Route path="new" element={<PlantCreate />} />
+                  </Route>
+
+                  <Route path=":id/edit" element={<PlantEdit />} />
                 </Route>
               </Route>
 

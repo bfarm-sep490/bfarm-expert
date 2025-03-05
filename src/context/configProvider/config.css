@@ -2,11 +2,11 @@
     border-radius: 8px;
 }
 
-.ant-table-wrapper .ant-table-tbody > tr:last-child > td:first-child {
+.ant-table-wrapper .ant-table-tbody>tr:last-child>td:first-child {
     border-bottom-left-radius: 8px;
 }
 
-.ant-table-wrapper .ant-table-tbody > tr:last-child > td:last-child {
+.ant-table-wrapper .ant-table-tbody>tr:last-child>td:last-child {
     border-bottom-right-radius: 8px;
 }
 
@@ -31,8 +31,61 @@
     height: 100%;
 }
 
+
 html[data-theme="dark"] {
     .ant-table-filter-dropdown {
         background-color: #000;
     }
+}
+
+/* 🔹 TÙY CHỈNH THANH CUỘN CHUNG (DÀNH CHO TOÀN BỘ TRANG) */
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #bdbdbd transparent;
+}
+
+/* Chrome, Edge */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* 🔹 TÙY CHỈNH THANH CUỘN TRONG ANT DESIGN TABLE */
+.ant-table-wrapper .ant-table-body {
+    scrollbar-width: thin;
+    scrollbar-color: #eaeaea transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ant-table-wrapper .ant-table-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.ant-table-wrapper .ant-table-body::-webkit-scrollbar-thumb {
+    background: #eaeaea;
+    border-radius: 4px;
+}
+
+.ant-table-wrapper .ant-table-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* 🔹 DARK MODE - ĐỔI MÀU THANH CUỘN KHI Ở CHẾ ĐỘ TỐI */
+html[data-theme="dark"] {
+    scrollbar-color: #666 transparent;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #666;
 }
