@@ -45,8 +45,8 @@ export const PlanListTable = () => {
   return (
     <Table
       {...tableProps}
-      rowKey="plan_id"
-      scroll={{ x: "max-content", y: 55 * 10 }}
+      rowKey="id"
+      scroll={{ x: true }}
       pagination={{
         ...tableProps.pagination,
         showTotal: (total) => <PaginationTotal total={total} entityName="plan" />,
@@ -88,7 +88,7 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.plan_name")}
+        title={t("plans.fields.plan_name", "Plan Name")}
         dataIndex="plan_name"
         filterIcon={(filtered) => (
           <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
@@ -110,7 +110,7 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.plant")}
+        title={t("plans.fields.plant", "Plant")}
         dataIndex={["plants", "plant_name"]}
         render={(value: string) => (
           <Typography.Text
@@ -123,7 +123,7 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.description")}
+        title={t("plans.fields.description", "Description")}
         dataIndex="description"
         width={300}
         filterIcon={(filtered) => (
@@ -145,7 +145,7 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.status")}
+        title={t("plans.fields.status", "Status")}
         dataIndex="status"
         sorter
         defaultSortOrder={getDefaultSortOrder("status", sorters)}
@@ -168,7 +168,7 @@ export const PlanListTable = () => {
       />
 
       <Table.Column
-        title={t("plans.fields.estimated_product")}
+        title={t("plans.fields.estimated_product", "Estimated Product")}
         dataIndex="estimated_product"
         sorter
         defaultSortOrder={getDefaultSortOrder("estimated_product", sorters)}
@@ -177,7 +177,7 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.started_date")}
+        title={t("plans.fields.started_date", "Started Date")}
         dataIndex="started_date"
         sorter
         defaultSortOrder={getDefaultSortOrder("started_date", sorters)}

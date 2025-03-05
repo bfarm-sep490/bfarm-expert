@@ -107,7 +107,7 @@ export const PlanListCard = () => {
             ]);
           }}
         >
-          {t("plans.filter.allStatus.label")}
+          {t("plans.filter.allStatus.label", "All Status")}
         </Tag>
         {!plantIsLoading &&
           statusOptions.map((status) => (

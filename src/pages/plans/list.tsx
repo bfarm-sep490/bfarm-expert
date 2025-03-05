@@ -66,7 +66,7 @@ export const PlanList = () => {
             });
           }}
         >
-          {t("plans.actions.add")}
+          {t("plans.actions.add", "Add Plan")}
         </CreateButton>,
       ]}
     >

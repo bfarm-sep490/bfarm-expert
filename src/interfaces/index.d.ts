@@ -164,15 +164,16 @@ export interface IPlant {
   max_humid: number;
   min_moisture: number;
   max_moisture: number;
-  min_fertilizer_quantity: number;
-  max_fertilizer_quantity: number;
+  min_fertilizer: number;
+  max_fertilizer: number;
   fertilizer_unit: string;
-  min_pesticide_quantity: number;
-  max_pesticide_quantity: number;
+  min_pesticide: number;
+  max_pesticide: number;
   pesticide_unit: string;
   min_brix_point: number;
   max_brix_point: number;
   gt_test_kit_color: string;
+  image_url: string;
 }
 
 export interface IOrderPlan {
@@ -192,8 +193,8 @@ export interface IProductionImage {
 export interface IInspectingForm {
   id: number;
   plan_id: number;
-  form_name: string;
-  form_type: string;
+  task_name: string;
+  task_type: string;
   description: string;
   start_date: string;
   end_date: string;

@@ -67,7 +67,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
         <Table
           {...tableProps}
           rowKey="id"
-          scroll={{ x: "max-content", y: 55 * 10 }}
+          scroll={{ x: true }}
           pagination={{
             ...tableProps.pagination,
             showTotal: (total) => <PaginationTotal total={total} entityName="plants" />,
@@ -121,8 +121,8 @@ export const PlantList = ({ children }: PropsWithChildren) => {
             render={(value) => (
               <ImageField
                 style={{
-                  width: "60px",
-                  height: "40px",
+                  width: "50px",
+                  height: "30px",
                   objectFit: "cover",
                 }}
                 value={value}
@@ -207,7 +207,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
 
           <Table.Column<IPlant>
             key="temperature"
-            title={t("plants.fields.temperature.label", "Temp (°C)")}
+            title={t("plants.fields.temperature.label", "Temp(°C)")}
             render={(_, record) => {
               return (
                 <Typography.Text>
@@ -219,7 +219,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
 
           <Table.Column<IPlant>
             key="humidity"
-            title={t("plants.fields.humidity.label", "Humidity (%)")}
+            title={t("plants.fields.humidity.label", "Humidity(%)")}
             render={(_, record) => {
               return (
                 <Typography.Text>
