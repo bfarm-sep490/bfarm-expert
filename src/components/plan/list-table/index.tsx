@@ -168,7 +168,7 @@ export const PlanListTable = () => {
       />
 
       <Table.Column
-        title={t("plans.fields.estimated_product", "Estimated Product")}
+        title={t("plans.fields.estimated_product", "EstimatedProduct")}
         dataIndex="estimated_product"
         sorter
         defaultSortOrder={getDefaultSortOrder("estimated_product", sorters)}
@@ -177,13 +177,13 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.started_date", "Started Date")}
-        dataIndex="started_date"
+        title={t("plans.fields.started_date", "StartedDate")}
+        dataIndex="start_date"
         sorter
         defaultSortOrder={getDefaultSortOrder("started_date", sorters)}
         render={(value: string) => (
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {new Date(value).toLocaleDateString()}
+            {new Date(value)?.toLocaleDateString()}
           </Typography.Text>
         )}
       />

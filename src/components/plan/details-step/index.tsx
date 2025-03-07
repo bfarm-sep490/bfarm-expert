@@ -1,5 +1,4 @@
-import { Form, Select, Input, Flex, DatePicker, InputNumber, Tooltip, Typography } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { Form, Select, Input, Flex, DatePicker, InputNumber, Typography } from "antd";
 import { useEffect } from "react";
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -21,7 +20,6 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
     }
   };
 
-  // Đồng bộ giá trị ban đầu từ form khi component mount
   useEffect(() => {
     const start_date = form.getFieldValue("start_date");
     const end_date = form.getFieldValue("end_date");
@@ -64,7 +62,7 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
       {/* Date Range */}
       <Form.Item
         label={<Text strong>{t("plans.fields.dateRange.label")}</Text>}
-        name="dateRange" // Thêm name để validation hoạt động trực tiếp trên RangePicker
+        name="dateRange"
         rules={[
           {
             required: true,
@@ -87,7 +85,7 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
           ]}
           onChange={(dates) => {
             handleRangeChange(dates);
-            form.setFieldsValue({ dateRange: dates }); // Đồng bộ với field dateRange
+            form.setFieldsValue({ dateRange: dates });
           }}
           value={
             form.getFieldValue("start_date") && form.getFieldValue("end_date")

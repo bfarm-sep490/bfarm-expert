@@ -1,286 +1,287 @@
 {
-  "pages": {
-    "login": {
-      "title": "Đăng nhập vào tài khoản của bạn",
-      "signin": "Đăng nhập",
-      "signup": "Đăng ký",
-      "divider": "hoặc",
-      "fields": {
-        "email": "Email",
-        "password": "Mật khẩu"
-      },
-      "errors": {
-        "validEmail": "Địa chỉ email không hợp lệ"
-      },
-      "buttons": {
-        "submit": "Đăng nhập",
-        "forgotPassword": "Quên mật khẩu?",
-        "noAccount": "Chưa có tài khoản?",
-        "rememberMe": "Ghi nhớ đăng nhập"
-      }
-    },
-    "forgotPassword": {
-      "title": "Bạn quên mật khẩu?",
-      "fields": {
-        "email": "Email"
-      },
-      "errors": {
-        "validEmail": "Địa chỉ email không hợp lệ"
-      },
-      "buttons": {
-        "submit": "Gửi hướng dẫn đặt lại mật khẩu"
-      }
-    },
-    "register": {
-      "title": "Đăng ký tài khoản của bạn",
-      "fields": {
-        "email": "Email",
-        "password": "Mật khẩu"
-      },
-      "errors": {
-        "validEmail": "Địa chỉ email không hợp lệ"
-      },
-      "buttons": {
-        "submit": "Đăng ký",
-        "haveAccount": "Đã có tài khoản?"
-      }
-    },
-    "updatePassword": {
-      "title": "Cập nhật mật khẩu",
-      "fields": {
-        "password": "Mật khẩu mới",
-        "confirmPassword": "Xác nhận mật khẩu mới"
-      },
-      "errors": {
-        "confirmPasswordNotMatch": "Mật khẩu không khớp"
-      },
-      "buttons": {
-        "submit": "Cập nhật"
-      }
-    },
-    "error": {
-      "404": "Xin lỗi, trang bạn tìm kiếm không tồn tại.",
-      "info": "Có thể bạn quên thêm thành phần {{action}} vào tài nguyên {{resource}}.",
-      "resource404": "Bạn chắc chắn đã tạo tài nguyên {{resource}}?",
-      "backHome": "Quay lại trang chủ"
-    }
-  },
   "actions": {
-    "list": "Danh sách",
+    "cancel": "Hủy",
     "create": "Tạo mới",
-    "edit": "Chỉnh sửa",
-    "show": "Xem",
     "delete": "Xóa",
-    "cancel": "Hủy"
+    "edit": "Chỉnh sửa",
+    "list": "Danh sách",
+    "show": "Xem"
   },
   "buttons": {
-    "add": "Thêm",
-    "create": "Tạo mới",
-    "save": "Lưu",
-    "logout": "Đăng xuất",
-    "delete": "Xóa",
-    "edit": "Chỉnh sửa",
-    "cancel": "Hủy",
-    "confirm": "Bạn có chắc không?",
-    "filter": "Lọc",
-    "clear": "Xóa",
-    "refresh": "Làm mới",
-    "show": "Hiển thị",
-    "undo": "Hoàn tác",
-    "import": "Nhập khẩu",
-    "export": "Xuất khẩu",
-    "clone": "Nhân bản",
     "accept": "Chấp nhận",
     "acceptAll": "Chấp nhận tất cả",
+    "add": "Thêm",
+    "cancel": "Hủy",
+    "clear": "Xóa",
+    "clone": "Nhân bản",
+    "confirm": "Bạn có chắc không?",
+    "create": "Tạo mới",
+    "delete": "Xóa",
+    "draft": "Nháp",
+    "edit": "Chỉnh sửa",
+    "export": "Xuất khẩu",
+    "filter": "Lọc",
+    "import": "Nhập khẩu",
+    "logout": "Đăng xuất",
+    "nextStep": "Tiếp theo",
+    "previousStep": "Quay lại",
+    "refresh": "Làm mới",
     "reject": "Từ chối",
     "rejectAll": "Từ chối tất cả",
-    "nextStep": "Tiếp theo",
-    "previousStep": "Quay lại"
-  },
-  "loading": "Đang tải",
-  "tags": {
-    "clone": "Nhân bản"
-  },
-  "table": {
-    "actions": "Hành động",
-    "inTotal": "tổng cộng"
-  },
-  "search": {
-    "placeholder": "Tìm kiếm...",
-    "more": "thêm"
-  },
-  "status": {
-    "enable": "Kích hoạt",
-    "disable": "Vô hiệu hóa"
-  },
-  "warnWhenUnsavedChanges": "Bạn có chắc chắn muốn rời đi? Bạn có thay đổi chưa được lưu.",
-  "notifications": {
-    "success": "Thành công",
-    "error": "Lỗi (mã trạng thái: {{statusCode}})",
-    "undoable": "Bạn có {{seconds}} giây để hoàn tác",
-    "createSuccess": "Đã tạo thành công {{resource}}",
-    "createError": "Lỗi khi tạo {{resource}} (mã trạng thái: {{statusCode}})",
-    "deleteSuccess": "Đã xóa thành công {{resource}}",
-    "deleteError": "Lỗi khi xóa {{resource}} (mã trạng thái: {{statusCode}})",
-    "editSuccess": "Đã chỉnh sửa thành công {{resource}}",
-    "editError": "Lỗi khi chỉnh sửa {{resource}} (mã trạng thái: {{statusCode}})",
-    "importProgress": "Đang nhập: {{processed}}/{{total}}"
+    "save": "Lưu",
+    "show": "Hiển thị",
+    "undo": "Hoàn tác"
   },
   "categories": {
     "categories": "Danh mục",
-    "titles": {
-      "list": "Danh mục"
-    },
     "fields": {
       "id": "ID",
-      "title": "Tiêu đề",
-      "products": "Sản phẩm",
       "isActive": {
+        "false": "Ẩn",
         "label": "Trạng thái",
-        "true": "Hiển thị",
-        "false": "Ẩn"
-      }
+        "true": "Hiển thị"
+      },
+      "products": "Sản phẩm",
+      "title": "Tiêu đề"
+    },
+    "titles": {
+      "list": "Danh mục"
     }
   },
   "dashboard": {
-    "title": "Bảng điều khiển",
-    "overview": {
-      "title": "Tổng quan"
-    },
-    "filter": {
-      "title": "Bộ lọc",
-      "date": {
-        "lastWeek": "Tuần trước",
-        "lastMonth": "Tháng trước",
-        "lastYear": "Năm trước"
-      }
-    },
-    "deliveryMap": {
-      "title": "Bản đồ giao hàng"
-    },
-    "orders": {
-      "title": "Đơn hàng"
-    },
-    "revenue": {
-      "title": "Doanh thu"
-    },
-    "totalSales": {
-      "title": "Tổng doanh số"
+    "dailyOrders": {
+      "title": "Đơn hàng hàng ngày"
     },
     "dailyRevenue": {
       "title": "Doanh thu hàng ngày"
     },
-    "dailyOrders": {
-      "title": "Đơn hàng hàng ngày"
+    "deliveryMap": {
+      "title": "Bản đồ giao hàng"
+    },
+    "filter": {
+      "date": {
+        "lastMonth": "Tháng trước",
+        "lastWeek": "Tuần trước",
+        "lastYear": "Năm trước"
+      },
+      "title": "Bộ lọc"
     },
     "newCustomers": {
       "title": "Khách hàng mới"
     },
-    "timeline": {
-      "title": "Dòng thời gian",
-      "orderStatuses": {
-        "pending": "Đang chuẩn bị đơn hàng",
-        "ready": "Đơn hàng đã sẵn sàng",
-        "on the way": "Đơn hàng đang được giao",
-        "delivered": "Đơn hàng đã giao",
-        "cancelled": "Đơn hàng đã hủy"
-      }
+    "orders": {
+      "title": "Đơn hàng"
+    },
+    "overview": {
+      "title": "Tổng quan"
+    },
+    "quickStats": {
+      "activeSeasons": "Mùa vụ hoạt động",
+      "cultivatedArea": "Diện tích canh tác",
+      "estimatedYield": "Sản lượng ước tính",
+      "qualityInspections": "Kiểm tra chất lượng",
+      "title": "Thống kê nhanh",
+      "value": "Giá trị"
     },
     "recentOrders": {
       "title": "Đơn hàng gần đây"
+    },
+    "revenue": {
+      "title": "Doanh thu"
+    },
+    "timeline": {
+      "orderStatuses": {
+        "cancelled": "Đơn hàng đã hủy",
+        "delivered": "Đơn hàng đã giao",
+        "on the way": "Đơn hàng đang được giao",
+        "pending": "Đang chuẩn bị đơn hàng",
+        "ready": "Đơn hàng đã sẵn sàng"
+      },
+      "title": "Dòng thời gian"
+    },
+    "title": "Bảng điều khiển",
+    "totalSales": {
+      "title": "Tổng doanh số"
     },
     "trendingMenus": {
       "title": "Thực đơn nổi bật hàng ngày"
     },
     "trendingProducts": {
       "title": "Sản phẩm nổi bật"
-    },
-    "quickStats": {
-      "title": "Thống kê nhanh",
-      "activeSeasons": "Mùa vụ hoạt động",
-      "cultivatedArea": "Diện tích canh tác",
-      "estimatedYield": "Sản lượng ước tính",
-      "qualityInspections": "Kiểm tra chất lượng",
-      "value": "Giá trị"
     }
   },
   "enum": {
     "orderStatuses": {
-      "Pending": "Đang chờ xử lý",
-      "Ready": "Sẵn sàng",
-      "On The Way": "Đang vận chuyển",
+      "Cancelled": "Đã hủy",
       "Delivered": "Đã giao",
-      "Cancelled": "Đã hủy"
+      "On The Way": "Đang vận chuyển",
+      "Pending": "Đang chờ xử lý",
+      "Ready": "Sẵn sàng"
     }
   },
+  "loading": "Đang tải",
+  "notifications": {
+    "createError": "Lỗi khi tạo {{resource}} (mã trạng thái: {{statusCode}})",
+    "createSuccess": "Đã tạo thành công {{resource}}",
+    "deleteError": "Lỗi khi xóa {{resource}} (mã trạng thái: {{statusCode}})",
+    "deleteSuccess": "Đã xóa thành công {{resource}}",
+    "editError": "Lỗi khi chỉnh sửa {{resource}} (mã trạng thái: {{statusCode}})",
+    "editSuccess": "Đã chỉnh sửa thành công {{resource}}",
+    "error": "Lỗi (mã trạng thái: {{statusCode}})",
+    "importProgress": "Đang nhập: {{processed}}/{{total}}",
+    "success": "Thành công",
+    "undoable": "Bạn có {{seconds}} giây để hoàn tác"
+  },
+  "pages": {
+    "error": {
+      "404": "Xin lỗi, trang bạn tìm kiếm không tồn tại.",
+      "backHome": "Quay lại trang chủ",
+      "info": "Có thể bạn quên thêm thành phần {{action}} vào tài nguyên {{resource}}.",
+      "resource404": "Bạn chắc chắn đã tạo tài nguyên {{resource}}?"
+    },
+    "forgotPassword": {
+      "buttons": {
+        "submit": "Gửi hướng dẫn đặt lại mật khẩu"
+      },
+      "errors": {
+        "validEmail": "Địa chỉ email không hợp lệ"
+      },
+      "fields": {
+        "email": "Email"
+      },
+      "title": "Bạn quên mật khẩu?"
+    },
+    "login": {
+      "buttons": {
+        "forgotPassword": "Quên mật khẩu?",
+        "noAccount": "Chưa có tài khoản?",
+        "rememberMe": "Ghi nhớ đăng nhập",
+        "submit": "Đăng nhập"
+      },
+      "divider": "hoặc",
+      "errors": {
+        "validEmail": "Địa chỉ email không hợp lệ"
+      },
+      "fields": {
+        "email": "Email",
+        "password": "Mật khẩu"
+      },
+      "signin": "Đăng nhập",
+      "signup": "Đăng ký",
+      "title": "Đăng nhập vào tài khoản của bạn"
+    },
+    "register": {
+      "buttons": {
+        "haveAccount": "Đã có tài khoản?",
+        "submit": "Đăng ký"
+      },
+      "errors": {
+        "validEmail": "Địa chỉ email không hợp lệ"
+      },
+      "fields": {
+        "email": "Email",
+        "password": "Mật khẩu"
+      },
+      "title": "Đăng ký tài khoản của bạn"
+    },
+    "updatePassword": {
+      "buttons": {
+        "submit": "Cập nhật"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Mật khẩu không khớp"
+      },
+      "fields": {
+        "confirmPassword": "Xác nhận mật khẩu mới",
+        "password": "Mật khẩu mới"
+      },
+      "title": "Cập nhật mật khẩu"
+    }
+  },
+  "search": {
+    "more": "thêm",
+    "placeholder": "Tìm kiếm..."
+  },
+  "status": {
+    "disable": "Vô hiệu hóa",
+    "enable": "Kích hoạt"
+  },
+  "table": {
+    "actions": "Hành động",
+    "inTotal": "tổng cộng"
+  },
+  "tags": {
+    "clone": "Nhân bản"
+  },
   "users": {
-    "users": "Khách hàng",
-    "titles": {
-      "edit": "Chỉnh sửa khách hàng",
-      "list": "Danh sách khách hàng",
-      "show": "Chi tiết khách hàng"
+    "addresses": {
+      "address": "Địa chỉ",
+      "addresses": "Địa chỉ"
     },
     "fields": {
-      "id": "ID",
+      "addresses": "Địa chỉ",
       "avatar": {
-        "label": "Ảnh đại diện",
-        "description": "Nhấp hoặc kéo ảnh đại diện vào đây để tải lên."
+        "description": "Nhấp hoặc kéo ảnh đại diện vào đây để tải lên.",
+        "label": "Ảnh đại diện"
       },
+      "createdAt": "Ngày tạo",
       "firstName": "Tên",
-      "lastName": "Họ",
-      "name": "Tên",
       "gender": {
+        "Female": "Nữ",
         "label": "Giới tính",
-        "Male": "Nam",
-        "Female": "Nữ"
+        "Male": "Nam"
       },
       "gsm": "Số điện thoại",
-      "createdAt": "Ngày tạo",
-      "addresses": "Địa chỉ",
+      "id": "ID",
       "isActive": {
+        "false": "Không hoạt động",
         "label": "Trạng thái",
-        "true": "Hoạt động",
-        "false": "Không hoạt động"
-      }
+        "true": "Hoạt động"
+      },
+      "lastName": "Họ",
+      "name": "Tên"
     },
     "filter": {
-      "title": "Bộ lọc",
-      "id": {
-        "label": "ID",
-        "placeholder": "Tìm kiếm ID"
+      "createdAt": {
+        "label": "Ngày tạo"
       },
-      "name": {
-        "label": "Tên",
-        "placeholder": "Tìm kiếm tên"
+      "gender": {
+        "female": "Nữ",
+        "label": "Giới tính",
+        "male": "Nam",
+        "placeholder": "Chọn giới tính"
       },
       "gsm": {
         "label": "Số điện thoại",
         "placeholder": "Tìm kiếm số điện thoại"
       },
+      "id": {
+        "label": "ID",
+        "placeholder": "Tìm kiếm ID"
+      },
+      "isActive": {
+        "false": "Không",
+        "label": "Hoạt động",
+        "placeholder": "Chọn trạng thái",
+        "true": "Có"
+      },
+      "name": {
+        "label": "Tên",
+        "placeholder": "Tìm kiếm tên"
+      },
       "search": {
         "label": "Tìm kiếm",
         "placeholder": "Tên, họ, số điện thoại, v.v."
       },
-      "createdAt": {
-        "label": "Ngày tạo"
-      },
-      "gender": {
-        "label": "Giới tính",
-        "placeholder": "Chọn giới tính",
-        "male": "Nam",
-        "female": "Nữ"
-      },
-      "isActive": {
-        "label": "Hoạt động",
-        "placeholder": "Chọn trạng thái",
-        "true": "Có",
-        "false": "Không"
-      },
-      "submit": "Áp dụng"
+      "submit": "Áp dụng",
+      "title": "Bộ lọc"
     },
-    "addresses": {
-      "addresses": "Địa chỉ",
-      "address": "Địa chỉ"
-    }
-  }
+    "titles": {
+      "edit": "Chỉnh sửa khách hàng",
+      "list": "Danh sách khách hàng",
+      "show": "Chi tiết khách hàng"
+    },
+    "users": "Khách hàng"
+  },
+  "warnWhenUnsavedChanges": "Bạn có chắc chắn muốn rời đi? Bạn có thay đổi chưa được lưu."
 }

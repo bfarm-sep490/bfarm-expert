@@ -20,7 +20,6 @@ export const TasksStep: React.FC<TasksStepProps> = ({
   const t = useTranslate();
   const [activeTab, setActiveTab] = useState("caring");
 
-  // Get task data using Refine hooks
   const {
     data: caringTasksData,
     isLoading: isLoadingCaringTasks,
@@ -57,13 +56,11 @@ export const TasksStep: React.FC<TasksStepProps> = ({
     filters: [{ field: "plan_id", operator: "eq", value: planId }],
   });
 
-  // Extract task data from the response
   const caringTasks = caringTasksData?.data || [];
   const harvestingTasks = harvestingTasksData?.data || [];
   const packagingTasks = packagingTasksData?.data || [];
   const inspectingTasks = inspectingTasksData?.data || [];
 
-  // Check if loading
   const isLoading =
     isLoadingCaringTasks ||
     isLoadingHarvestingTasks ||

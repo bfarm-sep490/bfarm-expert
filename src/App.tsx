@@ -20,19 +20,21 @@ import { Header, Title } from "./components";
 import { ThemedSiderV2 } from "./components/layout/sider";
 import { themeConfig } from "./components/theme";
 import { ConfigProvider } from "./context";
-import { useAutoLoginForDemo } from "./hooks";
+import { App as AntdApp } from "antd";
 import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
-import { PlantCreate, PlantEdit, PlantList, PlantShow } from "./pages/plants";
+import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
+import { liveProvider } from "@refinedev/ably";
+import { ablyClient } from "./utils/ablyClient";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
 }
 
 const customTitleHandler = ({ resource }: TitleHandlerOptions): string => {
-  const baseTitle = "BFarm";
+  const baseTitle = "BFarmx Expert";
   const titleSegment = resource?.meta?.label;
 
   const title = titleSegment ? `${titleSegment} | ${baseTitle}` : baseTitle;
@@ -41,7 +43,7 @@ const customTitleHandler = ({ resource }: TitleHandlerOptions): string => {
 
 const App: React.FC = () => {
   // This hook is used to automatically login the user.
-  const { loading } = useAutoLoginForDemo();
+  // const { loading } = useAutoLoginForDemo();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -58,165 +60,167 @@ const App: React.FC = () => {
     getLocale: () => i18n.language,
   };
 
-  if (loading) {
-    return null;
-  }
+  // if (loading) {
+  //   return null;
+  // }
 
   return (
     <BrowserRouter>
       <ConfigProvider theme={themeConfig}>
-        <RefineKbarProvider>
-          <Refine
-            routerProvider={routerProvider}
-            dataProvider={appDataProvider}
-            authProvider={authProvider}
-            i18nProvider={i18nProvider}
-            options={{
-              syncWithLocation: true,
-              warnWhenUnsavedChanges: true,
-              liveMode: "off",
-            }}
-            notificationProvider={useNotificationProvider}
-            // liveProvider={liveProvider(ablyClient)}
-            resources={[
-              {
-                name: "dashboard",
-                list: "/",
-                meta: {
-                  label: "Dashboard",
-                  icon: <DashboardOutlined />,
+        <AntdApp>
+          <RefineKbarProvider>
+            <Refine
+              routerProvider={routerProvider}
+              dataProvider={appDataProvider}
+              authProvider={authProvider}
+              i18nProvider={i18nProvider}
+              options={{
+                syncWithLocation: true,
+                warnWhenUnsavedChanges: true,
+                liveMode: "off",
+              }}
+              notificationProvider={useNotificationProvider}
+              liveProvider={liveProvider(ablyClient)}
+              resources={[
+                {
+                  name: "dashboard",
+                  list: "/",
+                  meta: {
+                    label: "Dashboard",
+                    icon: <DashboardOutlined />,
+                  },
                 },
-              },
-              {
-                name: "plans",
-                list: "/plans",
-                create: "/plans/new",
-                edit: "/plans/edit/:id",
-                show: "/plans/:id",
-                meta: {
-                  icon: <ScheduleOutlined />,
+                {
+                  name: "plans",
+                  list: "/plans",
+                  create: "/plans/new",
+                  edit: "/plans/edit/:id",
+                  show: "/plans/:id",
+                  meta: {
+                    icon: <ScheduleOutlined />,
+                  },
                 },
-              },
-              {
-                name: "plants",
-                list: "/plants",
-                create: "/plants/new",
-                edit: "/plants/:id/edit",
-                show: "/plants/show/:id",
-                meta: {
-                  icon: <ExperimentOutlined />,
+                {
+                  name: "plants",
+                  list: "/plants",
+                  create: "/plants/new",
+                  edit: "/plants/:id/edit",
+                  show: "/plants/show/:id",
+                  meta: {
+                    icon: <ExperimentOutlined />,
+                  },
                 },
-              },
-            ]}
-          >
-            <Routes>
-              <Route
-                element={
-                  <Authenticated
-                    key="authenticated-routes"
-                    fallback={<CatchAllNavigate to="/login" />}
-                  >
-                    <ThemedLayoutV2
-                      Sider={() => <ThemedSiderV2 Title={Title} fixed />}
-                      Header={() => <Header sticky />}
+              ]}
+            >
+              <Routes>
+                <Route
+                  element={
+                    <Authenticated
+                      key="authenticated-routes"
+                      fallback={<CatchAllNavigate to="/login" />}
                     >
-                      <div
-                        style={{
-                          maxWidth: "1600px",
-                          marginLeft: "auto",
-                          marginRight: "auto",
-                        }}
+                      <ThemedLayoutV2
+                        Sider={() => <ThemedSiderV2 Title={Title} fixed />}
+                        Header={() => <Header sticky />}
                       >
-                        <Outlet />
-                      </div>
-                    </ThemedLayoutV2>
-                  </Authenticated>
-                }
-              >
-                <Route index element={<DashboardPage />} />
+                        <div
+                          style={{
+                            maxWidth: "1600px",
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                          }}
+                        >
+                          <Outlet />
+                        </div>
+                      </ThemedLayoutV2>
+                    </Authenticated>
+                  }
+                >
+                  <Route index element={<DashboardPage />} />
 
-                <Route path="/plans">
-                  <Route index element={<PlanList />} />
-                  <Route path="new" element={<PlanCreate />} />
-                  <Route path=":id" element={<PlanShow />} />
-                  <Route path=":id/edit" element={<PlanEdit />} />
-                </Route>
-
-                <Route path="/plants">
-                  <Route
-                    path=""
-                    element={
-                      <PlantList>
-                        <Outlet />
-                      </PlantList>
-                    }
-                  >
-                    <Route path="new" element={<PlantCreate />} />
+                  <Route path="/plans">
+                    <Route index element={<PlanList />} />
+                    <Route path="new" element={<PlanCreate />} />
+                    <Route path=":id" element={<PlanShow />} />
+                    <Route path=":id/edit" element={<PlanEdit />} />
                   </Route>
 
-                  <Route path=":id/edit" element={<PlantEdit />} />
-                </Route>
-              </Route>
-
-              <Route
-                element={
-                  <Authenticated key="auth-pages" fallback={<Outlet />}>
-                    <NavigateToResource resource="dashboard" />
-                  </Authenticated>
-                }
-              >
-                <Route
-                  path="/login"
-                  element={
-                    <AuthPage
-                      type="login"
-                      formProps={{
-                        initialValues: {
-                          email: "demo@bfarm.dev",
-                          password: "demodemo",
-                        },
-                      }}
-                    />
-                  }
-                />
-                <Route
-                  path="/register"
-                  element={
-                    <AuthPage
-                      type="register"
-                      formProps={{
-                        initialValues: {
-                          email: "demo@bfarm.dev",
-                          password: "demodemo",
-                        },
-                      }}
-                    />
-                  }
-                />
-                <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
-                <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
-              </Route>
-
-              <Route
-                element={
-                  <Authenticated key="catch-all">
-                    <ThemedLayoutV2
-                      Sider={() => <ThemedSiderV2 Title={Title} fixed />}
-                      Header={() => <Header sticky />}
+                  <Route path="/plants">
+                    <Route
+                      path=""
+                      element={
+                        <PlantList>
+                          <Outlet />
+                        </PlantList>
+                      }
                     >
-                      <Outlet />
-                    </ThemedLayoutV2>
-                  </Authenticated>
-                }
-              >
-                <Route path="*" element={<ErrorComponent />} />
-              </Route>
-            </Routes>
-            <UnsavedChangesNotifier />
-            <DocumentTitleHandler handler={customTitleHandler} />
-            <RefineKbar />
-          </Refine>
-        </RefineKbarProvider>
+                      <Route path="new" element={<PlantCreate />} />
+                    </Route>
+
+                    <Route path=":id/edit" element={<PlantEdit />} />
+                  </Route>
+                </Route>
+
+                <Route
+                  element={
+                    <Authenticated key="auth-pages" fallback={<Outlet />}>
+                      <NavigateToResource resource="dashboard" />
+                    </Authenticated>
+                  }
+                >
+                  <Route
+                    path="/login"
+                    element={
+                      <AuthPage
+                        type="login"
+                        formProps={{
+                          initialValues: {
+                            email: "expert@gmail.com",
+                            password: "1@",
+                          },
+                        }}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/register"
+                    element={
+                      <AuthPage
+                        type="register"
+                        formProps={{
+                          initialValues: {
+                            email: "expert@gmail.com",
+                            password: "1@",
+                          },
+                        }}
+                      />
+                    }
+                  />
+                  <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
+                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
+                </Route>
+
+                <Route
+                  element={
+                    <Authenticated key="catch-all">
+                      <ThemedLayoutV2
+                        Sider={() => <ThemedSiderV2 Title={Title} fixed />}
+                        Header={() => <Header sticky />}
+                      >
+                        <Outlet />
+                      </ThemedLayoutV2>
+                    </Authenticated>
+                  }
+                >
+                  <Route path="*" element={<ErrorComponent />} />
+                </Route>
+              </Routes>
+              <UnsavedChangesNotifier />
+              <DocumentTitleHandler handler={customTitleHandler} />
+              <RefineKbar />
+            </Refine>
+          </RefineKbarProvider>
+        </AntdApp>
       </ConfigProvider>
     </BrowserRouter>
   );

@@ -21,19 +21,16 @@ export const YieldSelectionStep = ({
   const [searchText, setSearchText] = useState<string>("");
   const form = Form.useFormInstance();
 
-  // Cập nhật danh sách yields đã lọc khi yields thay đổi
   useEffect(() => {
     setFilteredYields(yields);
   }, [yields]);
 
-  // Cập nhật form khi chọn yield
   useEffect(() => {
     if (selectedYieldId) {
       form.setFieldValue("yield_id", selectedYieldId);
     }
   }, [selectedYieldId, form]);
 
-  // Lấy giá trị từ form nếu đã có giá trị (trường hợp edit)
   useEffect(() => {
     const currentValue = form.getFieldValue("yield_id");
     if (currentValue) {
@@ -41,12 +38,10 @@ export const YieldSelectionStep = ({
     }
   }, [form]);
 
-  // Xử lý khi chọn card
   const handleCardSelect = (yieldId: number) => {
     setSelectedYieldId(yieldId);
   };
 
-  // Lọc yields dựa trên từ khóa tìm kiếm
   useEffect(() => {
     if (searchText.trim() === "") {
       setFilteredYields(yields);
@@ -62,7 +57,6 @@ export const YieldSelectionStep = ({
     }
   }, [searchText, yields]);
 
-  // Xử lý tìm kiếm
   const handleSearch = (value: string) => {
     setSearchText(value);
   };

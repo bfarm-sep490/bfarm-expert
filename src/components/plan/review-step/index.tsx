@@ -4,11 +4,9 @@ import { CSSProperties } from "react";
 
 const { Title, Text } = Typography;
 
-// Style chung
 const sectionStyle: CSSProperties = { marginBottom: "24px" };
 const labelStyle: CSSProperties = { width: "200px", display: "inline-block" };
 
-// Component bảng tasks
 const TasksTable = ({ tasks, title }: { tasks: any[]; title: string }) => (
   <Card title={title} style={sectionStyle}>
     <Table
@@ -45,7 +43,6 @@ const TasksTable = ({ tasks, title }: { tasks: any[]; title: string }) => (
   </Card>
 );
 
-// Component review section
 const ReviewSection = ({
   fields,
   title,
