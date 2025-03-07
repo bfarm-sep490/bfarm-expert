@@ -1,7 +1,7 @@
 import { useTranslate, useDelete } from "@refinedev/core";
 import { EditOutlined, DeleteOutlined, MoreOutlined } from "@ant-design/icons";
 import { Dropdown, MenuProps, Space } from "antd";
-import { DeleteButton } from "@refinedev/antd"; // Import DeleteButton
+import { DeleteButton } from "@refinedev/antd";
 import { useState } from "react";
 import { TaskFormModal } from "../task-form-modal";
 
@@ -30,12 +30,10 @@ export const TaskActions: React.FC<TaskActionProps> = ({ record, taskType, onSuc
     }
   };
 
-  // Hiển thị modal chỉnh sửa
   const showEditModal = () => {
     setIsEditModalVisible(true);
   };
 
-  // Đóng modal chỉnh sửa
   const handleEditModalClose = () => {
     setIsEditModalVisible(false);
   };

@@ -1,17 +1,5 @@
-import { useTranslate, useCustomMutation, useApiUrl } from "@refinedev/core";
-import {
-  Form,
-  Select,
-  Input,
-  Button,
-  Modal,
-  Col,
-  Row,
-  DatePicker,
-  InputNumber,
-  message,
-  Spin,
-} from "antd";
+import { useTranslate, useCustomMutation, useApiUrl, useNotification } from "@refinedev/core";
+import { Form, Select, Input, Button, Modal, Col, Row, DatePicker, InputNumber, Spin } from "antd";
 import { useState, useEffect } from "react";
 
 import moment from "moment";
@@ -46,16 +34,12 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   const [pesticideFields, setPesticideFields] = useState<{ id: number }[]>([]);
   const [itemFields, setItemFields] = useState<{ id: number }[]>([]);
   const apiUrl = useApiUrl();
+  const { open } = useNotification();
 
-  // Sử dụng CustomMutation để cập nhật task
   const { mutate: customUpdateTask, isLoading: isUpdating } = useCustomMutation();
 
-  // Format dữ liệu khi mở modal
   useEffect(() => {
     if (visible && initialValues) {
-      console.log("Initial Values:", initialValues); // Debug để xem dữ liệu
-
-      // Format date fields
       const formattedValues = {
         ...initialValues,
         start_date: initialValues.start_date ? moment(initialValues.start_date) : null,
@@ -64,7 +48,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
       form.setFieldsValue(formattedValues);
 
-      // Xử lý fertilizers (kiểm tra cả fertilizers và care_fertilizers)
       const fertilizers = initialValues.fertilizers || initialValues.care_fertilizers || [];
       if (fertilizers.length > 0) {
         const fields = fertilizers.map((item: any, index: number) => ({
@@ -84,7 +67,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         setFertilizerFields([]);
       }
 
-      // Xử lý pesticides
       const pesticides = initialValues.pesticides || initialValues.care_pesticides || [];
       if (pesticides.length > 0) {
         const fields = pesticides.map((item: any, index: number) => ({
@@ -104,7 +86,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         setPesticideFields([]);
       }
 
-      // Xử lý items
       const items = initialValues.items || initialValues.care_items || [];
       if (items.length > 0) {
         const fields = items.map((item: any, index: number) => ({
@@ -150,7 +131,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
       let endpoint = "";
       let payload: any = {};
 
-      // Prepare fertilizers if present
       const fertilizers = fertilizerFields
         .map((field) => ({
           fertilizer_id: form.getFieldValue(`fertilizer_id_${field.id}`),
@@ -159,7 +139,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         }))
         .filter((item) => item.fertilizer_id);
 
-      // Prepare pesticides if present
       const pesticides = pesticideFields
         .map((field) => ({
           pesticide_id: form.getFieldValue(`pesticide_id_${field.id}`),
@@ -168,7 +147,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         }))
         .filter((item) => item.pesticide_id);
 
-      // Prepare items if present
       const items = itemFields
         .map((field) => ({
           item_id: form.getFieldValue(`item_id_${field.id}`),
@@ -229,7 +207,10 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
           break;
 
         default:
-          message.error(t("errors.unknownTaskType", "Unknown task type"));
+          open?.({
+            type: "error",
+            message: t("errors.unknownTaskType", "Unknown task type"),
+          });
           return;
       }
 
@@ -241,20 +222,22 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         },
         {
           onSuccess: (data) => {
-            message.success(
-              initialValues
+            open?.({
+              type: "success",
+              message: initialValues
                 ? t("success.taskUpdated", "Task updated successfully")
                 : t("success.taskAdded", "Task added successfully"),
-            );
+            });
             onSuccess();
           },
           onError: (error) => {
             console.error(initialValues ? "Error updating task:" : "Error adding task:", error);
-            message.error(
-              initialValues
+            open?.({
+              type: "error",
+              message: initialValues
                 ? t("errors.updatingTask", "Failed to update task")
                 : t("errors.addingTask", "Failed to add task"),
-            );
+            });
           },
         },
       );
@@ -458,7 +441,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                             removeField(field.id, fertilizerFields, setFertilizerFields)
                           }
                         >
-                          <DeleteOutlined spin />
+                          <DeleteOutlined />
                         </Button>
                       </Col>
                     </Row>
@@ -554,7 +537,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                           shape="circle"
                           onClick={() => removeField(field.id, pesticideFields, setPesticideFields)}
                         >
-                          <DeleteOutlined spin />
+                          <DeleteOutlined />
                         </Button>
                       </Col>
                     </Row>
@@ -646,7 +629,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                         shape="circle"
                         onClick={() => removeField(field.id, itemFields, setItemFields)}
                       >
-                        <DeleteOutlined spin />
+                        <DeleteOutlined />
                       </Button>
                     </Col>
                   </Row>
