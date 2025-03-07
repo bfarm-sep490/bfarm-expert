@@ -24,6 +24,7 @@ import {
   HddOutlined,
   SearchOutlined,
   UserOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import jsonServerDataProvider from "@refinedev/simple-rest";
 import { authProvider } from "./authProvider";
@@ -37,6 +38,7 @@ import { useTranslation } from "react-i18next";
 import { Header, Title } from "./components";
 import { ConfigProvider } from "./context";
 import { useAutoLoginForDemo } from "./hooks";
+import { dataProvider } from "./rest-data-provider";
 
 import "@refinedev/antd/dist/reset.css";
 import {
@@ -51,7 +53,17 @@ import { ThemedSiderV2 } from "./components/layout/sider";
 
 import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
-
+import { PlanList, PlanShow } from "./pages/plans";
+import { ApprovalingPlanDrawer } from "./pages/plans/approvaled-drawer";
+import { ShowProblemList } from "./pages/plans/problem/list";
+import { ProblemShowV2 } from "./components/problems/show";
+import { ShowTasksList } from "./pages/plans/tasks/show";
+import { ProductiveTaskShow } from "./components/caring-task/show";
+import { CaringCreate } from "./pages/plans/tasks/caring-create";
+import { CaringUpdate } from "./pages/plans/tasks/caring-update";
+import { PackagingTaskShow } from "./components/packaging-task/show";
+import { ProblemListInProblems } from "./components/problems/list";
+import { HarvestingTaskShow } from "./components/harvesting-task/show";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -69,9 +81,10 @@ const App: React.FC = () => {
   // This hook is used to automatically login the user.
   const { loading } = useAutoLoginForDemo();
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://api.outfit4rent.online/api";
 
-  const dataProvider = jsonServerDataProvider(API_URL);
+  const appDataProvider = dataProvider(API_URL);
 
   const { t, i18n } = useTranslation();
   interface TranslationParams {
@@ -94,16 +107,14 @@ const App: React.FC = () => {
         <RefineKbarProvider>
           <Refine
             routerProvider={routerProvider}
-            dataProvider={dataProvider}
+            dataProvider={appDataProvider}
             authProvider={authProvider}
             i18nProvider={i18nProvider}
             options={{
               syncWithLocation: true,
               warnWhenUnsavedChanges: true,
-              liveMode: "off"
+              liveMode: "off",
             }}
-            notificationProvider={useNotificationProvider}
-            liveProvider={liveProvider(ablyClient)}
             resources={[
               {
                 name: "dashboard",
@@ -120,6 +131,27 @@ const App: React.FC = () => {
                 meta: {
                   label: "Farmer Management",
                   icon: <UserOutlined />,
+                },
+              },
+              {
+                name: "plans",
+                list: "/plans",
+                create: "/plans/create",
+                show: "/plans/:id",
+                meta: {
+                  label: "Plans",
+                  icon: <CalendarOutlined />,
+                  route: "/plans",
+                },
+              },
+              {
+                name: "problems",
+                list: "/problems",
+                show: "/problems/:id",
+                meta: {
+                  label: "Vấn đề",
+                  icon: <WarningOutlined />,
+                  route: "/problems",
                 },
               },
               {
@@ -260,7 +292,81 @@ const App: React.FC = () => {
                 >
                   <Route path=":id" element={<CustomerShow />} />
                 </Route>
-
+                <Route path="/plans">
+                  <Route index element={<PlanList />} />
+                  <Route path=":id">
+                    <Route
+                      index
+                      element={
+                        <PlanShow>
+                          <Outlet></Outlet>
+                        </PlanShow>
+                      }
+                    />
+                    <Route
+                      path="approve"
+                      element={<ApprovalingPlanDrawer />}
+                    ></Route>
+                    <Route
+                      path="problems"
+                      element={
+                        <ShowProblemList>
+                          <Outlet />
+                        </ShowProblemList>
+                      }
+                    >
+                      <Route path=":id" element={<ProblemShowV2 />}></Route>
+                    </Route>
+                    <Route
+                      path="caring-tasks"
+                      element={
+                        <ShowTasksList>
+                          <Outlet />
+                        </ShowTasksList>
+                      }
+                    >
+                      <Route path=":taskId" element={<ProductiveTaskShow />} />
+                    </Route>
+                    <Route
+                      path="caring-tasks/create"
+                      element={<CaringCreate />}
+                    ></Route>
+                    <Route
+                      path="caring-tasks/:taskId/edit"
+                      element={<CaringUpdate />}
+                    ></Route>
+                    <Route
+                      path="harvesting-tasks"
+                      element={
+                        <ShowTasksList>
+                          <Outlet></Outlet>
+                        </ShowTasksList>
+                      }
+                    >
+                      <Route path=":taskId" element={<HarvestingTaskShow />} />
+                    </Route>
+                    <Route
+                      path="packaging-tasks"
+                      element={
+                        <ShowTasksList>
+                          <Outlet />
+                        </ShowTasksList>
+                      }
+                    >
+                      <Route path=":taskId" element={<PackagingTaskShow />} />
+                    </Route>
+                  </Route>
+                </Route>
+                <Route
+                  path="/problems"
+                  element={
+                    <ProblemListInProblems>
+                      <Outlet></Outlet>
+                    </ProblemListInProblems>
+                  }
+                >
+                  <Route path=":id" element={<ProblemShowV2 />} />
+                </Route>
                 <Route path="/device" element={<DeviceList />}>
                   <Route path=":id" element={<FarmerManagementShow />} />
                   <Route path="new" element={<FarmerManagementCreate />} />

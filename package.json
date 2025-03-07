@@ -47,6 +47,7 @@
     "i18next-xhr-backend": "latest",
     "lodash": "latest",
     "react": "latest",
+    "react-apexcharts": "^1.7.0",
     "react-dom": "latest",
     "react-i18next": "latest",
     "react-infinite-scroll-component": "latest",
