@@ -32,8 +32,8 @@ export interface IPlan {
   expert_id: number;
   plan_name: string;
   description: string;
-  started_date: string;
-  ended_date: string;
+  start_date: string;
+  end_date: string;
   completed_date?: string;
   status: "Draft" | "Pending" | "Ongoing" | "Completed" | "Cancelled";
   estimated_product: number;
@@ -42,6 +42,12 @@ export interface IPlan {
   created_at: string;
   updated_by?: string;
   updated_at?: string;
+  plant_information?: {
+    plant_id: number;
+  };
+  yield_information?: {
+    yield_id: number;
+  };
 }
 
 export interface IHarvestingTask {

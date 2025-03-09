@@ -179,7 +179,6 @@ export const authProvider: AuthProvider = {
     }
 
     try {
-      // Sử dụng hàm giải mã an toàn
       const tokenPayload = safelyDecodeJwt(token);
 
       if (!tokenPayload) {
@@ -233,7 +232,6 @@ export const authProvider: AuthProvider = {
         return null;
       }
 
-      // Sử dụng hàm giải mã an toàn
       const tokenPayload = safelyDecodeJwt(token);
       return tokenPayload
         ? tokenPayload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]

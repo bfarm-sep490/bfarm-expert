@@ -77,7 +77,7 @@ const App: React.FC = () => {
               options={{
                 syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
-                liveMode: "off",
+                liveMode: "auto",
               }}
               notificationProvider={useNotificationProvider}
               liveProvider={liveProvider(ablyClient)}
@@ -142,7 +142,7 @@ const App: React.FC = () => {
                     <Route index element={<PlanList />} />
                     <Route path="new" element={<PlanCreate />} />
                     <Route path=":id" element={<PlanShow />} />
-                    <Route path=":id/edit" element={<PlanEdit />} />
+                    <Route path="edit/:id" element={<PlanEdit />} />
                   </Route>
 
                   <Route path="/plants">

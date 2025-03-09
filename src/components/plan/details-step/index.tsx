@@ -107,7 +107,7 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
       <Flex gap={16} align="flex-start">
         <Form.Item
           label={<Text strong>{t("plans.fields.estimatedProduct.label")}</Text>}
-          name="estimatedProduct"
+          name="estimated_product"
           style={{ flex: 1 }}
         >
           <InputNumber
@@ -120,7 +120,7 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
 
         <Form.Item
           label={<Text strong>{t("plans.fields.estimatedUnit.label")}</Text>}
-          name="estimatedUnit"
+          name="estimated_unit"
           style={{ width: "320px" }}
         >
           <Select

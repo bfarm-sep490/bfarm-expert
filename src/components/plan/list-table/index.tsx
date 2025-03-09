@@ -12,6 +12,7 @@ import { PaginationTotal } from "../../paginationTotal";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router";
 import { NumberWithUnit } from "../number-with-unit";
+import { PlanActions } from "../plan-action";
 
 export const PlanListTable = () => {
   const { token } = theme.useToken();
@@ -187,23 +188,13 @@ export const PlanListTable = () => {
           </Typography.Text>
         )}
       />
-      <Table.Column
-        title={t("table.actions")}
+      <Table.Column<IPlan>
         fixed="right"
+        title={t("table.actions")}
+        dataIndex="actions"
+        key="actions"
         align="center"
-        render={(_, record: IPlan) => (
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() =>
-              go({
-                to: `${showUrl("plans", record.id)}`,
-                query: { to: pathname },
-                options: { keepQuery: true },
-                type: "replace",
-              })
-            }
-          />
-        )}
+        render={(_value, record) => <PlanActions record={record} />}
       />
     </Table>
   );

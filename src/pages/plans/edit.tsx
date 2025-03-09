@@ -1,5 +1,5 @@
-import { AntdInferencer } from "@refinedev/inferencer/antd";
+import { PlanForm } from "@/components/plan/plan-form";
 
 export const PlanEdit = () => {
-  return <AntdInferencer />;
+  return <PlanForm action="edit" />;
 };
