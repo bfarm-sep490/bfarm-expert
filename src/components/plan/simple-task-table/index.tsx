@@ -5,6 +5,10 @@ interface SimpleTaskTableProps {
   tasks: any[];
   taskType: string;
   onDeleted: () => void;
+  fertilizerSelectProps?: any;
+  pesticideSelectProps?: any;
+  itemSelectProps?: any;
+
   t: (key: string, defaultValue?: string) => string;
 }
 
@@ -13,6 +17,9 @@ export const SimpleTaskTable: React.FC<SimpleTaskTableProps> = ({
   taskType,
   onDeleted,
   t,
+  fertilizerSelectProps,
+  pesticideSelectProps,
+  itemSelectProps,
 }) => {
   const columns: TableColumnType<any>[] = [
     {
@@ -45,7 +52,14 @@ export const SimpleTaskTable: React.FC<SimpleTaskTableProps> = ({
       align: "center",
       width: 100,
       render: (_value, record) => (
-        <TaskActions record={record} taskType={taskType} onSuccess={onDeleted} />
+        <TaskActions
+          fertilizerSelectProps={fertilizerSelectProps}
+          pesticideSelectProps={pesticideSelectProps}
+          itemSelectProps={itemSelectProps}
+          record={record}
+          taskType={taskType}
+          onSuccess={onDeleted}
+        />
       ),
     },
   ];

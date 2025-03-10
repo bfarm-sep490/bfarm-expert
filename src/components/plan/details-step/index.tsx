@@ -1,32 +1,24 @@
 import { Form, Select, Input, Flex, DatePicker, InputNumber, Typography } from "antd";
 import { useEffect } from "react";
-const { RangePicker } = DatePicker;
+import dayjs from "dayjs";
 const { Text } = Typography;
 
 export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
   const form = Form.useFormInstance();
 
-  const handleRangeChange = (dates: any) => {
-    if (dates && dates.length === 2) {
-      form.setFieldsValue({
-        start_date: dates[0],
-        end_date: dates[1],
-      });
-    } else {
-      form.setFieldsValue({
-        start_date: null,
-        end_date: null,
-      });
-    }
-  };
-
   useEffect(() => {
+    // Ensure form values are properly set and convert string dates to dayjs objects
     const start_date = form.getFieldValue("start_date");
     const end_date = form.getFieldValue("end_date");
+
     if (start_date && end_date) {
+      // Convert string dates to dayjs objects if they're strings
+      const startDayjs = typeof start_date === "string" ? dayjs(start_date) : start_date;
+      const endDayjs = typeof end_date === "string" ? dayjs(end_date) : end_date;
+
       form.setFieldsValue({
-        start_date,
-        end_date,
+        start_date: startDayjs,
+        end_date: endDayjs,
       });
     }
   }, [form]);
@@ -59,49 +51,74 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
         />
       </Form.Item>
 
-      {/* Date Range */}
-      <Form.Item
-        label={<Text strong>{t("plans.fields.dateRange.label")}</Text>}
-        name="dateRange"
-        rules={[
-          {
-            required: true,
-            message: t("plans.fields.dateRange.required"),
-            validator: (_, value) =>
-              value && value[0] && value[1]
-                ? Promise.resolve()
-                : Promise.reject(new Error(t("plans.fields.dateRange.required"))),
-          },
-        ]}
-      >
-        <RangePicker
-          showTime={{ format: "HH:mm" }}
-          format="YYYY-MM-DD HH:mm"
-          style={{ width: "100%", borderRadius: "8px" }}
-          size="large"
-          placeholder={[
-            t("plans.fields.startedDate.placeholder"),
-            t("plans.fields.endedDate.placeholder"),
+      {/* Date Range - Separate Start and End Date */}
+      <Flex gap={16}>
+        <Form.Item
+          label={<Text strong>{t("plans.fields.startedDate.label") || "Start Date"}</Text>}
+          name="start_date"
+          rules={[
+            {
+              required: true,
+              message: t("plans.fields.startedDate.required") || "Start date is required",
+            },
           ]}
-          onChange={(dates) => {
-            handleRangeChange(dates);
-            form.setFieldsValue({ dateRange: dates });
+          style={{ flex: 1 }}
+          getValueProps={(value) => {
+            return { value: value ? dayjs(value) : undefined };
           }}
-          value={
-            form.getFieldValue("start_date") && form.getFieldValue("end_date")
-              ? [form.getFieldValue("start_date"), form.getFieldValue("end_date")]
-              : null
-          }
-        />
-      </Form.Item>
+        >
+          <DatePicker
+            showTime={{ format: "HH:mm" }}
+            format="YYYY-MM-DD HH:mm"
+            style={{ width: "100%", borderRadius: "8px" }}
+            size="large"
+            placeholder={t("plans.fields.startedDate.placeholder") || "Select start date"}
+          />
+        </Form.Item>
 
-      {/* Hidden Fields */}
-      <Form.Item name="start_date" hidden noStyle>
-        <Input hidden />
-      </Form.Item>
-      <Form.Item name="end_date" hidden noStyle>
-        <Input hidden />
-      </Form.Item>
+        <Form.Item
+          label={<Text strong>{t("plans.fields.endedDate.label") || "End Date"}</Text>}
+          name="end_date"
+          rules={[
+            {
+              required: true,
+              message: t("plans.fields.endedDate.required") || "End date is required",
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const start = getFieldValue("start_date");
+                if (!value || !start) return Promise.resolve();
+
+                // Convert both to dayjs to ensure proper comparison
+                const startDayjs = dayjs(start);
+                const endDayjs = dayjs(value);
+
+                if (endDayjs.isAfter(startDayjs)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error(
+                    t("plans.fields.dateRange.endAfterStart") ||
+                      "End date must be after start date",
+                  ),
+                );
+              },
+            }),
+          ]}
+          style={{ flex: 1 }}
+          getValueProps={(value) => {
+            return { value: value ? dayjs(value) : undefined };
+          }}
+        >
+          <DatePicker
+            showTime={{ format: "HH:mm" }}
+            format="YYYY-MM-DD HH:mm"
+            style={{ width: "100%", borderRadius: "8px" }}
+            size="large"
+            placeholder={t("plans.fields.endedDate.placeholder") || "Select end date"}
+          />
+        </Form.Item>
+      </Flex>
 
       {/* Estimated Product & Unit */}
       <Flex gap={16} align="flex-start">

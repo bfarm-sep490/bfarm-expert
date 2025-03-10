@@ -24,13 +24,13 @@ export const useFormList = ({ formProps, planId }: { formProps: FormProps; planI
   const { data: plantsData, isLoading: plantsLoading } = useList<IPlant>({
     resource: "plants",
     filters: [{ field: "is_available", operator: "eq", value: true }],
-    pagination: { pageSize: 6 },
+    pagination: { pageSize: 100 },
   });
 
   const { data: yieldsData, isLoading: yieldsLoading } = useList<IYield>({
     resource: "yields",
     filters: [{ field: "is_available", operator: "eq", value: true }],
-    pagination: { pageSize: 6 },
+    pagination: { pageSize: 100 },
   });
 
   const { selectProps: fertilizerSelectProps } = useSelect<IFertilizer>({
@@ -52,20 +52,40 @@ export const useFormList = ({ formProps, planId }: { formProps: FormProps; planI
   });
 
   const [caringTasks, setCaringTasks] = useState<Partial<ICaringTask>[]>(
-    formProps.initialValues?.caringTasks || [],
+    formProps.initialValues?.caring_task_information || formProps.initialValues?.caringTasks || [],
   );
+
   const [harvestingTasks, setHarvestingTasks] = useState<Partial<IHarvestingTask>[]>(
-    formProps.initialValues?.harvestingTasks || [],
+    formProps.initialValues?.harvesting_task_information ||
+      formProps.initialValues?.harvestingTasks ||
+      [],
   );
+
   const [inspectingTasks, setInspectingTasks] = useState<Partial<IInspectingForm>[]>(
-    formProps.initialValues?.inspectingTasks || [],
+    formProps.initialValues?.inspecting_form_information ||
+      formProps.initialValues?.inspectingTasks ||
+      [],
   );
 
   useEffect(() => {
     if (formProps.initialValues) {
-      setCaringTasks(formProps.initialValues.caringTasks || []);
-      setHarvestingTasks(formProps.initialValues.harvestingTasks || []);
-      setInspectingTasks(formProps.initialValues.inspectingTasks || []);
+      setCaringTasks(
+        formProps.initialValues.caring_task_information ||
+          formProps.initialValues.caringTasks ||
+          [],
+      );
+
+      setHarvestingTasks(
+        formProps.initialValues.harvesting_task_information ||
+          formProps.initialValues.harvestingTasks ||
+          [],
+      );
+
+      setInspectingTasks(
+        formProps.initialValues.inspecting_form_information ||
+          formProps.initialValues.inspectingTasks ||
+          [],
+      );
     }
   }, [formProps.initialValues]);
 
@@ -100,14 +120,18 @@ export const useFormList = ({ formProps, planId }: { formProps: FormProps; planI
         caringTasks={caringTasks}
         harvestingTasks={harvestingTasks}
         inspectingTasks={inspectingTasks}
+        plants={plantsData?.data || []}
+        yields={yieldsData?.data || []}
       />,
     ],
     [
       t,
-      plantsData,
+      plantsData?.data,
       plantsLoading,
-      yieldsData,
+      plantsData?.total,
+      yieldsData?.data,
       yieldsLoading,
+      yieldsData?.total,
       caringTasks,
       harvestingTasks,
       inspectingTasks,

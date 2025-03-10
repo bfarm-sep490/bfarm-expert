@@ -1,9 +1,9 @@
+import { PaginationTotal } from "@/components/paginationTotal";
 import { Flex, Form, List, Select, Empty, Input, Spin } from "antd";
 import { useState, useEffect } from "react";
 import { IYield } from "@/interfaces";
-import { SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal } from "@/components/paginationTotal";
 import { YieldCard } from "./YieldCard";
+import { SearchOutlined } from "@ant-design/icons";
 
 export const YieldSelectionStep = ({
   t,
@@ -19,6 +19,8 @@ export const YieldSelectionStep = ({
   const [selectedYieldId, setSelectedYieldId] = useState<number | null>(null);
   const [filteredYields, setFilteredYields] = useState<IYield[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
   const form = Form.useFormInstance();
 
   useEffect(() => {
@@ -32,12 +34,31 @@ export const YieldSelectionStep = ({
   }, [selectedYieldId, form]);
 
   useEffect(() => {
-    const currentValue = form.getFieldValue("yield_id");
-    if (currentValue) {
-      setSelectedYieldId(currentValue);
-    }
-  }, [form]);
+    const checkFormValue = () => {
+      const currentValue = form.getFieldValue("yield_id");
+      if (currentValue && currentValue !== selectedYieldId) {
+        setSelectedYieldId(currentValue);
 
+        if (yields.length > 0) {
+          const yieldIndex = yields.findIndex((yieldItem) => yieldItem.id === currentValue);
+          if (yieldIndex !== -1) {
+            const targetPage = Math.floor(yieldIndex / pageSize) + 1;
+            setCurrentPage(targetPage);
+          }
+        }
+      }
+    };
+
+    checkFormValue();
+
+    const intervalId = setInterval(checkFormValue, 500);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [form, selectedYieldId, yields, pageSize]);
+
+  // Xử lý khi chọn card
   const handleCardSelect = (yieldId: number) => {
     setSelectedYieldId(yieldId);
   };
@@ -50,8 +71,7 @@ export const YieldSelectionStep = ({
         (yieldItem) =>
           yieldItem.yield_name.toLowerCase().includes(searchText.toLowerCase()) ||
           (yieldItem.description &&
-            yieldItem.description.toLowerCase().includes(searchText.toLowerCase())) ||
-          (yieldItem.type && yieldItem.type.toLowerCase().includes(searchText.toLowerCase())),
+            yieldItem.description.toLowerCase().includes(searchText.toLowerCase())),
       );
       setFilteredYields(filtered);
     }
@@ -82,7 +102,9 @@ export const YieldSelectionStep = ({
       ) : (
         <List
           pagination={{
-            pageSize: 4,
+            pageSize,
+            current: currentPage,
+            onChange: (page) => setCurrentPage(page),
             total,
             showTotal: (total) => <PaginationTotal total={total} entityName={"yield"} />,
             position: "bottom",

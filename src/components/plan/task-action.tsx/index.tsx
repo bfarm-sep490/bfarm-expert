@@ -1,5 +1,5 @@
-import { useTranslate, useDelete } from "@refinedev/core";
-import { EditOutlined, DeleteOutlined, MoreOutlined } from "@ant-design/icons";
+import { useTranslate } from "@refinedev/core";
+import { EditOutlined, MoreOutlined } from "@ant-design/icons";
 import { Dropdown, MenuProps, Space } from "antd";
 import { DeleteButton } from "@refinedev/antd";
 import { useState } from "react";
@@ -9,9 +9,19 @@ type TaskActionProps = {
   record: any;
   taskType: string;
   onSuccess?: () => void;
+  fertilizerSelectProps?: any;
+  pesticideSelectProps?: any;
+  itemSelectProps?: any;
 };
 
-export const TaskActions: React.FC<TaskActionProps> = ({ record, taskType, onSuccess }) => {
+export const TaskActions: React.FC<TaskActionProps> = ({
+  record,
+  taskType,
+  onSuccess,
+  fertilizerSelectProps,
+  pesticideSelectProps,
+  itemSelectProps,
+}) => {
   const t = useTranslate();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
@@ -53,6 +63,7 @@ export const TaskActions: React.FC<TaskActionProps> = ({ record, taskType, onSuc
       label: (
         <DeleteButton
           type="text"
+          size="small"
           recordItemId={record.id}
           resource={getResource()}
           onSuccess={() => {
@@ -83,6 +94,9 @@ export const TaskActions: React.FC<TaskActionProps> = ({ record, taskType, onSuc
           initialValues={record}
           visible={isEditModalVisible}
           onCancel={handleEditModalClose}
+          fertilizerSelectProps={fertilizerSelectProps}
+          pesticideSelectProps={pesticideSelectProps}
+          itemSelectProps={itemSelectProps}
           onSuccess={() => {
             handleEditModalClose();
             if (onSuccess) onSuccess();

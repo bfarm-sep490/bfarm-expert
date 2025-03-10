@@ -1,7 +1,7 @@
 import { useTranslate, useGetToPath, useGo, useGetIdentity, BaseKey } from "@refinedev/core";
 import { SaveButton, useStepsForm } from "@refinedev/antd";
 import { Form, Button, Steps, Flex, message } from "antd";
-import { useSearchParams } from "react-router"; // Sửa "react-router" thành "react-router-dom"
+import { useSearchParams } from "react-router";
 import { useFormList } from "@/components/plan";
 import { FileTextOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -26,8 +26,8 @@ export const PlanForm = (props: Props) => {
   const { current, gotoStep, stepsProps, formProps, saveButtonProps, form, submit } =
     useStepsForm<IPlan>({
       resource: "plans",
-      id: planId,
-      action: planId ? "edit" : "create",
+      id: planId || props?.id,
+      action: planId ? "edit" : props.action,
       redirect: false,
       queryOptions: {
         select: (rawData) => {
@@ -47,6 +47,8 @@ export const PlanForm = (props: Props) => {
           setPlanId(newPlanId);
           gotoStep(3);
           message.success(t("plans.messages.createSuccess", "Plan created successfully"));
+        } else if (props.action === "edit" || planId) {
+          message.success(t("plans.messages.updateSuccess", "Plan updated successfully"));
         }
       },
       onMutationError: (error) => {
@@ -61,7 +63,7 @@ export const PlanForm = (props: Props) => {
     }
   }, [expert_id, form]);
 
-  const { formList } = useFormList({ formProps, planId }); // Truyền planId vào useFormList
+  const { formList } = useFormList({ formProps, planId });
 
   const handleCancel = () => {
     go({
@@ -82,7 +84,10 @@ export const PlanForm = (props: Props) => {
     setIsSubmitting(true);
     try {
       form.setFieldValue("expert_id", expert_id);
-      await submit(); // Gửi form để tạo plan
+      await submit();
+      if (props.action === "edit" || planId) {
+        gotoStep(current + 1);
+      }
     } catch (error) {
       console.error("Submit error:", error);
       message.error(t("plans.messages.createError", "Failed to create plan"));
@@ -101,11 +106,23 @@ export const PlanForm = (props: Props) => {
         await saveButtonProps.onClick();
       }
       message.success(t("plans.messages.draftSuccess", "Draft saved successfully"));
+      go({
+        to: getToPath({ action: "list" }) ?? "",
+        type: "replace",
+      });
     } catch (error) {
       console.error("Draft save error:", error);
       message.error(t("plans.messages.draftError", "Failed to save draft"));
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleNextStep = () => {
+    if (isThirdStep && (!props.action || props.action === "create") && !planId) {
+      handleSubmit();
+    } else {
+      gotoStep(current + 1);
     }
   };
 
@@ -145,19 +162,15 @@ export const PlanForm = (props: Props) => {
           <Button disabled={isFirstStep || isSubmitting} onClick={() => gotoStep(current - 1)}>
             {t("buttons.previousStep")}
           </Button>
-          {isThirdStep && !planId ? (
+          {isLastStep ? (
+            <SaveButton {...saveButtonProps} loading={isSubmitting} disabled={isSubmitting} />
+          ) : (
             <Button
               type="primary"
-              onClick={handleSubmit}
+              onClick={handleNextStep}
               loading={isSubmitting}
               disabled={isSubmitting}
             >
-              {t("buttons.submit", "Submit")}
-            </Button>
-          ) : isLastStep ? (
-            <SaveButton {...saveButtonProps} loading={isSubmitting} disabled={isSubmitting} />
-          ) : (
-            <Button type="primary" onClick={() => gotoStep(current + 1)} disabled={isSubmitting}>
               {t("buttons.nextStep")}
             </Button>
           )}

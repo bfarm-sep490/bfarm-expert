@@ -19,34 +19,56 @@ export const PlantSelectionStep = ({
   const [selectedPlantId, setSelectedPlantId] = useState<number | null>(null);
   const [filteredPlants, setFilteredPlants] = useState<IPlant[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
   const form = Form.useFormInstance();
 
-  // Cập nhật danh sách plants đã lọc khi plants thay đổi
   useEffect(() => {
     setFilteredPlants(plants);
   }, [plants]);
 
-  // Cập nhật form khi chọn plant
   useEffect(() => {
     if (selectedPlantId) {
       form.setFieldValue("plant_id", selectedPlantId);
     }
   }, [selectedPlantId, form]);
 
-  // Lấy giá trị từ form nếu đã có giá trị (trường hợp edit)
   useEffect(() => {
-    const currentValue = form.getFieldValue("plant_id");
-    if (currentValue) {
-      setSelectedPlantId(currentValue);
-    }
-  }, [form]);
+    const checkFormValue = () => {
+      const currentValue = form.getFieldValue("plant_id");
+      if (currentValue && currentValue !== selectedPlantId) {
+        setSelectedPlantId(currentValue);
 
-  // Xử lý khi chọn card
+        if (plants.length > 0) {
+          const plantIndex = plants.findIndex((plant) => plant.id === currentValue);
+          if (plantIndex !== -1) {
+            // Tính toán trang dựa trên index và pageSize
+            // Ant Design pagination bắt đầu từ trang 1
+            const targetPage = Math.floor(plantIndex / pageSize) + 1;
+            setCurrentPage(targetPage);
+          }
+        }
+      }
+    };
+
+    checkFormValue();
+
+    const intervalId = setInterval(checkFormValue, 500);
+
+    const unsubscribe = form
+      .getFieldInstance("plant_id")
+      ?.props?.onChange?.subscribe?.(checkFormValue);
+
+    return () => {
+      clearInterval(intervalId);
+      if (unsubscribe) unsubscribe();
+    };
+  }, [form, selectedPlantId, plants, pageSize]);
+
   const handleCardSelect = (plantId: number) => {
     setSelectedPlantId(plantId);
   };
 
-  // Lọc plants dựa trên từ khóa tìm kiếm
   useEffect(() => {
     if (searchText.trim() === "") {
       setFilteredPlants(plants);
@@ -60,7 +82,6 @@ export const PlantSelectionStep = ({
     }
   }, [searchText, plants]);
 
-  // Xử lý tìm kiếm
   const handleSearch = (value: string) => {
     setSearchText(value);
   };
@@ -86,7 +107,9 @@ export const PlantSelectionStep = ({
       ) : (
         <List
           pagination={{
-            pageSize: 4,
+            pageSize,
+            current: currentPage,
+            onChange: (page) => setCurrentPage(page),
             total,
             showTotal: (total) => <PaginationTotal total={total} entityName={"plant"} />,
             position: "bottom",

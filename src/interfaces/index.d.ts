@@ -51,7 +51,7 @@ export interface IPlan {
 }
 
 export interface IHarvestingTask {
-  task_id: number;
+  id: number;
   plan_id: number;
   task_name: string;
   description: string;
@@ -76,7 +76,7 @@ export interface IIssue {
 }
 
 export interface ICaringTask {
-  task_id: number;
+  id: number;
   plan_id: number;
   problem_id?: number;
   task_name: string;
@@ -213,6 +213,7 @@ export interface IInspectingForm {
   test_gt_kit_color?: string;
   inspecting_quantity: number;
   unit: string;
+  priority?: number;
   issue_percent?: number;
   can_harvest: boolean;
   completed_date?: string;

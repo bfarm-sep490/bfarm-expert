@@ -2,7 +2,7 @@ import { useTranslate, useCustomMutation, useApiUrl, useNotification } from "@re
 import { Form, Select, Input, Button, Modal, Col, Row, DatePicker, InputNumber, Spin } from "antd";
 import { useState, useEffect } from "react";
 
-import moment from "moment";
+import dayjs from "dayjs";
 import { DeleteOutlined } from "@ant-design/icons";
 
 interface TaskFormModalProps {
@@ -42,8 +42,8 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
     if (visible && initialValues) {
       const formattedValues = {
         ...initialValues,
-        start_date: initialValues.start_date ? moment(initialValues.start_date) : null,
-        end_date: initialValues.end_date ? moment(initialValues.end_date) : null,
+        start_date: initialValues.start_date ? dayjs(initialValues.start_date) : null,
+        end_date: initialValues.end_date ? dayjs(initialValues.end_date) : null,
       };
 
       form.setFieldsValue(formattedValues);

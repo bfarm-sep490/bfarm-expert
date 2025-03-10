@@ -61,7 +61,15 @@ export const TaskListSection: React.FC<TaskListSectionProps> = ({
         />
       </div>
 
-      <SimpleTaskTable tasks={tasks} taskType={taskType} onDeleted={onTaskDeleted} t={t} />
+      <SimpleTaskTable
+        tasks={tasks}
+        taskType={taskType}
+        onDeleted={onTaskDeleted}
+        t={t}
+        fertilizerSelectProps={fertilizerSelectProps}
+        pesticideSelectProps={pesticideSelectProps}
+        itemSelectProps={itemSelectProps}
+      />
     </div>
   );
 };
