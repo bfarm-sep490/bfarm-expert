@@ -53,7 +53,6 @@ export const YieldSelectionStep = ({
     setFilteredYields(filtered);
   }, [yields, searchText, statusFilter, isSuggestActive]);
 
-  // Cập nhật useEffect với dependency đầy đủ
   useEffect(() => {
     applyFilters();
   }, [applyFilters]);
@@ -124,7 +123,9 @@ export const YieldSelectionStep = ({
 
         const suggestedYields = yields.filter(
           (item) =>
-            suggestedYieldIds.includes(item.id) && item.status?.toLowerCase() === "available",
+            (suggestedYieldIds.includes(item.id) && item.status?.toLowerCase() === "available") ||
+            (suggestedYieldIds.includes(item.id) && item.status?.toLowerCase() === "maintenance") ||
+            (suggestedYieldIds.includes(item.id) && item.status?.toLowerCase() === "in-use"),
         );
 
         setFilteredYields(suggestedYields.length > 0 ? suggestedYields : []);
