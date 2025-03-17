@@ -7,12 +7,13 @@ import {
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
 import type { IPlan } from "../../../interfaces";
-import { Button, Input, InputNumber, Select, Table, theme, Typography } from "antd";
+import { Input, InputNumber, Select, Table, theme, Typography, Tag, Space } from "antd";
 import { PaginationTotal } from "../../paginationTotal";
-import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router";
 import { NumberWithUnit } from "../number-with-unit";
 import { PlanActions } from "../plan-action";
+import dayjs from "dayjs";
 
 export const PlanListTable = () => {
   const { token } = theme.useToken();
@@ -42,6 +43,21 @@ export const PlanListTable = () => {
       ],
     },
   });
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "pending":
+        return "blue";
+      case "ongoing":
+        return "green";
+      case "completed":
+        return "purple";
+      case "cancelled":
+        return "red";
+      default:
+        return "default";
+    }
+  };
 
   return (
     <Table
@@ -77,7 +93,7 @@ export const PlanListTable = () => {
         filterIcon={(filtered) => (
           <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
         )}
-        defaultFilteredValue={getDefaultFilter("plan_id", filters, "eq")}
+        defaultFilteredValue={getDefaultFilter("id", filters, "eq")}
         filterDropdown={(props) => (
           <FilterDropdown {...props}>
             <InputNumber
@@ -89,7 +105,11 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.plan_name", "Plan Name")}
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.plan_name", "Plan Name")}
+          </Typography.Text>
+        }
         dataIndex="plan_name"
         filterIcon={(filtered) => (
           <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
@@ -111,8 +131,64 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.plant", "Plant")}
-        dataIndex={["plants", "plant_name"]}
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.plant_name", "Plant")}
+          </Typography.Text>
+        }
+        dataIndex="plant_name"
+        render={(value: string) => (
+          <Typography.Text
+            style={{
+              whiteSpace: "nowrap",
+            }}
+          >
+            {value}
+          </Typography.Text>
+        )}
+        filterIcon={(filtered) => (
+          <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
+        )}
+        defaultFilteredValue={getDefaultFilter("plant_name", filters, "contains")}
+        filterDropdown={(props) => (
+          <FilterDropdown {...props}>
+            <Input placeholder={t("plans.filter.plant_name.placeholder")} />
+          </FilterDropdown>
+        )}
+      />
+      <Table.Column
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.yield_name", "Land")}
+          </Typography.Text>
+        }
+        dataIndex="yield_name"
+        render={(value: string) => (
+          <Typography.Text
+            style={{
+              whiteSpace: "nowrap",
+            }}
+          >
+            {value}
+          </Typography.Text>
+        )}
+        filterIcon={(filtered) => (
+          <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
+        )}
+        defaultFilteredValue={getDefaultFilter("yield_name", filters, "contains")}
+        filterDropdown={(props) => (
+          <FilterDropdown {...props}>
+            <Input placeholder={t("plans.filter.yield_name.placeholder")} />
+          </FilterDropdown>
+        )}
+      />
+      <Table.Column
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.expert_name", "Expert")}
+          </Typography.Text>
+        }
+        dataIndex="expert_name"
         render={(value: string) => (
           <Typography.Text
             style={{
@@ -124,7 +200,11 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.description", "Description")}
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.description", "Description")}
+          </Typography.Text>
+        }
         dataIndex="description"
         width={300}
         filterIcon={(filtered) => (
@@ -146,7 +226,11 @@ export const PlanListTable = () => {
         )}
       />
       <Table.Column
-        title={t("plans.fields.status", "Status")}
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.status", "Status")}
+          </Typography.Text>
+        }
         dataIndex="status"
         sorter
         defaultSortOrder={getDefaultSortOrder("status", sorters)}
@@ -166,10 +250,17 @@ export const PlanListTable = () => {
             </Select>
           </FilterDropdown>
         )}
+        render={(value: string) => (
+          <Tag color={getStatusColor(value)}>{t(`plans.status.${value.toLowerCase()}`)}</Tag>
+        )}
       />
 
       <Table.Column
-        title={t("plans.fields.estimated_product", "EstimatedProduct")}
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.estimated_product", "Estimated Product")}
+          </Typography.Text>
+        }
         dataIndex="estimated_product"
         sorter
         defaultSortOrder={getDefaultSortOrder("estimated_product", sorters)}
@@ -177,20 +268,55 @@ export const PlanListTable = () => {
           <NumberWithUnit value={value} unit={record.estimated_unit} />
         )}
       />
+
       <Table.Column
-        title={t("plans.fields.started_date", "StartedDate")}
-        dataIndex="start_date"
-        sorter
-        defaultSortOrder={getDefaultSortOrder("started_date", sorters)}
-        render={(value: string) => (
+        title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {new Date(value)?.toLocaleDateString()}
+            {t("plans.fields.date", "Dates")}
+          </Typography.Text>
+        }
+        key="dates"
+        render={(_, record: IPlan) => (
+          <Typography.Text type="secondary" style={{ fontSize: "12px", whiteSpace: "nowrap" }}>
+            {t("plans.fields.start_date")}: {dayjs(record.start_date).format("YYYY-MM-DD")} |{" "}
+            {t("plans.fields.end_date")}: {dayjs(record.end_date).format("YYYY-MM-DD")}
           </Typography.Text>
         )}
       />
+
+      <Table.Column
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.is_approved", "Approved")}
+          </Typography.Text>
+        }
+        dataIndex="is_approved"
+        render={(value: boolean) => (
+          <Tag color={value ? "success" : "error"}>{value ? t("common.yes") : t("common.no")}</Tag>
+        )}
+        filterIcon={(filtered) => (
+          <FilterOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
+        )}
+        defaultFilteredValue={getDefaultFilter("is_approved", filters, "eq")}
+        filterDropdown={(props) => (
+          <FilterDropdown {...props}>
+            <Select
+              style={{ width: "100%" }}
+              allowClear
+              placeholder={t("plans.filter.is_approved.placeholder")}
+            >
+              <Select.Option value={true}>{t("common.yes")}</Select.Option>
+              <Select.Option value={false}>{t("common.no")}</Select.Option>
+            </Select>
+          </FilterDropdown>
+        )}
+      />
+
       <Table.Column<IPlan>
         fixed="right"
-        title={t("table.actions")}
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>{t("table.actions")}</Typography.Text>
+        }
         dataIndex="actions"
         key="actions"
         align="center"

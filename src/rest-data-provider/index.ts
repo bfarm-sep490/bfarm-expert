@@ -178,7 +178,7 @@ export const dataProvider = (
 
     let axiosResponse;
     switch (method) {
-      case "put":
+      case "patch":
       case "post":
       case "put":
         axiosResponse = await httpClient[method](url, payload, {

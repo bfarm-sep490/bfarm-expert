@@ -28,16 +28,21 @@ export interface IFarmerPermission {
 export interface IPlan {
   id: number;
   plant_id: number;
+  plant_name: string;
   yield_id: number;
+  yield_name: string;
   expert_id: number;
+  expert_name: string;
   plan_name: string;
   description: string;
   start_date: string;
   end_date: string;
-  completed_date?: string;
+  complete_date?: string;
   status: "Draft" | "Pending" | "Ongoing" | "Completed" | "Cancelled";
   estimated_product: number;
   estimated_unit: string;
+  qr_code: string;
+  seed_quantity: number;
   created_by: string;
   created_at: string;
   updated_by?: string;
@@ -48,6 +53,7 @@ export interface IPlan {
   yield_information?: {
     yield_id: number;
   };
+  is_approved: boolean;
 }
 
 export interface IHarvestingTask {
@@ -139,7 +145,7 @@ export interface IYield {
   type: string;
   description: string;
   size: string;
-  is_available: boolean;
+  status: string;
 }
 
 export interface IDevice {
@@ -161,25 +167,16 @@ export interface IPlant {
   id: number;
   plant_name: string;
   quantity: number;
-  unit: string;
   description: string;
-  is_available: boolean;
-  min_temp: number;
-  max_temp: number;
-  min_humid: number;
-  max_humid: number;
-  min_moisture: number;
-  max_moisture: number;
-  min_fertilizer: number;
-  max_fertilizer: number;
-  fertilizer_unit: string;
-  min_pesticide: number;
-  max_pesticide: number;
-  pesticide_unit: string;
-  min_brix_point: number;
-  max_brix_point: number;
-  gt_test_kit_color: string;
+  base_price: number;
+  type: string;
   image_url: string;
+  delta_one: number;
+  delta_two: number;
+  delta_three: number;
+  preservation_day: number;
+  estimated_per_one: number;
+  status: string;
 }
 
 export interface IOrderPlan {

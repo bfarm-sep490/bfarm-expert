@@ -18,8 +18,9 @@ export const PlanForm = (props: Props) => {
   const getToPath = useGetToPath();
   const [searchParams] = useSearchParams();
   const go = useGo();
-  const { data: identity } = useGetIdentity<{ id: number }>();
+  const { data: identity } = useGetIdentity<{ id: number; name: string }>();
   const expert_id = identity?.id;
+  const expert_name = identity?.name;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [planId, setPlanId] = useState<BaseKey | undefined>(props.id);
 
@@ -61,7 +62,11 @@ export const PlanForm = (props: Props) => {
     if (expert_id !== undefined) {
       form.setFieldValue("expert_id", expert_id);
     }
-  }, [expert_id, form]);
+
+    if (expert_name !== undefined) {
+      form.setFieldValue("updated_by", expert_name);
+    }
+  }, [expert_id, expert_name, form]);
 
   const { formList } = useFormList({ formProps, planId });
 
@@ -84,6 +89,7 @@ export const PlanForm = (props: Props) => {
     setIsSubmitting(true);
     try {
       form.setFieldValue("expert_id", expert_id);
+      form.setFieldValue("updated_by", expert_name);
       await submit();
       if (props.action === "edit" || planId) {
         gotoStep(current + 1);
@@ -102,6 +108,7 @@ export const PlanForm = (props: Props) => {
     setIsSubmitting(true);
     try {
       form.setFieldValue("expert_id", expert_id);
+      form.setFieldValue("updated_by", expert_name);
       if (saveButtonProps.onClick) {
         await saveButtonProps.onClick();
       }
@@ -142,6 +149,9 @@ export const PlanForm = (props: Props) => {
 
       <Form {...formProps} layout="vertical">
         <Form.Item name="expert_id" hidden>
+          <input />
+        </Form.Item>
+        <Form.Item name="updated_by" hidden>
           <input />
         </Form.Item>
         {formList[current]}

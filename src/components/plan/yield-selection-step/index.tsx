@@ -1,31 +1,62 @@
 import { PaginationTotal } from "@/components/paginationTotal";
-import { Flex, Form, List, Select, Empty, Input, Spin } from "antd";
-import { useState, useEffect } from "react";
+import { Flex, Form, List, Select, Empty, Input, Spin, Button, Space, Badge } from "antd";
+import { useState, useEffect, useCallback } from "react";
 import { IYield } from "@/interfaces";
 import { YieldCard } from "./YieldCard";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, BulbOutlined, ClearOutlined, FilterOutlined } from "@ant-design/icons";
+import { useApiUrl, useNotification } from "@refinedev/core";
+import axios from "axios";
 
 export const YieldSelectionStep = ({
   t,
   yields,
   loading,
-  total,
 }: {
   t: (key: string) => string;
   yields: IYield[];
   loading: boolean;
-  total: number;
 }) => {
   const [selectedYieldId, setSelectedYieldId] = useState<number | null>(null);
   const [filteredYields, setFilteredYields] = useState<IYield[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const [isSuggestActive, setIsSuggestActive] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const pageSize = 4;
   const form = Form.useFormInstance();
+  const apiUrl = useApiUrl();
+  const { open } = useNotification();
 
+  const availableStatuses = [...new Set(yields.map((item) => item.status))].filter(Boolean);
+
+  const applyFilters = useCallback(() => {
+    if (isSuggestActive) return;
+
+    let filtered = [...yields];
+
+    if (searchText.trim() !== "") {
+      filtered = filtered.filter(
+        (yieldItem) =>
+          yieldItem.yield_name.toLowerCase().includes(searchText.toLowerCase()) ||
+          (yieldItem.description &&
+            yieldItem.description.toLowerCase().includes(searchText.toLowerCase())),
+      );
+    }
+
+    if (statusFilter) {
+      filtered = filtered.filter(
+        (yieldItem) => yieldItem.status?.toLowerCase() === statusFilter.toLowerCase(),
+      );
+    }
+
+    setFilteredYields(filtered);
+  }, [yields, searchText, statusFilter, isSuggestActive]);
+
+  // Cập nhật useEffect với dependency đầy đủ
   useEffect(() => {
-    setFilteredYields(yields);
-  }, [yields]);
+    applyFilters();
+  }, [applyFilters]);
 
   useEffect(() => {
     if (selectedYieldId) {
@@ -58,42 +89,151 @@ export const YieldSelectionStep = ({
     };
   }, [form, selectedYieldId, yields, pageSize]);
 
-  // Xử lý khi chọn card
   const handleCardSelect = (yieldId: number) => {
     setSelectedYieldId(yieldId);
   };
-
-  useEffect(() => {
-    if (searchText.trim() === "") {
-      setFilteredYields(yields);
-    } else {
-      const filtered = yields.filter(
-        (yieldItem) =>
-          yieldItem.yield_name.toLowerCase().includes(searchText.toLowerCase()) ||
-          (yieldItem.description &&
-            yieldItem.description.toLowerCase().includes(searchText.toLowerCase())),
-      );
-      setFilteredYields(filtered);
-    }
-  }, [searchText, yields]);
 
   const handleSearch = (value: string) => {
     setSearchText(value);
   };
 
+  const handleStatusFilterChange = (value: string | null) => {
+    setStatusFilter(value);
+  };
+
+  const handleSuggestYields = async () => {
+    const plantId = form.getFieldValue("plant_id");
+
+    if (!plantId) {
+      open?.({
+        // @ts-expect-error type
+        type: "warning",
+        message: t("yields.selectPlantFirst"),
+        description: t("yields.selectPlantFirstDescription"),
+      });
+      return;
+    }
+
+    setSuggestLoading(true);
+
+    try {
+      const response = await axios.get(`${apiUrl}/plants/${plantId}/suggest-yields`);
+
+      if (response.data && response.data.data && response.data.data.length > 0) {
+        const suggestedYieldIds = response.data.data.map((item: { id: number }) => item.id);
+
+        const suggestedYields = yields.filter(
+          (item) =>
+            suggestedYieldIds.includes(item.id) && item.status?.toLowerCase() === "available",
+        );
+
+        setFilteredYields(suggestedYields.length > 0 ? suggestedYields : []);
+        setIsSuggestActive(suggestedYields.length > 0);
+
+        setSearchText("");
+        setStatusFilter(null);
+
+        if (suggestedYields.length > 0) {
+          open?.({
+            type: "success",
+            message: t("yields.suggestedSuccess"),
+            description: t("yields.suggestedSuccessDescription"),
+          });
+        } else {
+          open?.({
+            // @ts-expect-error type
+            type: "warning",
+            message: t("yields.noSuggestedYields"),
+            description: t("yields.noSuggestedYieldsDescription"),
+          });
+        }
+      } else {
+        open?.({
+          // @ts-expect-error type
+          type: "warning",
+          message: t("yields.noSuggestedYields"),
+          description: t("yields.noSuggestedYieldsDescription"),
+        });
+      }
+    } catch (error) {
+      console.error("Error suggesting yields:", error);
+      open?.({
+        type: "error",
+        message: t("yields.suggestError"),
+        description: t("yields.suggestErrorDescription"),
+      });
+    } finally {
+      setSuggestLoading(false);
+    }
+  };
+
+  const handleClearSuggest = () => {
+    setIsSuggestActive(false);
+    applyFilters();
+  };
+
+  const handleClearAllFilters = () => {
+    setSearchText("");
+    setStatusFilter(null);
+    setIsSuggestActive(false);
+    setFilteredYields(yields);
+  };
+
   return (
     <>
-      <Flex gap={16} style={{ marginBottom: 16 }}>
+      <Flex gap={16} style={{ marginBottom: 16 }} wrap="wrap">
         <Input
           placeholder={t("yields.search")}
           prefix={<SearchOutlined />}
           onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: 300 }}
+          value={searchText}
+          style={{ width: 250 }}
           allowClear
+          disabled={isSuggestActive}
         />
+
+        <Select
+          placeholder={t("yields.filterByStatus")}
+          style={{ width: 180 }}
+          allowClear
+          onChange={handleStatusFilterChange}
+          value={statusFilter}
+          disabled={isSuggestActive}
+          options={availableStatuses.map((status) => ({
+            value: status,
+            label: status,
+          }))}
+          suffixIcon={<FilterOutlined />}
+        />
+
+        <Space>
+          {isSuggestActive ? (
+            <Badge count={filteredYields.length} overflowCount={99} color="#52c41a">
+              <Button type="primary" danger icon={<ClearOutlined />} onClick={handleClearSuggest}>
+                {t("yields.clearSuggest")}
+              </Button>
+            </Badge>
+          ) : (
+            <>
+              <Button
+                type="primary"
+                icon={<BulbOutlined />}
+                onClick={handleSuggestYields}
+                loading={suggestLoading}
+              >
+                {t("yields.suggest")}
+              </Button>
+              {(searchText || statusFilter) && (
+                <Button icon={<ClearOutlined />} onClick={handleClearAllFilters}>
+                  {t("yields.clearAllFilters")}
+                </Button>
+              )}
+            </>
+          )}
+        </Space>
       </Flex>
 
-      {loading ? (
+      {loading || suggestLoading ? (
         <Flex justify="center" align="center" style={{ height: 300 }}>
           <Spin size="large" tip={t("yields.loading")} />
         </Flex>
@@ -105,7 +245,7 @@ export const YieldSelectionStep = ({
             pageSize,
             current: currentPage,
             onChange: (page) => setCurrentPage(page),
-            total,
+            total: filteredYields.length,
             showTotal: (total) => <PaginationTotal total={total} entityName={"yield"} />,
             position: "bottom",
           }}

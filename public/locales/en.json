@@ -198,6 +198,77 @@
       "title": "Update password"
     }
   },
+  "plans": {
+    "fields": {
+      "date": "Dates",
+      "description": "Description",
+      "end_date": "End Date",
+      "estimated_product": "Estimated Product",
+      "expert_name": "Expert",
+      "is_approved": "Approved",
+      "plan_name": "Plan Name",
+      "plant": {
+        "label": "Crop",
+        "placeholder": "Select a crop",
+        "required": "Please select a crop"
+      },
+      "plant_name": "Plant",
+      "start_date": "Start Date",
+      "status": "Status",
+      "yield_name": "Land Plot"
+    },
+    "filter": {
+      "allStatus": {
+        "label": "All Status"
+      },
+      "description": {
+        "placeholder": "Search description"
+      },
+      "id": {
+        "placeholder": "Plan ID"
+      },
+      "is_approved": {
+        "placeholder": "Filter by approval"
+      },
+      "plan_name": {
+        "placeholder": "Search plan name"
+      },
+      "plant_name": {
+        "placeholder": "Search plant name"
+      },
+      "status": {
+        "placeholder": "Filter by status"
+      },
+      "yield_name": {
+        "placeholder": "Search land plot"
+      }
+    },
+    "status": {
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "ongoing": "Ongoing",
+      "pending": "Pending"
+    }
+  },
+  "plants": {
+    "available": "Available",
+    "basePrice": "Base price",
+    "clearAllFilters": "Clear all filters",
+    "days": "days",
+    "filterByStatus": "Filter by status",
+    "filterByType": "Filter by type",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "noDescription": "No description",
+    "noStatus": "No status",
+    "noType": "Unknown type",
+    "preservationDays": "Preservation",
+    "quantity": "Quantity",
+    "search": "Search plants...",
+    "select": "Select",
+    "selected": "Selected",
+    "type": "Type"
+  },
   "search": {
     "more": "more",
     "placeholder": "Search..."
@@ -283,5 +354,33 @@
     },
     "users": "Customers"
   },
-  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes."
+  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
+  "yields": {
+    "area": "Area",
+    "available": "Available",
+    "clearAllFilters": "Clear all filters",
+    "clearSuggest": "Clear suggestions",
+    "filterByStatus": "Filter by status",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "noDescription": "No description",
+    "noSize": "Unknown size",
+    "noStatus": "No status",
+    "noSuggestedYields": "No suggestions found",
+    "noSuggestedYieldsDescription": "No suitable land plots found for the selected crop. Please select a different crop or view all land plots.",
+    "noType": "Unknown type",
+    "search": "Search yields...",
+    "select": "Select",
+    "selected": "Selected",
+    "selectPlantFirst": "Please select a crop first",
+    "selectPlantFirstDescription": "You need to select a crop before receiving suggestions about suitable land plots.",
+    "size": "Size",
+    "suggest": "Suggest",
+    "suggestedSuccess": "Suitable land plots found",
+    "suggestedSuccessDescription": "Found land plots suitable for the selected crop.",
+    "suggestError": "Error retrieving suggestions",
+    "suggestErrorDescription": "An error occurred while retrieving suggestions. Please try again later.",
+    "type": "Type",
+    "unavailable": "Unavailable"
+  }
 }

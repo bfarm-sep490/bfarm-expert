@@ -198,6 +198,77 @@
       "title": "Cập nhật mật khẩu"
     }
   },
+  "plans": {
+    "fields": {
+      "date": "Ngày Tháng",
+      "description": "Mô Tả",
+      "end_date": "Ngày Kết Thúc",
+      "estimated_product": "Sản Lượng Dự Kiến",
+      "expert_name": "Chuyên Gia",
+      "is_approved": "Đã Duyệt",
+      "plan_name": "Tên Kế Hoạch",
+      "plant": {
+        "label": "Cây trồng",
+        "placeholder": "Chọn cây trồng",
+        "required": "Vui lòng chọn cây trồng"
+      },
+      "plant_name": "Cây Trồng",
+      "start_date": "Ngày Bắt Đầu",
+      "status": "Trạng Thái",
+      "yield_name": "Mảnh Đất"
+    },
+    "filter": {
+      "allStatus": {
+        "label": "Tất Cả Trạng Thái"
+      },
+      "description": {
+        "placeholder": "Tìm kiếm mô tả"
+      },
+      "id": {
+        "placeholder": "ID kế hoạch"
+      },
+      "is_approved": {
+        "placeholder": "Lọc theo phê duyệt"
+      },
+      "plan_name": {
+        "placeholder": "Tìm kiếm tên kế hoạch"
+      },
+      "plant_name": {
+        "placeholder": "Tìm kiếm cây trồng"
+      },
+      "status": {
+        "placeholder": "Lọc theo trạng thái"
+      },
+      "yield_name": {
+        "placeholder": "Tìm kiếm mảnh đất"
+      }
+    },
+    "status": {
+      "cancelled": "Đã Hủy",
+      "completed": "Hoàn Thành",
+      "ongoing": "Đang Tiến Hành",
+      "pending": "Chờ Xử Lý"
+    }
+  },
+  "plants": {
+    "available": "Khả dụng",
+    "basePrice": "Giá cơ bản",
+    "clearAllFilters": "Xóa tất cả bộ lọc",
+    "days": "ngày",
+    "filterByStatus": "Lọc theo trạng thái",
+    "filterByType": "Lọc theo loại",
+    "loading": "Đang tải...",
+    "noData": "Không có dữ liệu",
+    "noDescription": "Không có mô tả",
+    "noStatus": "Không có trạng thái",
+    "noType": "Không rõ loại",
+    "preservationDays": "Thời gian bảo quản",
+    "quantity": "Số lượng",
+    "search": "Tìm kiếm cây trồng...",
+    "select": "Chọn",
+    "selected": "Đã chọn",
+    "type": "Loại"
+  },
   "search": {
     "more": "thêm",
     "placeholder": "Tìm kiếm..."
@@ -283,5 +354,33 @@
     },
     "users": "Khách hàng"
   },
-  "warnWhenUnsavedChanges": "Bạn có chắc chắn muốn rời đi? Bạn có thay đổi chưa được lưu."
+  "warnWhenUnsavedChanges": "Bạn có chắc chắn muốn rời đi? Bạn có thay đổi chưa được lưu.",
+  "yields": {
+    "area": "Diện tích",
+    "available": "Khả dụng",
+    "clearAllFilters": "Xóa tất cả bộ lọc",
+    "clearSuggest": "Xóa gợi ý",
+    "filterByStatus": "Lọc theo trạng thái",
+    "loading": "Đang tải...",
+    "noData": "Không có dữ liệu",
+    "noDescription": "Không có mô tả",
+    "noSize": "Không rõ kích thước",
+    "noStatus": "Không có trạng thái",
+    "noSuggestedYields": "Không tìm thấy gợi ý",
+    "noSuggestedYieldsDescription": "Không tìm thấy mảnh đất nào phù hợp với cây trồng đã chọn. Vui lòng chọn cây trồng khác hoặc xem tất cả mảnh đất.",
+    "noType": "Không rõ loại",
+    "search": "Tìm kiếm mảnh đất...",
+    "select": "Chọn",
+    "selected": "Đã chọn",
+    "selectPlantFirst": "Vui lòng chọn cây trồng trước",
+    "selectPlantFirstDescription": "Bạn cần chọn một cây trồng trước khi nhận gợi ý về mảnh đất phù hợp.",
+    "size": "Kích thước",
+    "suggest": "Gợi ý",
+    "suggestedSuccess": "Đã tìm thấy mảnh đất phù hợp",
+    "suggestedSuccessDescription": "Đã tìm thấy các mảnh đất phù hợp với cây trồng đã chọn.",
+    "suggestError": "Lỗi khi lấy gợi ý",
+    "suggestErrorDescription": "Đã xảy ra lỗi khi lấy gợi ý. Vui lòng thử lại sau.",
+    "type": "Loại",
+    "unavailable": "Không khả dụng"
+  }
 }

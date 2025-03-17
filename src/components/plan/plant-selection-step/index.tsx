@@ -1,9 +1,9 @@
 import { PaginationTotal } from "@/components/paginationTotal";
-import { Flex, Form, List, Select, Empty, Input, Spin } from "antd";
-import { useState, useEffect } from "react";
+import { Flex, Form, List, Select, Empty, Input, Spin, Button, Space } from "antd";
+import { useState, useEffect, useCallback } from "react";
 import { IPlant } from "@/interfaces";
 import { PlantCard } from "./PlantCard";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, FilterOutlined, ClearOutlined } from "@ant-design/icons";
 
 export const PlantSelectionStep = ({
   t,
@@ -20,12 +20,47 @@ export const PlantSelectionStep = ({
   const [filteredPlants, setFilteredPlants] = useState<IPlant[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const pageSize = 4;
   const form = Form.useFormInstance();
 
+  // Lấy tất cả trạng thái và loại cây có sẵn từ danh sách plants
+  const availableStatuses = [...new Set(plants.map((item) => item.status))].filter(Boolean);
+  const availableTypes = [...new Set(plants.map((item) => item.type))].filter(Boolean);
+
+  // Sử dụng useCallback để memoize hàm applyFilters
+  const applyFilters = useCallback(() => {
+    let filtered = [...plants];
+
+    // Áp dụng bộ lọc văn bản
+    if (searchText.trim() !== "") {
+      filtered = filtered.filter(
+        (plant) =>
+          plant.plant_name.toLowerCase().includes(searchText.toLowerCase()) ||
+          (plant.description && plant.description.toLowerCase().includes(searchText.toLowerCase())),
+      );
+    }
+
+    // Áp dụng bộ lọc trạng thái
+    if (statusFilter) {
+      filtered = filtered.filter(
+        (plant) => plant.status?.toLowerCase() === statusFilter.toLowerCase(),
+      );
+    }
+
+    // Áp dụng bộ lọc loại cây
+    if (typeFilter) {
+      filtered = filtered.filter((plant) => plant.type?.toLowerCase() === typeFilter.toLowerCase());
+    }
+
+    setFilteredPlants(filtered);
+  }, [plants, searchText, statusFilter, typeFilter]);
+
+  // Cập nhật useEffect với dependency đầy đủ
   useEffect(() => {
-    setFilteredPlants(plants);
-  }, [plants]);
+    applyFilters();
+  }, [applyFilters]);
 
   useEffect(() => {
     if (selectedPlantId) {
@@ -42,8 +77,6 @@ export const PlantSelectionStep = ({
         if (plants.length > 0) {
           const plantIndex = plants.findIndex((plant) => plant.id === currentValue);
           if (plantIndex !== -1) {
-            // Tính toán trang dựa trên index và pageSize
-            // Ant Design pagination bắt đầu từ trang 1
             const targetPage = Math.floor(plantIndex / pageSize) + 1;
             setCurrentPage(targetPage);
           }
@@ -55,13 +88,8 @@ export const PlantSelectionStep = ({
 
     const intervalId = setInterval(checkFormValue, 500);
 
-    const unsubscribe = form
-      .getFieldInstance("plant_id")
-      ?.props?.onChange?.subscribe?.(checkFormValue);
-
     return () => {
       clearInterval(intervalId);
-      if (unsubscribe) unsubscribe();
     };
   }, [form, selectedPlantId, plants, pageSize]);
 
@@ -69,33 +97,68 @@ export const PlantSelectionStep = ({
     setSelectedPlantId(plantId);
   };
 
-  useEffect(() => {
-    if (searchText.trim() === "") {
-      setFilteredPlants(plants);
-    } else {
-      const filtered = plants.filter(
-        (plant) =>
-          plant.plant_name.toLowerCase().includes(searchText.toLowerCase()) ||
-          (plant.description && plant.description.toLowerCase().includes(searchText.toLowerCase())),
-      );
-      setFilteredPlants(filtered);
-    }
-  }, [searchText, plants]);
-
   const handleSearch = (value: string) => {
     setSearchText(value);
   };
 
+  const handleStatusFilterChange = (value: string | null) => {
+    setStatusFilter(value);
+  };
+
+  const handleTypeFilterChange = (value: string | null) => {
+    setTypeFilter(value);
+  };
+
+  const handleClearAllFilters = () => {
+    setSearchText("");
+    setStatusFilter(null);
+    setTypeFilter(null);
+    setFilteredPlants(plants);
+  };
+
   return (
     <>
-      <Flex gap={16} style={{ marginBottom: 16 }}>
+      <Flex gap={16} style={{ marginBottom: 16 }} wrap="wrap">
         <Input
           placeholder={t("plants.search")}
           prefix={<SearchOutlined />}
           onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: 300 }}
+          value={searchText}
+          style={{ width: 250 }}
           allowClear
         />
+
+        <Select
+          placeholder={t("plants.filterByStatus")}
+          style={{ width: 180 }}
+          allowClear
+          onChange={handleStatusFilterChange}
+          value={statusFilter}
+          options={availableStatuses.map((status) => ({
+            value: status,
+            label: status,
+          }))}
+          suffixIcon={<FilterOutlined />}
+        />
+
+        <Select
+          placeholder={t("plants.filterByType")}
+          style={{ width: 180 }}
+          allowClear
+          onChange={handleTypeFilterChange}
+          value={typeFilter}
+          options={availableTypes.map((type) => ({
+            value: type,
+            label: type,
+          }))}
+          suffixIcon={<FilterOutlined />}
+        />
+
+        {(searchText || statusFilter || typeFilter) && (
+          <Button icon={<ClearOutlined />} onClick={handleClearAllFilters}>
+            {t("plants.clearAllFilters")}
+          </Button>
+        )}
       </Flex>
 
       {loading ? (
@@ -110,7 +173,7 @@ export const PlantSelectionStep = ({
             pageSize,
             current: currentPage,
             onChange: (page) => setCurrentPage(page),
-            total,
+            total: filteredPlants.length,
             showTotal: (total) => <PaginationTotal total={total} entityName={"plant"} />,
             position: "bottom",
           }}

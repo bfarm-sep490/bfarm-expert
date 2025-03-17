@@ -1,6 +1,5 @@
-import { Card, Badge, Button, Flex, Tag, Tooltip, Space } from "antd";
+import { Card, Badge, Button, Flex, Tag, Space } from "antd";
 import { IPlant } from "@/interfaces";
-import { DashboardOutlined } from "@ant-design/icons";
 
 interface PlantCardProps {
   plant: IPlant;
@@ -10,6 +9,8 @@ interface PlantCardProps {
 }
 
 export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelect, t }) => {
+  const isAvailable = plant.status?.toLowerCase() === "available";
+
   return (
     <Badge.Ribbon
       text={t("plants.selected")}
@@ -17,14 +18,20 @@ export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelec
       style={{ display: isSelected ? "block" : "none" }}
     >
       <Card
-        hoverable
+        hoverable={isAvailable}
         style={{
           borderColor: isSelected ? "#52c41a" : undefined,
           transition: "all 0.3s",
           transform: isSelected ? "translateY(-5px)" : undefined,
           height: "100%",
+          opacity: isAvailable ? 1 : 0.7,
+          cursor: isAvailable ? "pointer" : "not-allowed",
         }}
-        onClick={() => onSelect(plant.id)}
+        onClick={() => {
+          if (isAvailable) {
+            onSelect(plant.id);
+          }
+        }}
         cover={
           <div
             style={{
@@ -50,9 +57,7 @@ export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelec
           title={
             <Flex justify="space-between" align="center">
               <span>{plant.plant_name}</span>
-              <Tag color={plant.is_available ? "success" : "error"}>
-                {plant.is_available ? t("plants.available") : t("plants.unavailable")}
-              </Tag>
+              <Tag color={getStatusColor(plant.status)}>{plant.status || t("plants.noStatus")}</Tag>
             </Flex>
           }
           description={
@@ -61,28 +66,35 @@ export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelec
                 {plant.description || t("plants.noDescription")}
               </div>
 
-              <Space size="small">
-                <Tooltip title={t("plants.temperature")}>
-                  <Tag icon={<DashboardOutlined />} color="blue">
-                    {plant.min_temp}°C - {plant.max_temp}°C
-                  </Tag>
-                </Tooltip>
+              {/* Không hiển thị temperature và humidity vì không có trong API */}
 
-                <Tooltip title={t("plants.humidity")}>
-                  <Tag icon={<DashboardOutlined />} color="cyan">
-                    {plant.min_humid}% - {plant.max_humid}%
-                  </Tag>
-                </Tooltip>
-              </Space>
+              <div style={{ marginTop: 8 }}>
+                <span>{t("plants.type")}: </span>
+                <strong>{plant.type || t("plants.noType")}</strong>
+              </div>
 
               {plant.quantity > 0 && (
-                <div style={{ marginTop: 8 }}>
+                <div>
                   <span>{t("plants.quantity")}: </span>
-                  <strong>
-                    {plant.quantity} {plant.unit}
-                  </strong>
+                  <strong>{plant.quantity}</strong>
                 </div>
               )}
+
+              <div>
+                <span>{t("plants.basePrice")}: </span>
+                <strong>
+                  {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                    plant.base_price,
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                <span>{t("plants.preservationDays")}: </span>
+                <strong>
+                  {plant.preservation_day} {t("plants.days")}
+                </strong>
+              </div>
             </Space>
           }
         />
@@ -94,6 +106,7 @@ export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelec
               onSelect(plant.id);
             }}
             style={{ width: "100%" }}
+            disabled={!isAvailable}
           >
             {isSelected ? t("plants.selected") : t("plants.select")}
           </Button>
@@ -101,4 +114,17 @@ export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelec
       </Card>
     </Badge.Ribbon>
   );
+};
+
+const getStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case "available":
+      return "success";
+    case "in-use":
+      return "processing";
+    case "maintenance":
+      return "warning";
+    default:
+      return "default";
+  }
 };

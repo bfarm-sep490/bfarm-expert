@@ -1,4 +1,10 @@
-import { useTranslate, useCustomMutation, useApiUrl, useNotification } from "@refinedev/core";
+import {
+  useTranslate,
+  useCustomMutation,
+  useApiUrl,
+  useNotification,
+  useGetIdentity,
+} from "@refinedev/core";
 import { Form, Select, Input, Button, Modal, Col, Row, DatePicker, InputNumber, Spin } from "antd";
 import { useState, useEffect } from "react";
 
@@ -33,6 +39,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   const [fertilizerFields, setFertilizerFields] = useState<{ id: number }[]>([]);
   const [pesticideFields, setPesticideFields] = useState<{ id: number }[]>([]);
   const [itemFields, setItemFields] = useState<{ id: number }[]>([]);
+  const { data: identity } = useGetIdentity<{ name: string }>();
   const apiUrl = useApiUrl();
   const { open } = useNotification();
 
@@ -164,6 +171,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             task_type: values.task_type,
             start_date: values.start_date.toISOString(),
             end_date: values.end_date.toISOString(),
+            created_by: identity?.name,
             fertilizers,
             pesticides,
             items,
@@ -177,6 +185,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             task_name: values.task_name,
             description: values.description || "",
             start_date: values.start_date.toISOString(),
+            created_by: identity?.name,
             end_date: values.end_date.toISOString(),
             items,
           };
@@ -188,6 +197,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             plan_id: planId,
             task_name: values.task_name,
             description: values.description || "",
+            created_by: identity?.name,
             start_date: values.start_date.toISOString(),
             end_date: values.end_date.toISOString(),
             items,
@@ -200,6 +210,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             plan_id: planId,
             task_name: values.task_name,
             task_type: values.task_type,
+            created_by: identity?.name,
             description: values.description || "",
             start_date: values.start_date.toISOString(),
             end_date: values.end_date.toISOString(),

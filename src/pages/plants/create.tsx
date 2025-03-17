@@ -8,24 +8,22 @@ import {
   Modal,
   Flex,
   theme,
-  Switch,
+  Select,
   InputNumber,
   Card,
   Space,
 } from "antd";
 import {
   InfoCircleOutlined,
-  EnvironmentOutlined,
-  MedicineBoxOutlined,
+  DollarOutlined,
+  TagOutlined,
   ShopOutlined,
   NumberOutlined,
   FileTextOutlined,
   CheckCircleOutlined,
-  FireOutlined,
-  CloudOutlined,
-  ExperimentOutlined,
-  BgColorsOutlined,
-  AimOutlined,
+  FieldTimeOutlined,
+  UploadOutlined,
+  PercentageOutlined,
 } from "@ant-design/icons";
 import type { IPlant } from "../../interfaces";
 import { useMemo } from "react";
@@ -96,8 +94,7 @@ export const PlantCreate = () => {
       <Flex vertical style={{ padding: "16px 24px" }}>
         <Steps {...stepsProps} responsive current={current} style={{ marginBottom: "24px" }}>
           <Steps.Step title={t("plants.steps.basic")} icon={<InfoCircleOutlined />} />
-          <Steps.Step title={t("plants.steps.environment")} icon={<EnvironmentOutlined />} />
-          <Steps.Step title={t("plants.steps.treatment")} icon={<MedicineBoxOutlined />} />
+          <Steps.Step title={t("plants.steps.details")} icon={<DollarOutlined />} />
         </Steps>
         <Card bordered={false} style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
           <Form {...formProps} layout="vertical" style={{ padding: "16px" }}>
@@ -135,6 +132,28 @@ const useFormList = (props: UseFormListProps) => {
             prefix={<ShopOutlined style={{ color: token.colorTextTertiary }} />}
           />
         </Form.Item>
+
+        <Form.Item
+          label={
+            <span>
+              <TagOutlined /> {t("plants.fields.type.label")}
+            </span>
+          }
+          name="type"
+          rules={[{ required: true, message: t("plants.fields.type.required") }]}
+        >
+          <Select
+            size="large"
+            placeholder={t("plants.fields.type.placeholder")}
+            options={[
+              { value: "Rau lá", label: "Rau lá" },
+              { value: "Củ", label: "Củ" },
+              { value: "Quả", label: "Quả" },
+              { value: "Gia vị", label: "Gia vị" },
+            ]}
+          />
+        </Form.Item>
+
         <Form.Item
           label={
             <span>
@@ -152,21 +171,7 @@ const useFormList = (props: UseFormListProps) => {
             addonAfter={<NumberOutlined />}
           />
         </Form.Item>
-        <Form.Item
-          label={
-            <span>
-              <FileTextOutlined /> {t("plants.fields.unit.label")}
-            </span>
-          }
-          name="unit"
-          rules={[{ required: true, message: t("plants.fields.unit.required") }]}
-        >
-          <Input
-            size="large"
-            placeholder={t("plants.fields.unit.placeholder")}
-            prefix={<FileTextOutlined style={{ color: token.colorTextTertiary }} />}
-          />
-        </Form.Item>
+
         <Form.Item
           label={
             <span>
@@ -181,136 +186,158 @@ const useFormList = (props: UseFormListProps) => {
             style={{ resize: "none" }}
           />
         </Form.Item>
+
         <Form.Item
           label={
             <span>
-              <CheckCircleOutlined /> {t("plants.fields.isAvailable.label")}
+              <UploadOutlined /> {t("plants.fields.image.label")}
             </span>
           }
-          name="is_available"
-          valuePropName="checked"
+          name="image_url"
+          rules={[{ required: true, message: t("plants.fields.image.required") }]}
         >
-          <Switch checkedChildren="Yes" unCheckedChildren="No" />
+          <Input
+            size="large"
+            placeholder={t("plants.fields.image.placeholder")}
+            prefix={<UploadOutlined style={{ color: token.colorTextTertiary }} />}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={
+            <span>
+              <TagOutlined /> {t("plants.fields.status.label")}
+            </span>
+          }
+          name="status"
+          rules={[{ required: true, message: t("plants.fields.status.required") }]}
+          initialValue="Available"
+        >
+          <Select
+            size="large"
+            placeholder={t("plants.fields.status.placeholder")}
+            options={[
+              { value: "Available", label: "Available" },
+              { value: "In-Use", label: "In-Use" },
+              { value: "Maintenance", label: "Maintenance" },
+            ]}
+          />
         </Form.Item>
       </Space>
     );
 
     const step2 = (
       <Space direction="vertical" size="small" style={{ width: "100%" }}>
+        <Form.Item
+          label={
+            <span>
+              <DollarOutlined /> {t("plants.fields.basePrice.label")}
+            </span>
+          }
+          name="base_price"
+          rules={[{ required: true, message: t("plants.fields.basePrice.required") }]}
+        >
+          <InputNumber
+            size="large"
+            min={0}
+            style={{ width: "100%" }}
+            placeholder="0"
+            addonAfter="VND"
+            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={
+            <span>
+              <FieldTimeOutlined /> {t("plants.fields.preservationDay.label")}
+            </span>
+          }
+          name="preservation_day"
+          rules={[{ required: true, message: t("plants.fields.preservationDay.required") }]}
+        >
+          <InputNumber
+            size="large"
+            min={1}
+            style={{ width: "100%" }}
+            placeholder="0"
+            addonAfter={t("plants.days")}
+          />
+        </Form.Item>
+
         <Flex gap="middle">
           <Form.Item
             label={
               <span>
-                <FireOutlined /> {t("plants.fields.minTemp.label")}
+                <PercentageOutlined /> {t("plants.fields.deltaOne.label")}
               </span>
             }
-            name="min_temp"
-            rules={[{ required: true, message: t("plants.fields.minTemp.required") }]}
+            name="delta_one"
+            rules={[{ required: true, message: t("plants.fields.deltaOne.required") }]}
             style={{ flex: 1 }}
           >
             <InputNumber
               size="large"
               min={0}
+              step={0.1}
               style={{ width: "100%" }}
-              addonAfter="°C"
               placeholder="0"
             />
           </Form.Item>
           <Form.Item
             label={
               <span>
-                <FireOutlined /> {t("plants.fields.maxTemp.label")}
+                <PercentageOutlined /> {t("plants.fields.deltaTwo.label")}
               </span>
             }
-            name="max_temp"
-            rules={[{ required: true, message: t("plants.fields.maxTemp.required") }]}
+            name="delta_two"
+            rules={[{ required: true, message: t("plants.fields.deltaTwo.required") }]}
             style={{ flex: 1 }}
           >
             <InputNumber
               size="large"
               min={0}
+              step={0.1}
               style={{ width: "100%" }}
-              addonAfter="°C"
               placeholder="0"
             />
           </Form.Item>
         </Flex>
+
         <Flex gap="middle">
           <Form.Item
             label={
               <span>
-                <CloudOutlined /> {t("plants.fields.minHumid.label")}
+                <PercentageOutlined /> {t("plants.fields.deltaThree.label")}
               </span>
             }
-            name="min_humid"
-            rules={[{ required: true, message: t("plants.fields.minHumid.required") }]}
+            name="delta_three"
+            rules={[{ required: true, message: t("plants.fields.deltaThree.required") }]}
             style={{ flex: 1 }}
           >
             <InputNumber
               size="large"
               min={0}
-              max={100}
+              step={0.1}
               style={{ width: "100%" }}
-              addonAfter="%"
               placeholder="0"
             />
           </Form.Item>
           <Form.Item
             label={
               <span>
-                <CloudOutlined /> {t("plants.fields.maxHumid.label")}
+                <PercentageOutlined /> {t("plants.fields.estimatedPerOne.label")}
               </span>
             }
-            name="max_humid"
-            rules={[{ required: true, message: t("plants.fields.maxHumid.required") }]}
+            name="estimated_per_one"
+            rules={[{ required: true, message: t("plants.fields.estimatedPerOne.required") }]}
             style={{ flex: 1 }}
           >
             <InputNumber
               size="large"
               min={0}
-              max={100}
+              step={0.1}
               style={{ width: "100%" }}
-              addonAfter="%"
-              placeholder="0"
-            />
-          </Form.Item>
-        </Flex>
-        <Flex gap="middle">
-          <Form.Item
-            label={
-              <span>
-                <AimOutlined /> {t("plants.fields.minMoisture.label")}
-              </span>
-            }
-            name="min_moisture"
-            rules={[{ required: true, message: t("plants.fields.minMoisture.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber
-              size="large"
-              min={0}
-              max={100}
-              style={{ width: "100%" }}
-              addonAfter="%"
-              placeholder="0"
-            />
-          </Form.Item>
-          <Form.Item
-            label={
-              <span>
-                <AimOutlined /> {t("plants.fields.maxMoisture.label")}
-              </span>
-            }
-            name="max_moisture"
-            rules={[{ required: true, message: t("plants.fields.maxMoisture.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber
-              size="large"
-              min={0}
-              max={100}
-              style={{ width: "100%" }}
-              addonAfter="%"
               placeholder="0"
             />
           </Form.Item>
@@ -318,136 +345,8 @@ const useFormList = (props: UseFormListProps) => {
       </Space>
     );
 
-    const step3 = (
-      <Space direction="vertical" size="small" style={{ width: "100%" }}>
-        <Flex gap="middle">
-          <Form.Item
-            label={
-              <span>
-                <ExperimentOutlined /> {t("plants.fields.minFertilizer.label")}
-              </span>
-            }
-            name="min_fertilizer_quantity"
-            rules={[{ required: true, message: t("plants.fields.minFertilizer.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
-          </Form.Item>
-          <Form.Item
-            label={
-              <span>
-                <ExperimentOutlined /> {t("plants.fields.maxFertilizer.label")}
-              </span>
-            }
-            name="max_fertilizer_quantity"
-            rules={[{ required: true, message: t("plants.fields.maxFertilizer.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
-          </Form.Item>
-        </Flex>
-        <Form.Item
-          label={
-            <span>
-              <FileTextOutlined /> {t("plants.fields.fertilizerUnit.label")}
-            </span>
-          }
-          name="fertilizer_unit"
-          rules={[{ required: true, message: t("plants.fields.fertilizerUnit.required") }]}
-        >
-          <Input
-            size="large"
-            placeholder={t("plants.fields.fertilizerUnit.placeholder")}
-            prefix={<FileTextOutlined style={{ color: token.colorTextTertiary }} />}
-          />
-        </Form.Item>
-        <Flex gap="middle">
-          <Form.Item
-            label={
-              <span>
-                <MedicineBoxOutlined /> {t("plants.fields.minPesticide.label")}
-              </span>
-            }
-            name="min_pesticide_quantity"
-            rules={[{ required: true, message: t("plants.fields.minPesticide.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
-          </Form.Item>
-          <Form.Item
-            label={
-              <span>
-                <MedicineBoxOutlined /> {t("plants.fields.maxPesticide.label")}
-              </span>
-            }
-            name="max_pesticide_quantity"
-            rules={[{ required: true, message: t("plants.fields.maxPesticide.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
-          </Form.Item>
-        </Flex>
-        <Form.Item
-          label={
-            <span>
-              <FileTextOutlined /> {t("plants.fields.pesticideUnit.label")}
-            </span>
-          }
-          name="pesticide_unit"
-          rules={[{ required: true, message: t("plants.fields.pesticideUnit.required") }]}
-        >
-          <Input
-            size="large"
-            placeholder={t("plants.fields.pesticideUnit.placeholder")}
-            prefix={<FileTextOutlined style={{ color: token.colorTextTertiary }} />}
-          />
-        </Form.Item>
-        <Flex gap="middle">
-          <Form.Item
-            label={
-              <span>
-                <ExperimentOutlined /> {t("plants.fields.minBrix.label")}
-              </span>
-            }
-            name="min_brix_point"
-            rules={[{ required: true, message: t("plants.fields.minBrix.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
-          </Form.Item>
-          <Form.Item
-            label={
-              <span>
-                <ExperimentOutlined /> {t("plants.fields.maxBrix.label")}
-              </span>
-            }
-            name="max_brix_point"
-            rules={[{ required: true, message: t("plants.fields.maxBrix.required") }]}
-            style={{ flex: 1 }}
-          >
-            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
-          </Form.Item>
-        </Flex>
-        <Form.Item
-          label={
-            <span>
-              <BgColorsOutlined /> {t("plants.fields.testKitColor.label")}
-            </span>
-          }
-          name="gt_test_kit_color"
-          rules={[{ required: true, message: t("plants.fields.testKitColor.required") }]}
-        >
-          <Input
-            size="large"
-            placeholder={t("plants.fields.testKitColor.placeholder")}
-            prefix={<BgColorsOutlined style={{ color: token.colorTextTertiary }} />}
-          />
-        </Form.Item>
-      </Space>
-    );
-
-    return [step1, step2, step3];
-  }, [props.formProps]);
+    return [step1, step2];
+  }, [t, token]);
 
   return { formList };
 };

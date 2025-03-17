@@ -9,23 +9,44 @@ interface YieldCardProps {
 }
 
 export const YieldCard: React.FC<YieldCardProps> = ({ yieldItem, isSelected, onSelect, t }) => {
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "available":
+        return "success";
+      case "in-use":
+        return "processing";
+      case "maintenance":
+        return "warning";
+      default:
+        return "default";
+    }
+  };
+
+  const isAvailable = yieldItem.status?.toLowerCase() === "available";
+
   return (
     <Card
-      hoverable
+      hoverable={isAvailable}
       style={{
         borderColor: isSelected ? "#52c41a" : undefined,
         transition: "all 0.3s",
         transform: isSelected ? "translateY(-5px)" : undefined,
         height: "100%",
+        opacity: isAvailable ? 1 : 0.7,
+        cursor: isAvailable ? "pointer" : "not-allowed",
       }}
-      onClick={() => onSelect(yieldItem.id)}
+      onClick={() => {
+        if (isAvailable) {
+          onSelect(yieldItem.id);
+        }
+      }}
     >
       <Card.Meta
         title={
           <Flex justify="space-between" align="center">
             <span>{yieldItem.yield_name}</span>
-            <Tag color={yieldItem.is_available ? "success" : "error"}>
-              {yieldItem.is_available ? t("yields.available") : t("yields.unavailable")}
+            <Tag color={getStatusColor(yieldItem.status)}>
+              {yieldItem.status || t("yields.noStatus")}
             </Tag>
           </Flex>
         }
@@ -62,6 +83,7 @@ export const YieldCard: React.FC<YieldCardProps> = ({ yieldItem, isSelected, onS
             onSelect(yieldItem.id);
           }}
           style={{ width: "100%" }}
+          disabled={!isAvailable}
         >
           {isSelected ? t("yields.selected") : t("yields.select")}
         </Button>

@@ -103,7 +103,6 @@ export const useFormList = ({ formProps, planId }: { formProps: FormProps; planI
         t={t}
         yields={yieldsData?.data || []}
         loading={yieldsLoading}
-        total={yieldsData?.total || 0}
       />,
       <DetailsStep key="details" t={t} />,
       <TasksStep

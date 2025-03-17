@@ -7,8 +7,8 @@ import {
   List,
   useTable,
 } from "@refinedev/antd";
-import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { Table, Typography, theme, InputNumber, Input, Tag, Switch } from "antd";
+import { EyeOutlined, SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import { Table, Typography, theme, InputNumber, Input, Tag, Select, Space } from "antd";
 import type { IPlant } from "../../interfaces";
 import { PaginationTotal } from "../../components";
 import { useLocation } from "react-router";
@@ -37,6 +37,25 @@ export const PlantList = ({ children }: PropsWithChildren) => {
       ],
     },
   });
+
+  // Hàm lấy màu sắc cho tag status
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "available":
+        return "success";
+      case "in-use":
+        return "processing";
+      case "maintenance":
+        return "warning";
+      default:
+        return "default";
+    }
+  };
+
+  // Hàm định dạng tiền tệ
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+  };
 
   return (
     <>
@@ -133,7 +152,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column<IPlant>
             key="plant_name"
             dataIndex="plant_name"
-            title={t("plants.fields.plant_name.label", "Plant Name")}
+            title={t("plants.fields.name.label", "Plant Name")}
             filterIcon={(filtered) => (
               <SearchOutlined
                 style={{
@@ -146,6 +165,34 @@ export const PlantList = ({ children }: PropsWithChildren) => {
               <FilterDropdown {...props}>
                 <Input
                   placeholder={t("plants.filter.plant_name.placeholder", "Search plant name")}
+                />
+              </FilterDropdown>
+            )}
+          />
+
+          <Table.Column<IPlant>
+            key="type"
+            dataIndex="type"
+            title={t("plants.fields.type.label", "Type")}
+            filterIcon={(filtered) => (
+              <FilterOutlined
+                style={{
+                  color: filtered ? token.colorPrimary : undefined,
+                }}
+              />
+            )}
+            defaultFilteredValue={getDefaultFilter("type", filters, "eq")}
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder={t("plants.filter.type.placeholder", "Filter by type")}
+                  options={[
+                    { value: "Rau lá", label: "Rau lá" },
+                    { value: "Củ", label: "Củ" },
+                    { value: "Quả", label: "Quả" },
+                    { value: "Gia vị", label: "Gia vị" },
+                  ]}
                 />
               </FilterDropdown>
             )}
@@ -165,13 +212,13 @@ export const PlantList = ({ children }: PropsWithChildren) => {
                 </Typography.Text>
               );
             }}
-            render={(value, record: IPlant) => (
+            render={(value) => (
               <Typography.Text
                 style={{
                   whiteSpace: "nowrap",
                 }}
               >
-                {value} {record.unit}
+                {value}
               </Typography.Text>
             )}
           />
@@ -199,44 +246,51 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           />
 
           <Table.Column<IPlant>
-            dataIndex="is_available"
-            key="is_available"
-            title={t("plants.fields.is_available.label", "Available")}
-            render={(value) => <Switch checked={value} disabled />}
+            dataIndex="status"
+            key="status"
+            title={t("plants.fields.status.label", "Status")}
+            render={(value) => (
+              <Tag color={getStatusColor(value)}>{value || t("plants.noStatus")}</Tag>
+            )}
+            filterIcon={(filtered) => (
+              <FilterOutlined
+                style={{
+                  color: filtered ? token.colorPrimary : undefined,
+                }}
+              />
+            )}
+            defaultFilteredValue={getDefaultFilter("status", filters, "eq")}
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder={t("plants.filter.status.placeholder", "Filter by status")}
+                  options={[
+                    { value: "Available", label: "Available" },
+                    { value: "In-Use", label: "In-Use" },
+                    { value: "Maintenance", label: "Maintenance" },
+                  ]}
+                />
+              </FilterDropdown>
+            )}
           />
 
           <Table.Column<IPlant>
-            key="temperature"
-            title={t("plants.fields.temperature.label", "Temp(°C)")}
-            render={(_, record) => {
-              return (
-                <Typography.Text>
-                  {record.min_temp} - {record.max_temp}
-                </Typography.Text>
-              );
-            }}
+            key="base_price"
+            dataIndex="base_price"
+            title={t("plants.fields.basePrice.label", "Base Price")}
+            render={(value) => <Typography.Text>{formatCurrency(value)}</Typography.Text>}
           />
 
           <Table.Column<IPlant>
-            key="humidity"
-            title={t("plants.fields.humidity.label", "Humidity(%)")}
-            render={(_, record) => {
-              return (
-                <Typography.Text>
-                  {record.min_humid} - {record.max_humid}
-                </Typography.Text>
-              );
-            }}
-          />
-
-          <Table.Column<IPlant>
-            dataIndex="gt_test_kit_color"
-            key="gt_test_kit_color"
-            title={t("plants.fields.gt_test_kit_color.label", "Test Kit Color")}
-            render={(value) => {
-              const color = value.toLowerCase().replace(/\s+/g, "");
-              return <Tag color={color}>{value}</Tag>;
-            }}
+            key="preservation"
+            dataIndex="preservation_day"
+            title={t("plants.fields.preservationDays.label", "Preservation")}
+            render={(value) => (
+              <Typography.Text>
+                {value} {t("plants.days")}
+              </Typography.Text>
+            )}
           />
 
           <Table.Column
