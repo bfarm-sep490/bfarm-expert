@@ -1,7 +1,16 @@
-import { DashboardOutlined, ExperimentOutlined, ScheduleOutlined } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  ExperimentOutlined,
+  ScheduleOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import "dayjs/locale/vi";
 
-import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
+import {
+  useNotificationProvider,
+  ThemedLayoutV2,
+  ErrorComponent,
+} from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 import { Authenticated, IResourceItem, Refine } from "@refinedev/core";
 import { RefineKbarProvider, RefineKbar } from "@refinedev/kbar";
@@ -28,6 +37,20 @@ import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
 import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
+import { ApprovingPlanDrawer } from "./pages/plans/approvaled-drawer";
+import { ShowProblemList } from "./pages/plans/problem/list";
+import { ProblemShowV2 } from "./pages/problems/show";
+import { ShowTasksList } from "./pages/plans/tasks/show";
+import { ProductiveTaskShow } from "./components/caring-task/show";
+import { HarvestingTaskShow } from "./components/harvesting-task/show";
+import { HarvestingUpdate } from "./pages/plans/tasks/harvesting-update";
+import { PackagingTaskShow } from "./components/packaging-task/show";
+import { PackagingUpdate } from "./pages/plans/tasks/packaging-update";
+import { ProblemListInProblems } from "./pages/problems/list";
+import { CaringCreate } from "./pages/plans/tasks/caring-create";
+import { CaringUpdate } from "./pages/plans/tasks/caring-update";
+import { HarvestingCreate } from "./pages/plans/tasks/harvesting-create";
+import { PackagingCreate } from "./pages/plans/tasks/packaging-create";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -45,7 +68,8 @@ const App: React.FC = () => {
   // This hook is used to automatically login the user.
   // const { loading } = useAutoLoginForDemo();
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://api.outfit4rent.online/api";
 
   const appDataProvider = dataProvider(API_URL);
 
@@ -79,8 +103,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              notificationProvider={useNotificationProvider}
-              liveProvider={liveProvider(ablyClient)}
+              // notificationProvider={useNotificationProvider}
+              // liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",
@@ -98,6 +122,16 @@ const App: React.FC = () => {
                   show: "/plans/:id",
                   meta: {
                     icon: <ScheduleOutlined />,
+                  },
+                },
+                {
+                  name: "problems",
+                  list: "/problems",
+                  show: "/problems/:id",
+                  meta: {
+                    label: "Vấn đề",
+                    icon: <WarningOutlined />,
+                    route: "/problems",
                   },
                 },
                 {
@@ -141,10 +175,82 @@ const App: React.FC = () => {
                   <Route path="/plans">
                     <Route index element={<PlanList />} />
                     <Route path="new" element={<PlanCreate />} />
-                    <Route path=":id" element={<PlanShow />} />
+                    <Route path=":id">
+                      <Route
+                        index
+                        element={
+                          <PlanShow>
+                            <Outlet></Outlet>
+                          </PlanShow>
+                        }
+                      />
+                      <Route path="approve" element={<ApprovingPlanDrawer />}></Route>
+                      <Route
+                        path="problems"
+                        element={
+                          <ShowProblemList>
+                            <Outlet />
+                          </ShowProblemList>
+                        }
+                      >
+                        <Route path=":id" element={<ProblemShowV2 />}></Route>
+                      </Route>
+
+                      <Route
+                        path="caring-tasks"
+                        element={
+                          <ShowTasksList>
+                            <Outlet />
+                          </ShowTasksList>
+                        }
+                      >
+                        <Route path=":taskId" element={<ProductiveTaskShow />} />
+                      </Route>
+                      <Route path="caring-tasks/create" element={<CaringCreate />}></Route>
+                      <Route path="caring-tasks/:taskId/edit" element={<CaringUpdate />}></Route>
+                      <Route
+                        path="harvesting-tasks"
+                        element={
+                          <ShowTasksList>
+                            <Outlet></Outlet>
+                          </ShowTasksList>
+                        }
+                      >
+                        <Route path=":taskId" element={<HarvestingTaskShow />} />
+                      </Route>
+                      <Route path="harvesting-tasks/create" element={<HarvestingCreate />}></Route>
+                      <Route
+                        path="harvesting-tasks/:taskId/edit"
+                        element={<HarvestingUpdate />}
+                      ></Route>
+                      <Route
+                        path="packaging-tasks"
+                        element={
+                          <ShowTasksList>
+                            <Outlet />
+                          </ShowTasksList>
+                        }
+                      >
+                        <Route path=":taskId" element={<PackagingTaskShow />} />
+                      </Route>
+                      <Route path="packaging-tasks/create" element={<PackagingCreate />}></Route>
+                      <Route
+                        path="packaging-tasks/:taskId/edit"
+                        element={<PackagingUpdate />}
+                      ></Route>
+                    </Route>
                     <Route path="edit/:id" element={<PlanEdit />} />
                   </Route>
-
+                  <Route
+                    path="/problems"
+                    element={
+                      <ProblemListInProblems>
+                        <Outlet></Outlet>
+                      </ProblemListInProblems>
+                    }
+                  >
+                    <Route path=":id" element={<ProblemShowV2 />} />
+                  </Route>
                   <Route path="/plants">
                     <Route
                       path=""
@@ -196,8 +302,14 @@ const App: React.FC = () => {
                       />
                     }
                   />
-                  <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
-                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
+                  <Route
+                    path="/forgot-password"
+                    element={<AuthPage type="forgotPassword" />}
+                  />
+                  <Route
+                    path="/update-password"
+                    element={<AuthPage type="updatePassword" />}
+                  />
                 </Route>
 
                 <Route
