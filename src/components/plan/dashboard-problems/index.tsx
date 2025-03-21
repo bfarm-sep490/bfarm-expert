@@ -101,7 +101,7 @@ export const ProblemsDashBoard = ({ data }: ProblemsDashBoardProps) => {
     });
 
     const seriesData = Object.keys(problemsPerDay).map((date) => ({
-      x: new Date(date).getTime(), // Convert date string to timestamp
+      x: new Date(date).getTime(),
       y: problemsPerDay[date],
     }));
 

@@ -37,7 +37,6 @@ import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
 import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
-import { ApprovingPlanDrawer } from "./pages/plans/approvaled-drawer";
 import { ShowProblemList } from "./pages/plans/problem/list";
 import { ProblemShowV2 } from "./pages/problems/show";
 import { ShowTasksList } from "./pages/plans/tasks/show";
