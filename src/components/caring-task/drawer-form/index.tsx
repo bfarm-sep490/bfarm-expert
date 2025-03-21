@@ -188,15 +188,6 @@ export const CaringTaskPage = (props: Props) => {
       ? "Chỉnh sửa công việc chăm sóc #" + taskId
       : "Thêm công việc chăm sóc";
 
-  const statusOptions = [
-    { label: t("status.draft", "Nháp"), value: "Draft" },
-    { label: t("status.pending", "Chờ xử lý"), value: "Pending" },
-    { label: t("status.cancel", "Đang thực hiện"), value: "Ongoing" },
-    { label: t("status.complete", "Hoàn thành"), value: "Complete" },
-    { label: t("status.cancel", "Hủy bỏ"), value: "Cancel" },
-    { label: t("status.incomplete", "Chưa hoàn thành"), value: "Incomplete" },
-    { label: t("status.unapprove", "Không phê duyệt"), value: "Unapprove" },
-  ];
   const taskTypeOptions = [
     { label: t("status.watering", "Tưới nước"), value: "Watering" },
     {
@@ -377,13 +368,6 @@ export const CaringTaskPage = (props: Props) => {
               rules={[{ required: true }]}
             >
               <Select options={taskTypeOptions} />
-            </Form.Item>
-            <Form.Item
-              label="Trạng thái"
-              name="status"
-              rules={[{ required: true }]}
-            >
-              <Select options={statusOptions} />
             </Form.Item>
             <Form.Item
               label="Mô tả"

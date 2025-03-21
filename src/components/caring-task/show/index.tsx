@@ -284,16 +284,6 @@ export const ProductiveTaskShow = () => {
               </Space>
             </Flex>
           )}
-          {task?.status === "Pending" && (
-            <Flex justify="end">
-              <Space>
-                <Button color="danger" variant="solid">
-                  Không chấp nhận
-                </Button>
-                <Button>Chấp nhận</Button>
-              </Space>
-            </Flex>
-          )}
         </>
       }
     >
@@ -356,7 +346,6 @@ export const ProductiveTaskShow = () => {
             </Button>
           )}
         </Flex>
-        ;
         <List
           bordered
           dataSource={[

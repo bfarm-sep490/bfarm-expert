@@ -154,15 +154,7 @@ export const HarvestingTaskForm = (props: Props) => {
       ? "Chỉnh sửa công việc thu hoạch #" + taskId
       : "Thêm công việc thu hoạch";
 
-  const statusOptions = [
-    { label: t("status.draft", "Nháp"), value: "Draft" },
-    { label: t("status.pending", "Chờ xử lý"), value: "Pending" },
-    { label: t("status.cancel", "Đang thực hiện"), value: "Ongoing" },
-    { label: t("status.complete", "Hoàn thành"), value: "Complete" },
-    { label: t("status.cancel", "Hủy bỏ"), value: "Cancel" },
-    { label: t("status.incomplete", "Chưa hoàn thành"), value: "Incomplete" },
-    { label: t("status.unapprove", "Không phê duyệt"), value: "Unapprove" },
-  ];
+  
   const addField = (
     list: any[],
     setList: React.Dispatch<React.SetStateAction<any[]>>
@@ -282,13 +274,6 @@ export const HarvestingTaskForm = (props: Props) => {
                   </Select.Option>
                 ))}
               </Select>
-            </Form.Item>
-            <Form.Item
-              label="Trạng thái"
-              name="status"
-              rules={[{ required: true }]}
-            >
-              <Select options={statusOptions} />
             </Form.Item>
             <Form.Item
               label="Mô tả"

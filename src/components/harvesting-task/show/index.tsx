@@ -64,18 +64,6 @@ export const HarvestingTaskShow = () => {
               </Space>
             </Flex>
           )}
-          {task?.status === "Pending" && (
-            <Flex justify="end">
-              <Space>
-                <Button color="danger" variant="solid">
-                  Không chấp nhận
-                </Button>
-                <Button color="primary" variant="solid">
-                  Tiến hành
-                </Button>
-              </Space>
-            </Flex>
-          )}
         </>
       }
     >

@@ -54,10 +54,7 @@ export const HarvestingTaskForm = (props: Props) => {
     filters: [{ field: "status", operator: "eq", value: "Ongoing" }],
   });
 
-  const plans = [
-    ...(queryPendingPlans.data?.data || []),
-    ...(queryOngoingPlans?.data?.data || []),
-  ];
+  const plans = [...(queryPendingPlans.data?.data || []), ...(queryOngoingPlans?.data?.data || [])];
   const { data: itemData } = useList({
     resource: "items",
   });
@@ -128,19 +125,7 @@ export const HarvestingTaskForm = (props: Props) => {
       ? "Chỉnh sửa công việc thu hoạch #" + taskId
       : "Thêm công việc thu hoạch";
 
-  const statusOptions = [
-    { label: t("status.draft", "Nháp"), value: "Draft" },
-    { label: t("status.pending", "Chờ xử lý"), value: "Pending" },
-    { label: t("status.cancel", "Đang thực hiện"), value: "Ongoing" },
-    { label: t("status.complete", "Hoàn thành"), value: "Complete" },
-    { label: t("status.cancel", "Hủy bỏ"), value: "Cancel" },
-    { label: t("status.incomplete", "Chưa hoàn thành"), value: "Incomplete" },
-    { label: t("status.unapprove", "Không phê duyệt"), value: "Unapprove" },
-  ];
-  const addField = (
-    list: any[],
-    setList: React.Dispatch<React.SetStateAction<any[]>>
-  ) => {
+  const addField = (list: any[], setList: React.Dispatch<React.SetStateAction<any[]>>) => {
     const newList = [
       ...list,
       {
@@ -175,17 +160,10 @@ export const HarvestingTaskForm = (props: Props) => {
   };
   return (
     <>
-      <Button
-        type="text"
-        onClick={back}
-        style={{ width: "40px", height: "40px" }}
-      >
+      <Button type="text" onClick={back} style={{ width: "40px", height: "40px" }}>
         <ArrowLeftOutlined style={{ fontSize: "20px" }} />
       </Button>
-      <Card
-        title={title}
-        style={{ width: "100%", margin: "0 auto", padding: "16px" }}
-      >
+      <Card title={title} style={{ width: "100%", margin: "0 auto", padding: "16px" }}>
         <Spin spinning={formLoading}>
           <Form
             form={formProps?.form}
@@ -193,11 +171,7 @@ export const HarvestingTaskForm = (props: Props) => {
             layout="vertical"
             onFinish={handleFinish}
           >
-            <Form.Item
-              label="Tên công việc"
-              name="task_name"
-              rules={[{ required: true }]}
-            >
+            <Form.Item label="Tên công việc" name="task_name" rules={[{ required: true }]}>
               <Input name="task_name" />
             </Form.Item>
             <Row gutter={16}>
@@ -256,13 +230,6 @@ export const HarvestingTaskForm = (props: Props) => {
                   </Select.Option>
                 ))}
               </Select>
-            </Form.Item>
-            <Form.Item
-              label="Trạng thái"
-              name="status"
-              rules={[{ required: true }]}
-            >
-              <Select options={statusOptions} />
             </Form.Item>
             <Form.Item
               label="Mô tả"
