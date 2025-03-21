@@ -87,7 +87,12 @@ export interface ICaringTask {
   problem_id?: number;
   task_name: string;
   result_content?: string;
-  task_type: "Planting" | "Nurturing" | "Watering" | "Fertilizing" | "PestControl";
+  task_type:
+    | "Planting"
+    | "Nurturing"
+    | "Watering"
+    | "Fertilizing"
+    | "PestControl";
   start_date: string;
   end_date: string;
   complete_date?: string;
@@ -251,9 +256,8 @@ export interface IProblem {
   issue_id?: number;
   name: string;
   description: string;
-  date: string;
-  type_problem: string;
-  status: "Pending" | "Approved" | "Cancelled";
+  created_date: Date;
+  status: "Pending" | "Resolved" | "Cancelled";
   result: string;
 }
 
