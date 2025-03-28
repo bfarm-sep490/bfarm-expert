@@ -1,20 +1,40 @@
 import { PaginationTotal } from "@/components/paginationTotal";
-import { Flex, Form, List, Select, Empty, Input, Spin, Button, Space } from "antd";
+import {
+  Flex,
+  Form,
+  List,
+  Select,
+  Empty,
+  Input,
+  Spin,
+  Button,
+  Space,
+  Alert,
+  Tag,
+  Tooltip,
+} from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { IPlant } from "@/interfaces";
 import { PlantCard } from "./PlantCard";
-import { SearchOutlined, FilterOutlined, ClearOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  FilterOutlined,
+  ClearOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 
 export const PlantSelectionStep = ({
   t,
   plants,
   loading,
   total,
+  canEdit = true,
 }: {
   t: (key: string) => string;
   plants: IPlant[];
   loading: boolean;
   total: number;
+  canEdit?: boolean;
 }) => {
   const [selectedPlantId, setSelectedPlantId] = useState<number | null>(null);
   const [filteredPlants, setFilteredPlants] = useState<IPlant[]>([]);
@@ -25,7 +45,10 @@ export const PlantSelectionStep = ({
   const pageSize = 4;
   const form = Form.useFormInstance();
 
-  // Lấy tất cả trạng thái và loại cây có sẵn từ danh sách plants
+  const orderIds = form.getFieldValue("order_ids") || [];
+
+  const orderPlantId = form.getFieldValue("order_plant_id");
+
   const availableStatuses = [...new Set(plants.map((item) => item.status))].filter(Boolean);
   const availableTypes = [...new Set(plants.map((item) => item.type))].filter(Boolean);
 
@@ -42,14 +65,12 @@ export const PlantSelectionStep = ({
       );
     }
 
-    // Áp dụng bộ lọc trạng thái
     if (statusFilter) {
       filtered = filtered.filter(
         (plant) => plant.status?.toLowerCase() === statusFilter.toLowerCase(),
       );
     }
 
-    // Áp dụng bộ lọc loại cây
     if (typeFilter) {
       filtered = filtered.filter((plant) => plant.type?.toLowerCase() === typeFilter.toLowerCase());
     }
@@ -57,10 +78,17 @@ export const PlantSelectionStep = ({
     setFilteredPlants(filtered);
   }, [plants, searchText, statusFilter, typeFilter]);
 
-  // Cập nhật useEffect với dependency đầy đủ
   useEffect(() => {
     applyFilters();
   }, [applyFilters]);
+
+  // Set plant_id từ order khi component mount
+  useEffect(() => {
+    if (orderPlantId && !selectedPlantId) {
+      setSelectedPlantId(orderPlantId);
+      form.setFieldValue("plant_id", orderPlantId);
+    }
+  }, [orderPlantId, selectedPlantId, form]);
 
   useEffect(() => {
     if (selectedPlantId) {
@@ -94,6 +122,7 @@ export const PlantSelectionStep = ({
   }, [form, selectedPlantId, plants, pageSize]);
 
   const handleCardSelect = (plantId: number) => {
+    if (!canEdit) return;
     setSelectedPlantId(plantId);
   };
 
@@ -116,9 +145,28 @@ export const PlantSelectionStep = ({
     setFilteredPlants(plants);
   };
 
+  const renderOrderInfo = () => {
+    if (!form.getFieldValue("order_plant_name")) return null;
+
+    return (
+      <Tooltip
+        title={
+          <Space direction="vertical" size={4}>
+            <div>Cây: {form.getFieldValue("order_plant_name")}</div>
+            <div>Không thể thay đổi cây vì đã liên kết với đơn hàng.</div>
+          </Space>
+        }
+      >
+        <Tag color="blue" style={{ cursor: "help" }}>
+          <InfoCircleOutlined /> Cây từ đơn hàng
+        </Tag>
+      </Tooltip>
+    );
+  };
+
   return (
     <>
-      <Flex gap={16} style={{ marginBottom: 16 }} wrap="wrap">
+      <Flex gap={16} style={{ marginBottom: 16 }} wrap="wrap" align="center">
         <Input
           placeholder={t("plants.search")}
           prefix={<SearchOutlined />}
@@ -159,6 +207,8 @@ export const PlantSelectionStep = ({
             {t("plants.clearAllFilters")}
           </Button>
         )}
+
+        {renderOrderInfo()}
       </Flex>
 
       {loading ? (
@@ -195,6 +245,8 @@ export const PlantSelectionStep = ({
                 isSelected={selectedPlantId === plant.id}
                 onSelect={handleCardSelect}
                 t={t}
+                isFromOrder={orderPlantId === plant.id}
+                disabled={!canEdit}
               />
             </List.Item>
           )}
@@ -210,6 +262,7 @@ export const PlantSelectionStep = ({
         <Select
           options={plants.map((plant) => ({ value: plant.id, label: plant.plant_name }))}
           placeholder={t("plans.fields.plant.placeholder")}
+          disabled={!canEdit}
         />
       </Form.Item>
 

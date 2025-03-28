@@ -129,12 +129,23 @@ export interface IInspector {
 
 export interface IOrder {
   id: number;
-  order_id: number;
-  price: number;
-  status: "paid" | "cancelled" | "pending" | "failed";
+  retailer_id: number;
+  retailer_name: string;
+  plant_id: number;
+  plant_name: string;
+  plan_id: number | null;
+  plan_name: string | null;
+  packaging_type_id: number;
+  packaging_type_name: string;
+  deposit_price: number;
+  total_price: number | null;
+  status: "Deposit" | "Pending" | "Ongoing" | "Completed" | "Cancelled";
   address: string;
+  phone: string;
+  preorder_quantity: number;
+  estimate_pick_up_date: string;
   created_at: string;
-  is_payed: boolean;
+  transactions: any[];
 }
 
 export interface IYield {

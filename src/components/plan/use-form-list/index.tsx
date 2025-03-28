@@ -18,7 +18,15 @@ import { DetailsStep } from "../details-step";
 import { TasksStep } from "../tasks-step";
 import { ReviewStep } from "../review-step";
 
-export const useFormList = ({ formProps, planId }: { formProps: FormProps; planId?: BaseKey }) => {
+export const useFormList = ({
+  formProps,
+  planId,
+  canEditPlant = true,
+}: {
+  formProps: FormProps;
+  planId?: BaseKey;
+  canEditPlant?: boolean;
+}) => {
   const t = useTranslate();
 
   const { data: plantsData, isLoading: plantsLoading } = useList<IPlant>({
@@ -97,6 +105,7 @@ export const useFormList = ({ formProps, planId }: { formProps: FormProps; planI
         plants={plantsData?.data || []}
         loading={plantsLoading}
         total={plantsData?.total || 0}
+        canEdit={canEditPlant}
       />,
       <YieldSelectionStep
         key="yield"
@@ -139,6 +148,7 @@ export const useFormList = ({ formProps, planId }: { formProps: FormProps; planI
       itemSelectProps,
       formProps,
       planId,
+      canEditPlant,
     ],
   );
 

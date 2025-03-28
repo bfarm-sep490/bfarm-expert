@@ -1,16 +1,24 @@
-import { useTranslate, useGetToPath, useGo, useGetIdentity, BaseKey } from "@refinedev/core";
+import {
+  useTranslate,
+  useGetToPath,
+  useGo,
+  useGetIdentity,
+  BaseKey,
+  useOne,
+} from "@refinedev/core";
 import { SaveButton, useStepsForm } from "@refinedev/antd";
 import { Form, Button, Steps, Flex, message } from "antd";
 import { useSearchParams } from "react-router";
 import { useFormList } from "@/components/plan";
 import { FileTextOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { IPlan } from "@/interfaces";
+import { IPlan, IOrder } from "@/interfaces";
 
 type Props = {
   id?: BaseKey;
   action: "create" | "edit";
   onMutationSuccess?: () => void;
+  orderIds?: string[];
 };
 
 export const PlanForm = (props: Props) => {
@@ -24,10 +32,18 @@ export const PlanForm = (props: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [planId, setPlanId] = useState<BaseKey | undefined>(props.id);
 
+  const { data: orderData } = useOne<IOrder>({
+    resource: "orders",
+    id: props.orderIds?.[0],
+    queryOptions: {
+      enabled: !!props.orderIds?.length,
+    },
+  });
+
   const { current, gotoStep, stepsProps, formProps, saveButtonProps, form, submit } =
     useStepsForm<IPlan>({
       resource: "plans",
-      id: planId || props?.id,
+      id: planId ?? props?.id,
       action: planId ? "edit" : props.action,
       redirect: false,
       queryOptions: {
@@ -58,6 +74,9 @@ export const PlanForm = (props: Props) => {
       },
     });
 
+  const hasOrder =
+    (props.orderIds?.length ?? 0) > 0 || formProps.initialValues?.order_ids?.length > 0;
+
   useEffect(() => {
     if (expert_id !== undefined) {
       form.setFieldValue("expert_id", expert_id);
@@ -66,9 +85,26 @@ export const PlanForm = (props: Props) => {
     if (expert_name !== undefined) {
       form.setFieldValue("updated_by", expert_name);
     }
-  }, [expert_id, expert_name, form]);
 
-  const { formList } = useFormList({ formProps, planId });
+    if (props.orderIds && props.orderIds.length > 0) {
+      form.setFieldValue(
+        "order_ids",
+        props.orderIds.map((id) => parseInt(id)),
+      );
+    }
+
+    if (orderData?.data) {
+      const order = orderData.data;
+      form.setFieldValue("order_plant_id", order.plant_id);
+      form.setFieldValue("order_plant_name", order.plant_name);
+    }
+  }, [expert_id, expert_name, props.orderIds, form, orderData]);
+
+  const { formList } = useFormList({
+    formProps,
+    planId,
+    canEditPlant: !hasOrder,
+  });
 
   const handleCancel = () => {
     go({

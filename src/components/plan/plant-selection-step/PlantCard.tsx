@@ -6,21 +6,30 @@ interface PlantCardProps {
   isSelected: boolean;
   onSelect: (id: number) => void;
   t: (key: string) => string;
+  isFromOrder?: boolean;
+  disabled?: boolean;
 }
 
-export const PlantCard: React.FC<PlantCardProps> = ({ plant, isSelected, onSelect, t }) => {
-  const isAvailable = plant.status?.toLowerCase() === "available";
+export const PlantCard: React.FC<PlantCardProps> = ({
+  plant,
+  isSelected,
+  onSelect,
+  t,
+  isFromOrder,
+  disabled = false,
+}) => {
+  const isAvailable = plant.status?.toLowerCase() === "available" && !disabled;
 
   return (
     <Badge.Ribbon
-      text={t("plants.selected")}
-      color="green"
+      text={isFromOrder ? t("plants.fromOrder") : t("plants.selected")}
+      color={isFromOrder ? "blue" : "green"}
       style={{ display: isSelected ? "block" : "none" }}
     >
       <Card
         hoverable={isAvailable}
         style={{
-          borderColor: isSelected ? "#52c41a" : undefined,
+          borderColor: getBorderColor(isSelected, isFromOrder),
           transition: "all 0.3s",
           transform: isSelected ? "translateY(-5px)" : undefined,
           height: "100%",
@@ -127,4 +136,11 @@ const getStatusColor = (status: string) => {
     default:
       return "default";
   }
+};
+
+const getBorderColor = (isSelected: boolean, isFromOrder: boolean | undefined) => {
+  if (isSelected) {
+    return isFromOrder ? "#1890ff" : "#52c41a";
+  }
+  return undefined;
 };
