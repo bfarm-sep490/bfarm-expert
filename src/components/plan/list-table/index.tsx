@@ -4,6 +4,7 @@ import {
   useGo,
   useNavigation,
   useTranslate,
+  useInvalidate,
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
 import type { IPlan } from "../../../interfaces";
@@ -21,6 +22,7 @@ export const PlanListTable = () => {
   const go = useGo();
   const { pathname } = useLocation();
   const { showUrl } = useNavigation();
+  const invalidate = useInvalidate();
 
   const { tableProps, sorters, filters } = useTable<IPlan, HttpError>({
     filters: {
@@ -284,34 +286,6 @@ export const PlanListTable = () => {
         )}
       />
 
-      <Table.Column
-        title={
-          <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.is_approved", "Approved")}
-          </Typography.Text>
-        }
-        dataIndex="is_approved"
-        render={(value: boolean) => (
-          <Tag color={value ? "success" : "error"}>{value ? t("common.yes") : t("common.no")}</Tag>
-        )}
-        filterIcon={(filtered) => (
-          <FilterOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
-        )}
-        defaultFilteredValue={getDefaultFilter("is_approved", filters, "eq")}
-        filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Select
-              style={{ width: "100%" }}
-              allowClear
-              placeholder={t("plans.filter.is_approved.placeholder")}
-            >
-              <Select.Option value={true}>{t("common.yes")}</Select.Option>
-              <Select.Option value={false}>{t("common.no")}</Select.Option>
-            </Select>
-          </FilterDropdown>
-        )}
-      />
-
       <Table.Column<IPlan>
         fixed="right"
         title={
@@ -320,7 +294,17 @@ export const PlanListTable = () => {
         dataIndex="actions"
         key="actions"
         align="center"
-        render={(_value, record) => <PlanActions record={record} />}
+        render={(_value, record) => (
+          <PlanActions
+            record={record}
+            onSuccess={() => {
+              invalidate({
+                resource: "plans",
+                invalidates: ["list"],
+              });
+            }}
+          />
+        )}
       />
     </Table>
   );

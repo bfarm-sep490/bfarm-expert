@@ -48,6 +48,10 @@
       "list": "Danh mục"
     }
   },
+  "common": {
+    "no": "Không",
+    "yes": "Có"
+  },
   "dashboard": {
     "dailyOrders": {
       "title": "Đơn hàng hàng ngày"
@@ -244,8 +248,10 @@
       }
     },
     "status": {
+      "cancel": "Hủy",
       "cancelled": "Đã Hủy",
       "completed": "Hoàn Thành",
+      "draft": "Nháp",
       "ongoing": "Đang Tiến Hành",
       "pending": "Chờ Xử Lý"
     }

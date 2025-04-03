@@ -13,6 +13,7 @@ interface OrderData {
   status: string;
   estimate_pick_up_date: string;
   plant_id: number;
+  plant_name: string;
   retailer_id: number;
   disabled?: boolean;
 }
@@ -216,7 +217,7 @@ export const PlanSelectionModal = ({
                           : "default"
                       }
                     >
-                      Cây #{item.plant_id}
+                      #{item.plant_name}
                     </Tag>
                   </Space>
                   <Space>

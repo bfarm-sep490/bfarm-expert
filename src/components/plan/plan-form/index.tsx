@@ -145,12 +145,12 @@ export const PlanForm = (props: Props) => {
     try {
       form.setFieldValue("expert_id", expert_id);
       form.setFieldValue("updated_by", expert_name);
-      if (saveButtonProps.onClick) {
-        await saveButtonProps.onClick();
-      }
+      saveButtonProps.onClick();
       message.success(t("plans.messages.draftSuccess", "Draft saved successfully"));
       go({
-        to: getToPath({ action: "list" }) ?? "",
+        to: searchParams.get("to") ?? getToPath({ action: "list" }) ?? "",
+        query: { to: undefined },
+        options: { keepQuery: true },
         type: "replace",
       });
     } catch (error) {
@@ -159,6 +159,22 @@ export const PlanForm = (props: Props) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const enhancedSaveButtonProps = {
+    ...saveButtonProps,
+    onClick: () => {
+      if (saveButtonProps.onClick) {
+        form.setFieldValue("updated_by", expert_name);
+        saveButtonProps.onClick();
+      }
+      go({
+        to: searchParams.get("to") ?? getToPath({ action: "list" }) ?? "",
+        query: { to: undefined },
+        options: { keepQuery: true },
+        type: "replace",
+      });
+    },
   };
 
   const handleNextStep = () => {
@@ -209,7 +225,11 @@ export const PlanForm = (props: Props) => {
             {t("buttons.previousStep")}
           </Button>
           {isLastStep ? (
-            <SaveButton {...saveButtonProps} loading={isSubmitting} disabled={isSubmitting} />
+            <SaveButton
+              {...enhancedSaveButtonProps}
+              loading={isSubmitting}
+              disabled={isSubmitting}
+            />
           ) : (
             <Button
               type="primary"

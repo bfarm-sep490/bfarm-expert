@@ -48,6 +48,10 @@
       "list": "Categories"
     }
   },
+  "common": {
+    "no": "No",
+    "yes": "Yes"
+  },
   "dashboard": {
     "dailyOrders": {
       "title": "Daily Orders"
@@ -244,8 +248,10 @@
       }
     },
     "status": {
+      "cancel": "Cancel",
       "cancelled": "Cancelled",
       "completed": "Completed",
+      "draft": "Draft",
       "ongoing": "Ongoing",
       "pending": "Pending"
     }

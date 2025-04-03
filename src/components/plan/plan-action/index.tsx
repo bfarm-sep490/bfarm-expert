@@ -1,6 +1,6 @@
-import { useGo, useNavigation, useTranslate } from "@refinedev/core";
+import { useGo, useNavigation, useTranslate, useCustomMutation, useApiUrl } from "@refinedev/core";
 import { EditOutlined, MoreOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps, Space } from "antd";
+import { Dropdown, MenuProps, Space, message } from "antd";
 import { DeleteButton, EditButton } from "@refinedev/antd";
 import { IPlan } from "@/interfaces";
 import { useLocation } from "react-router";
@@ -15,6 +15,36 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
   const go = useGo();
   const { pathname } = useLocation();
   const { editUrl } = useNavigation();
+  const apiUrl = useApiUrl();
+
+  const { mutate: updateStatus } = useCustomMutation();
+
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      updateStatus(
+        {
+          url: `${apiUrl}/plans/${record.id}/status?status=${newStatus}&report_by=Expert`,
+          method: "put",
+          values: {},
+        },
+        {
+          onSuccess: () => {
+            message.success(t("plans.messages.statusUpdateSuccess", "Status updated successfully"));
+            if (onSuccess) {
+              onSuccess();
+            }
+          },
+          onError: () => {
+            message.error(t("plans.messages.statusUpdateError", "Failed to update status"));
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Status update error:", error);
+      message.error(t("plans.messages.statusUpdateError", "Failed to update status"));
+    }
+  };
+
   const items: MenuProps["items"] = [
     {
       key: "edit",
@@ -61,6 +91,22 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
       ),
     },
   ];
+
+  if (record.status === "Draft" || record.status === "Pending") {
+    items.push(
+      {
+        type: "divider",
+      },
+      {
+        key: "changeStatus",
+        label:
+          record.status === "Draft"
+            ? t("plans.actions.submitForApproval", "Approval")
+            : t("plans.actions.moveToDraft", "Draft"),
+        onClick: () => handleStatusChange(record.status === "Draft" ? "Pending" : "Draft"),
+      },
+    );
+  }
 
   return (
     <>
