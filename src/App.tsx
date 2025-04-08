@@ -1,7 +1,16 @@
-import { DashboardOutlined, ExperimentOutlined, ScheduleOutlined } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  ExperimentOutlined,
+  ScheduleOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import "dayjs/locale/vi";
 
-import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
+import {
+  useNotificationProvider,
+  ThemedLayoutV2,
+  ErrorComponent,
+} from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 import { Authenticated, IResourceItem, Refine } from "@refinedev/core";
 import { RefineKbarProvider, RefineKbar } from "@refinedev/kbar";
@@ -28,6 +37,8 @@ import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
 import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
+import { ProblemListInProblems } from "./pages/problems/list";
+import { ProblemShowV2 } from "./pages/problems/show";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -79,8 +90,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              notificationProvider={useNotificationProvider}
-              liveProvider={liveProvider(ablyClient)}
+              // notificationProvider={useNotificationProvider}
+              // liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",
@@ -98,6 +109,16 @@ const App: React.FC = () => {
                   show: "/plans/:id",
                   meta: {
                     icon: <ScheduleOutlined />,
+                  },
+                },
+                {
+                  name: "problems",
+                  list: "/problems",
+                  show: "/problems/:id",
+                  meta: {
+                    label: "Vấn đề",
+                    icon: <WarningOutlined />,
+                    route: "/problems",
                   },
                 },
                 {
@@ -144,7 +165,16 @@ const App: React.FC = () => {
                     <Route path=":id" element={<PlanShow />} />
                     <Route path="edit/:id" element={<PlanEdit />} />
                   </Route>
-
+                  <Route
+                    path="/problems"
+                    element={
+                      <ProblemListInProblems>
+                        <Outlet></Outlet>
+                      </ProblemListInProblems>
+                    }
+                  >
+                    <Route path=":id" element={<ProblemShowV2 />} />
+                  </Route>
                   <Route path="/plants">
                     <Route
                       path=""
@@ -196,8 +226,14 @@ const App: React.FC = () => {
                       />
                     }
                   />
-                  <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
-                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
+                  <Route
+                    path="/forgot-password"
+                    element={<AuthPage type="forgotPassword" />}
+                  />
+                  <Route
+                    path="/update-password"
+                    element={<AuthPage type="updatePassword" />}
+                  />
                 </Route>
 
                 <Route
