@@ -84,8 +84,10 @@ var defaultMessages = {
     return "+" + total + " cái khác";
   },
 };
-
-export const ScheduleComponent = () => {
+type ScheduleComponentProps = {
+  status?: string;
+};
+export const ScheduleComponent = (props: ScheduleComponentProps) => {
   const [open, setOpen] = useState(false);
   const [viewComponent, setViewComponent] = useState("Schedule");
 
@@ -815,7 +817,7 @@ export const ScheduleComponent = () => {
       <AssignTaskModal
         api={api}
         planId={id ? parseInt(id, 10) : undefined}
-        type="Ongoing"
+        type={props?.status}
         refetch={refetchAll}
         open={open}
         onClose={() => setOpen(false)}

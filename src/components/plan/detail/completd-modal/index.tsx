@@ -2,17 +2,26 @@ import { useEffect } from "react";
 import { useModalForm } from "@refinedev/antd";
 import { Modal, Form, Button, Typography } from "antd";
 import { useNavigate } from "react-router";
-import { useBack, useCustomMutation, useDelete, useUpdate } from "@refinedev/core";
+import {
+  useBack,
+  useCustomMutation,
+  useDelete,
+  useGetIdentity,
+  useUpdate,
+} from "@refinedev/core";
+import { IIdentity } from "@/interfaces";
 
 type Props = {
   visible: boolean;
   id: number;
   onClose: () => void;
   status: string;
+  refetch?: () => void;
 };
 
-export const StatusModal = ({ id, visible, onClose, status }: Props) => {
+export const StatusModal = ({ id, visible, onClose, status, refetch }: Props) => {
   const navigate = useNavigate();
+  const { data: user } = useGetIdentity<IIdentity>();
   const { isLoading, mutate } = useUpdate();
   const { isLoading: deletedLoading, mutate: deletedMutate } = useDelete();
   const getMessage = () => {
@@ -32,12 +41,15 @@ export const StatusModal = ({ id, visible, onClose, status }: Props) => {
         mutate(
           {
             resource: "plans",
-            id: `${id}/status/${status}`,
-            values: {},
+            id: `${id}/plan-public`,
+            values: {
+              report_by: user?.name,
+            },
           },
           {
             onSuccess: () => {
-              back();
+              refetch?.();
+              onClose?.();
             },
           },
         );
@@ -52,7 +64,7 @@ export const StatusModal = ({ id, visible, onClose, status }: Props) => {
             onSuccess: () => {
               back();
             },
-          },
+          }
         );
       }
     } catch (error) {
@@ -70,14 +82,21 @@ export const StatusModal = ({ id, visible, onClose, status }: Props) => {
         <Button key="cancel" loading={isLoading} onClick={onClose}>
           Hủy bỏ
         </Button>,
-        <Button key="submit" type="primary" onClick={updateItem} loading={isLoading}>
+        <Button
+          key="submit"
+          type="primary"
+          onClick={updateItem}
+          loading={isLoading}
+        >
           Xác nhận
         </Button>,
       ]}
     >
       <Typography.Text>{getMessage()}</Typography.Text>
       <br />
-      <Typography.Text style={{ color: "red", fontSize: 11, fontStyle: "italic" }}>
+      <Typography.Text
+        style={{ color: "red", fontSize: 11, fontStyle: "italic" }}
+      >
         *Chú ý: Hành động này không thể hoàn tác
       </Typography.Text>
     </Modal>

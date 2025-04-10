@@ -88,6 +88,8 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
     data: generalData,
     isLoading: generalLoading,
     error: generalError,
+    refetch: generalRefetch,
+    isFetching: generalFetching,
   } = useOne<IGeneralPlan, HttpError>({
     resource: "plans",
     id: `${id}/general`,
@@ -106,6 +108,8 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
     data: taskDashBoardData,
     isLoading: isTaskDashboardLoading,
     error: taskDashBoardError,
+    refetch: taskDashBoardRefetch,
+    isFetching: taskDashBoardFetching,
   } = useOne<any, HttpError>({
     resource: "plans",
     id: `${id}/tasks/count`,
@@ -114,6 +118,8 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
     data: inspectingTaskData,
     isLoading: inspectingTaskLoading,
     error: inspectingTaskError,
+    refetch: inspectingTaskRefetch,
+    isFetching: inspectingTaskFetching,
   } = useList<any, HttpError>({
     resource: "inspecting-forms",
     filters: [
@@ -187,10 +193,12 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
   const general_info = generalData?.data;
 
   const navigate = useNavigate();
-  const { data: packagingProductsData, isLoading: packagingProductsLoading } = useList<
-    any,
-    HttpError
-  >({
+  const {
+    data: packagingProductsData,
+    isLoading: packagingProductsLoading,
+    isFetching: packagingProductFetching,
+    refetch: packagingProductRefetch,
+  } = useList<any, HttpError>({
     resource: `packaging-products`,
     filters: [
       {
@@ -200,10 +208,21 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
       },
     ],
   });
-  const { data: packagingTypesData, isLoading: packagingTypesLoading } = useList<any, HttpError>({
+  const {
+    data: packagingTypesData,
+    isLoading: packagingTypesLoading,
+
+    isFetching: packagingTypeFetching,
+    refetch: packagingTypeRefetch,
+  } = useList<any, HttpError>({
     resource: `packaging-types`,
   });
-  const { data: harvestingProductsData } = useList<any, HttpError>({
+  const {
+    data: harvestingProductsData,
+    isLoading: harvestingProductsLoading,
+    isFetching: harvestingProductFetching,
+    refetch: harvestingProductRefetch,
+  } = useList<any, HttpError>({
     resource: `harvesting-product`,
     filters: [
       {
@@ -214,7 +233,12 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
     ],
   });
   const harvesting_products = harvestingProductsData?.data as any[];
-  const { data: orderData, isLoading: orderLoading } = useList<any, HttpError>({
+  const {
+    data: orderData,
+    isLoading: orderLoading,
+    refetch: orderRetch,
+    isFetching: orderFetching,
+  } = useList<any, HttpError>({
     resource: `orders`,
     filters: [
       {
@@ -321,7 +345,8 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     <UserOutlined style={{ fontSize: 16 }} />
                     <Typography.Text strong>Cây trồng:</Typography.Text>
                     <Typography.Text>
-                      {general_info?.plant_information?.plant_name || "Chưa xác định"}
+                      {general_info?.plant_information?.plant_name ||
+                        "Chưa xác định"}
                     </Typography.Text>
                   </Space>
 
@@ -329,7 +354,10 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     <GoldOutlined style={{ fontSize: 16 }} />
                     <Typography.Text strong>Khu đất</Typography.Text>
                     <Typography.Text>
-                      <Tag>{general_info?.yield_information?.yield_name || "Chưa xác định"}</Tag>
+                      <Tag>
+                        {general_info?.yield_information?.yield_name ||
+                          "Chưa xác định"}
+                      </Tag>
                     </Typography.Text>
                   </Space>
                   <Space align="start" style={{ marginTop: 12 }}>
@@ -351,9 +379,14 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     <Typography.Text strong>Ngày tạo:</Typography.Text>
                     <Typography.Text type="secondary">
                       {general_info?.created_at ? (
-                        <DateField value={general_info?.created_at} format="hh:mm DD/MM/YYYY" />
+                        <DateField
+                          value={general_info?.created_at}
+                          format="hh:mm DD/MM/YYYY"
+                        />
                       ) : (
-                        <Typography.Text type="danger">Chưa xác định</Typography.Text>
+                        <Typography.Text type="danger">
+                          Chưa xác định
+                        </Typography.Text>
                       )}
                     </Typography.Text>
                   </Space>
@@ -380,7 +413,18 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
         </Card>
         <Divider />
         <DropDownSection title="Tổng quan">
-          <Card>
+          <Card
+            loading={
+              generalLoading ||
+              generalFetching ||
+              packagingProductFetching ||
+              packagingTypeFetching ||
+              packagingProductsLoading ||
+              packagingTypesLoading ||
+              orderFetching ||
+              orderLoading
+            }
+          >
             <Flex
               gap={44}
               vertical={!breakpoint.sm || !breakpoint.md}
@@ -406,8 +450,12 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                   }}
                 >
                   <Typography.Text color="secondary" style={{ fontSize: 36 }}>
-                    <Typography.Text strong style={{ fontSize: 44, color: "#00E396" }}>
-                      {orders?.filter((x) => x.status === "Complete")?.length ?? 0}
+                    <Typography.Text
+                      strong
+                      style={{ fontSize: 44, color: "#00E396" }}
+                    >
+                      {orders?.filter((x) => x.status === "Complete")?.length ??
+                        0}
                     </Typography.Text>
 
                     <TextField
@@ -419,7 +467,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
               </Flex>
               <Divider
                 style={{ height: 200 }}
-                type={breakpoint.sm || breakpoint.md ? "vertical" : "horizontal"}
+                type={
+                  breakpoint.sm || breakpoint.md ? "vertical" : "horizontal"
+                }
               />
               <Flex
                 style={{
@@ -445,13 +495,17 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                         ?.map((x) => x?.available_harvesting_quantity)
                         ?.reduce((acc, curr) => acc + curr, 0) || 0
                     }
-                    total_harvesting_products={general_info?.estimated_product || 0}
+                    total_harvesting_products={
+                      general_info?.estimated_product || 0
+                    }
                   />
                 </Flex>
               </Flex>
               <Divider
                 style={{ height: 200 }}
-                type={breakpoint.sm || breakpoint.md ? "vertical" : "horizontal"}
+                type={
+                  breakpoint.sm || breakpoint.md ? "vertical" : "horizontal"
+                }
               />
               <Flex
                 style={{
@@ -527,7 +581,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                 <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                   <ActivityCard
                     icon={<BranchesOutlined style={{ color: "#52c41a" }} />}
-                    completedTasks={caring_task_dashboard?.complete_quantity || 0}
+                    completedTasks={
+                      caring_task_dashboard?.complete_quantity || 0
+                    }
                     title="Chăm sóc"
                     loading={isTaskDashboardLoading}
                     totalActivity={
@@ -539,7 +595,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     }
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(caring_task_dashboard?.last_create_date).toLocaleDateString()
+                      new Date(
+                        caring_task_dashboard?.last_create_date
+                      ).toLocaleDateString()
                     }
                   />
                 </Col>
@@ -549,7 +607,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     loading={inspectingTaskLoading}
                     icon={<AuditOutlined style={{ color: "#fa8c16" }} />}
                     completedTasks={
-                      inspecting_task_dashboard?.filter((x) => x.status === "Complete")?.length || 0
+                      inspecting_task_dashboard?.filter(
+                        (x) => x.status === "Complete"
+                      )?.length || 0
                     }
                     title="Kiểm định"
                     totalActivity={inspecting_task_dashboard?.length || 0}
@@ -560,7 +620,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                 <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                   <ActivityCard
                     icon={<GiftOutlined style={{ color: "#52c41a" }} />}
-                    completedTasks={havesting_task_dashboard?.complete_quantity || 0}
+                    completedTasks={
+                      havesting_task_dashboard?.complete_quantity || 0
+                    }
                     loading={isTaskDashboardLoading}
                     title="Thu hoạch"
                     totalActivity={
@@ -572,7 +634,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     }
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(havesting_task_dashboard?.last_create_date).toLocaleDateString()
+                      new Date(
+                        havesting_task_dashboard?.last_create_date
+                      ).toLocaleDateString()
                     }
                   />
                 </Col>
@@ -580,7 +644,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                 <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                   <ActivityCard
                     icon={<AuditOutlined style={{ color: "#fa8c16" }} />}
-                    completedTasks={packaging_task_dashboard?.complete_quantity || 0}
+                    completedTasks={
+                      packaging_task_dashboard?.complete_quantity || 0
+                    }
                     loading={isTaskDashboardLoading}
                     totalActivity={
                       packaging_task_dashboard?.cancel_quantity +
@@ -592,14 +658,16 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     title="Đóng gói"
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(packaging_task_dashboard?.last_create_date).toLocaleDateString()
+                      new Date(
+                        packaging_task_dashboard?.last_create_date
+                      ).toLocaleDateString()
                     }
                   />
                 </Col>
               </Row>
             </Col>
           </Row>
-          <ScheduleComponent />
+          <ScheduleComponent status={general_info?.status} />
         </DropDownSection>
 
         {/* <DropDownSection title="Quan sát">
@@ -682,6 +750,20 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
         id={Number(id)}
         onClose={() => setCompletedModal(false)}
         status={valueModal}
+        refetch={() => {
+          generalRefetch();
+          taskDashBoardRefetch();
+          inspectingTaskRefetch();
+          caringRefetch();
+          harvestingRefetch();
+          packagingRefetch();
+          chosenFarmerRefetch();
+          orderRetch();
+          packagingProductRefetch();
+          packagingTypeRefetch();
+          harvestingProductRefetch();
+          problemRefetch();
+        }}
       />
       {children}{" "}
     </div>
