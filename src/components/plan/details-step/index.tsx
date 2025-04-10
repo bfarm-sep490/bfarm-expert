@@ -1,10 +1,23 @@
-import { Form, Select, Input, Flex, DatePicker, InputNumber, Typography } from "antd";
+import { Form, Input, Flex, DatePicker, InputNumber, Typography } from "antd";
 import { useEffect } from "react";
 import dayjs from "dayjs";
+import { useLocation } from "react-router";
 const { Text } = Typography;
 
 export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
   const form = Form.useFormInstance();
+  const orderPlantId = form.getFieldValue("order_plant_id");
+  const estimatedPerOne = form.getFieldValue("estimated_per_one");
+  const location = useLocation();
+
+  // Get totalPreorderQuantity from URL
+  const getTotalPreorderQuantity = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const totalPreorderQuantity = searchParams.get("totalPreorderQuantity");
+    return totalPreorderQuantity ? parseInt(totalPreorderQuantity) : 0;
+  };
+
+  const totalPreorderQuantity = getTotalPreorderQuantity();
 
   useEffect(() => {
     // Ensure form values are properly set and convert string dates to dayjs objects
@@ -22,6 +35,15 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
       });
     }
   }, [form]);
+
+  // Calculate seed_quantity when estimated_product changes
+  useEffect(() => {
+    const estimatedProduct = form.getFieldValue("estimated_product");
+    if (estimatedProduct && estimatedPerOne) {
+      const seedQuantity = Math.ceil(estimatedProduct / estimatedPerOne);
+      form.setFieldValue("seed_quantity", seedQuantity);
+    }
+  }, [form.getFieldValue("estimated_product"), estimatedPerOne, form]);
 
   return (
     <Flex vertical>
@@ -121,10 +143,35 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
       </Flex>
 
       {/* Estimated Product & Unit */}
-      <Flex gap={16} align="flex-start">
+      <Flex gap={16}>
         <Form.Item
           label={<Text strong>{t("plans.fields.estimatedProduct.label")}</Text>}
           name="estimated_product"
+          style={{ flex: 1 }}
+          rules={[
+            {
+              required: true,
+              message: t("plans.fields.estimatedProduct.required"),
+            },
+          ]}
+        >
+          <InputNumber
+            min={orderPlantId ? form.getFieldValue("estimated_product") : totalPreorderQuantity}
+            placeholder={t("plans.fields.estimatedProduct.placeholder")}
+            size="large"
+            style={{ width: "100%", borderRadius: "8px" }}
+            onChange={(value) => {
+              if (value && estimatedPerOne) {
+                const seedQuantity = Math.ceil(value / estimatedPerOne);
+                form.setFieldValue("seed_quantity", seedQuantity);
+              }
+            }}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={<Text strong>{t("plans.fields.seedQuantity.label")}</Text>}
+          name="seed_quantity"
           style={{ flex: 1 }}
         >
           <InputNumber
@@ -132,22 +179,7 @@ export const DetailsStep = ({ t }: { t: (key: string) => string }) => {
             placeholder={t("plans.fields.estimatedProduct.placeholder")}
             size="large"
             style={{ width: "100%", borderRadius: "8px" }}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={<Text strong>{t("plans.fields.estimatedUnit.label")}</Text>}
-          name="estimated_unit"
-          style={{ width: "320px" }}
-        >
-          <Select
-            options={[
-              { label: "kg", value: "kg" },
-              { label: "ton", value: "ton" },
-            ]}
-            placeholder={t("plans.fields.estimatedUnit.placeholder")}
-            size="large"
-            style={{ borderRadius: "8px" }}
+            disabled
           />
         </Form.Item>
       </Flex>

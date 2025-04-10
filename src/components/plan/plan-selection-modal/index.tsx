@@ -21,7 +21,7 @@ interface OrderData {
 interface PlanSelectionModalProps {
   open: boolean;
   onClose: () => void;
-  onCreateWithOrders: (orderIds: string[]) => void;
+  onCreateWithOrders: (orderIds: string[], totalPreorderQuantity: number) => void;
   onCreateNormal: () => void;
 }
 
@@ -119,7 +119,12 @@ export const PlanSelectionModal = ({
 
   const handleCreate = () => {
     if (option === "with_orders") {
-      onCreateWithOrders(selectedOrders);
+      const totalPreorderQuantity = selectedOrders.reduce((total, orderId) => {
+        const order = tableData.find((order) => order.key === orderId);
+        return total + (order?.preorder_quantity || 0);
+      }, 0);
+
+      onCreateWithOrders(selectedOrders, totalPreorderQuantity);
     } else {
       onCreateNormal();
     }
@@ -242,7 +247,7 @@ export const PlanSelectionModal = ({
               ]}
               style={{ width: "100%" }}
               listStyle={{
-                width: "100%",
+                flex: 1,
                 height: 400,
               }}
               showSearch

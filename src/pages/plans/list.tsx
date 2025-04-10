@@ -24,12 +24,13 @@ export const PlanList = () => {
     localStorage.setItem("plan-view", value);
   };
 
-  const handleCreateWithOrders = (orderIds: string[]) => {
+  const handleCreateWithOrders = (orderIds: string[], totalPreorderQuantity: number) => {
     go({
       to: `${createUrl("plans")}`,
       query: {
         to: pathname,
         orderIds: orderIds.join(","),
+        totalPreorderQuantity,
       },
       options: {
         keepQuery: true,

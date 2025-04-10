@@ -1,6 +1,6 @@
 import { useGo, useNavigation, useTranslate, useCustomMutation, useApiUrl } from "@refinedev/core";
-import { EditOutlined, MoreOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps, Space, message } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
+import { Dropdown, MenuProps, Space, message, Button } from "antd";
 import { DeleteButton, EditButton } from "@refinedev/antd";
 import { IPlan } from "@/interfaces";
 import { useLocation } from "react-router";
@@ -49,10 +49,10 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
     {
       key: "edit",
       label: (
-        <EditButton
-          key="edit"
-          size="small"
+        <Button
           type="text"
+          size="small"
+          style={{ width: "100%", textAlign: "left", padding: "4px 8px" }}
           onClick={() => {
             return go({
               to: `${editUrl("plans", record.id)}`,
@@ -67,29 +67,34 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
           }}
         >
           {t("actions.edit")}
-        </EditButton>
+        </Button>
       ),
     },
     {
       type: "divider",
     },
-    {
-      key: "delete",
-      label: (
-        <DeleteButton
-          key="delete"
-          type="text"
-          size="small"
-          recordItemId={record.id}
-          resource="plans"
-          onSuccess={() => {
-            if (onSuccess) {
-              onSuccess();
-            }
-          }}
-        />
-      ),
-    },
+    ...(record.status !== "Ongoing"
+      ? [
+          {
+            key: "delete",
+            label: (
+              <DeleteButton
+                key="delete"
+                type="text"
+                size="small"
+                recordItemId={record.id}
+                resource="plans"
+                style={{ width: "100%", textAlign: "left", padding: "4px 8px" }}
+                onSuccess={() => {
+                  if (onSuccess) {
+                    onSuccess();
+                  }
+                }}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   if (record.status === "Draft" || record.status === "Pending") {
@@ -99,11 +104,18 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
       },
       {
         key: "changeStatus",
-        label:
-          record.status === "Draft"
-            ? t("plans.actions.submitForApproval", "Approval")
-            : t("plans.actions.moveToDraft", "Draft"),
-        onClick: () => handleStatusChange(record.status === "Draft" ? "Pending" : "Draft"),
+        label: (
+          <Button
+            type="text"
+            size="small"
+            style={{ width: "100%", textAlign: "left", padding: "4px 8px" }}
+            onClick={() => handleStatusChange(record.status === "Draft" ? "Pending" : "Draft")}
+          >
+            {record.status === "Draft"
+              ? t("plans.actions.submitForApproval", "Approval")
+              : t("plans.actions.moveToDraft", "Draft")}
+          </Button>
+        ),
       },
     );
   }

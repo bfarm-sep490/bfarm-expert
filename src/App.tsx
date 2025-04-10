@@ -39,6 +39,8 @@ import { HarvestingProductShow } from "./components/production/harvesting/drawer
 import { HarvestingProductionListPage } from "./pages/harvesting-production/list";
 import { PackagedProductListPage } from "./pages/packaging-production/list";
 import { PackagingProductShow } from "./components/production/packaging/drawer-show";
+import { liveProvider } from "@refinedev/ably";
+import { ablyClient } from "./utils/ablyClient";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -90,8 +92,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              // notificationProvider={useNotificationProvider}
-              // liveProvider={liveProvider(ablyClient)}
+              notificationProvider={useNotificationProvider}
+              liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",

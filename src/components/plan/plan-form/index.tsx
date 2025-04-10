@@ -5,6 +5,7 @@ import {
   useGetIdentity,
   BaseKey,
   useOne,
+  useInvalidate,
 } from "@refinedev/core";
 import { SaveButton, useStepsForm } from "@refinedev/antd";
 import { Form, Button, Steps, Flex, message } from "antd";
@@ -19,6 +20,7 @@ type Props = {
   action: "create" | "edit";
   onMutationSuccess?: () => void;
   orderIds?: string[];
+  totalPreorderQuantity?: number;
 };
 
 export const PlanForm = (props: Props) => {
@@ -26,6 +28,7 @@ export const PlanForm = (props: Props) => {
   const getToPath = useGetToPath();
   const [searchParams] = useSearchParams();
   const go = useGo();
+  const invalidate = useInvalidate();
   const { data: identity } = useGetIdentity<{ id: number; name: string }>();
   const expert_id = identity?.id;
   const expert_name = identity?.name;
@@ -74,6 +77,34 @@ export const PlanForm = (props: Props) => {
       },
     });
 
+  useEffect(() => {
+    if (current === 4) {
+      if (planId) {
+        invalidate({
+          resource: "plans",
+          invalidates: ["detail"],
+          id: planId,
+        });
+      } else if (props.id) {
+        invalidate({
+          resource: "plans",
+          invalidates: ["detail"],
+          id: props.id,
+        });
+      }
+    }
+  }, [current, planId, props.id, invalidate]);
+
+  useEffect(() => {
+    if (planId) {
+      invalidate({
+        resource: "plans",
+        invalidates: ["detail"],
+        id: planId,
+      });
+    }
+  }, [planId, invalidate]);
+
   const hasOrder =
     (props.orderIds?.length ?? 0) > 0 || formProps.initialValues?.order_ids?.length > 0;
 
@@ -93,12 +124,16 @@ export const PlanForm = (props: Props) => {
       );
     }
 
+    if (props.totalPreorderQuantity !== undefined && props.totalPreorderQuantity > 0) {
+      form.setFieldValue("estimated_product", props.totalPreorderQuantity);
+    }
+
     if (orderData?.data) {
       const order = orderData.data;
       form.setFieldValue("order_plant_id", order.plant_id);
       form.setFieldValue("order_plant_name", order.plant_name);
     }
-  }, [expert_id, expert_name, props.orderIds, form, orderData]);
+  }, [expert_id, expert_name, props.orderIds, props.totalPreorderQuantity, form, orderData]);
 
   const { formList } = useFormList({
     formProps,

@@ -8,14 +8,13 @@ import {
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
 import type { IPlan } from "../../../interfaces";
-import { Input, InputNumber, Select, Table, theme, Typography, Tag, Space } from "antd";
+import { Input, InputNumber, Select, Table, theme, Typography, Tag } from "antd";
 import { PaginationTotal } from "../../paginationTotal";
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router";
 import { NumberWithUnit } from "../number-with-unit";
 import { PlanActions } from "../plan-action";
 import dayjs from "dayjs";
-import { use } from "react";
 
 export const PlanListTable = () => {
   const { token } = theme.useToken();
@@ -64,11 +63,6 @@ export const PlanListTable = () => {
   const navigate = useNavigate();
   return (
     <Table
-      onRow={(record) => ({
-        onClick: () => {
-          navigate(`${record.id}`);
-        },
-      })}
       {...tableProps}
       rowKey="id"
       scroll={{ x: true }}
@@ -93,7 +87,9 @@ export const PlanListTable = () => {
           <Typography.Text
             style={{
               whiteSpace: "nowrap",
+              cursor: "pointer",
             }}
+            onClick={() => navigate(`${value}`)}
           >
             #{value}
           </Typography.Text>
@@ -128,11 +124,13 @@ export const PlanListTable = () => {
             <Input placeholder={t("plans.filter.plan_name.placeholder")} />
           </FilterDropdown>
         )}
-        render={(value: string) => (
+        render={(value: string, record: IPlan) => (
           <Typography.Text
             style={{
               whiteSpace: "nowrap",
+              cursor: "pointer",
             }}
+            onClick={() => navigate(`${record.id}`)}
           >
             {value}
           </Typography.Text>

@@ -1,18 +1,5 @@
 import { PaginationTotal } from "@/components/paginationTotal";
-import {
-  Flex,
-  Form,
-  List,
-  Select,
-  Empty,
-  Input,
-  Spin,
-  Button,
-  Space,
-  Alert,
-  Tag,
-  Tooltip,
-} from "antd";
+import { Flex, Form, List, Select, Empty, Input, Spin, Button, Space, Tag, Tooltip } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { IPlant } from "@/interfaces";
 import { PlantCard } from "./PlantCard";
@@ -44,19 +31,14 @@ export const PlantSelectionStep = ({
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const pageSize = 4;
   const form = Form.useFormInstance();
-
-  const orderIds = form.getFieldValue("order_ids") || [];
-
   const orderPlantId = form.getFieldValue("order_plant_id");
 
   const availableStatuses = [...new Set(plants.map((item) => item.status))].filter(Boolean);
   const availableTypes = [...new Set(plants.map((item) => item.type))].filter(Boolean);
 
-  // Sử dụng useCallback để memoize hàm applyFilters
   const applyFilters = useCallback(() => {
     let filtered = [...plants];
 
-    // Áp dụng bộ lọc văn bản
     if (searchText.trim() !== "") {
       filtered = filtered.filter(
         (plant) =>
@@ -93,8 +75,13 @@ export const PlantSelectionStep = ({
   useEffect(() => {
     if (selectedPlantId) {
       form.setFieldValue("plant_id", selectedPlantId);
+      // Find the selected plant and set its estimated_per_one value
+      const selectedPlant = plants.find((plant) => plant.id === selectedPlantId);
+      if (selectedPlant) {
+        form.setFieldValue("estimated_per_one", selectedPlant.estimated_per_one);
+      }
     }
-  }, [selectedPlantId, form]);
+  }, [selectedPlantId, form, plants]);
 
   useEffect(() => {
     const checkFormValue = () => {
