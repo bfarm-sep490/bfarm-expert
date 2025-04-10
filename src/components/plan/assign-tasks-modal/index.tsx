@@ -13,6 +13,7 @@ import {
   Drawer,
   Flex,
   Form,
+  Grid,
   Input,
   Modal,
   Row,
@@ -96,14 +97,10 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
   const [productiveTasks, setProductiveTasks] = React.useState<any[]>([]);
   const [harvestingTasks, setHarvestingTasks] = React.useState<any[]>([]);
   const [inspectingTasks, setInspectingTasks] = React.useState<any[]>([]);
-  const [farmers, setFarmers] = React.useState<any[]>([]);
   const [inspectors, setInspectors] = React.useState<any[]>([]);
   const [chosenFarmers, setChosenFarmers] = React.useState<any[]>([]);
-  const [plants, setPlants] = React.useState<any[]>([]);
-  const [experts, setExperts] = React.useState<any[]>([]);
-  const [yields, setYields] = React.useState<any[]>([]);
   const [packagingTasks, setPackagingTasks] = React.useState<any[]>([]);
-  const back = useBack();
+  const breakpoint = Grid.useBreakpoint();
   const { formProps, formLoading, onFinish } = useForm<GainingPlan>({
     resource: "plans",
     id: `${props?.planId}/tasks-assign`,
@@ -179,62 +176,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
   });
 
   const {
-    data: farmerData,
-    isLoading: farmerLoading,
-    refetch: farmersRefetch,
-  } = useList({
-    resource: `farmers`,
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setFarmers(data?.data || []);
-      },
-    },
-  });
-
-  const {
-    data: expertsData,
-    isLoading: expertLoading,
-    refetch: expertRefetch,
-  } = useList({
-    resource: `experts`,
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setExperts(data?.data || []);
-      },
-    },
-  });
-
-  const {
-    data: yieldsData,
-    isLoading: yieldLoading,
-    refetch: yieldRefetch,
-  } = useList({
-    resource: "yields",
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setYields(data?.data || []);
-      },
-    },
-  });
-
-  const {
-    data: plantData,
-    isLoading: plantLoading,
-    refetch: plantRefetch,
-  } = useList({
-    resource: "plants",
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setPlants(data?.data || []);
-      },
-    },
-  });
-
-  const {
     data: inspectorsData,
     isLoading: inspectorLoading,
     refetch: inspectorRefetch,
@@ -270,9 +211,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       onSuccess(data: any) {
         if (props?.problemId)
           setProductiveTasks(
-            data?.data.filter(
-              (task: any) => task?.problem_id === props?.problemId
-            ) || []
+            data?.data.filter((task: any) => task?.problem_id === props?.problemId) || [],
           );
         else setProductiveTasks(data?.data || []);
       },
@@ -471,10 +410,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
   useEffect(() => {
     if (
       planLoading === false &&
-      plantLoading === false &&
-      yieldLoading === false &&
-      expertLoading === false &&
-      farmerLoading === false &&
       chosenFarmerLoading === false &&
       caringLoading === false &&
       harvestingLoading === false &&
@@ -487,10 +422,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
     }
   }, [
     planLoading,
-    plantLoading,
-    yieldLoading,
-    expertLoading,
-    farmerLoading,
     chosenFarmerLoading,
     caringLoading,
     harvestingLoading,
@@ -506,20 +437,12 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       setProductiveTasks([]);
       setHarvestingTasks([]);
       setInspectingTasks([]);
-      setFarmers([]);
       setInspectors([]);
       setChosenFarmers([]);
-      setPlants([]);
-      setExperts([]);
-      setYields([]);
       setPackagingTasks([]);
       formProps.form?.resetFields();
     } else {
       planRefetch();
-      plantRefetch();
-      yieldRefetch();
-      expertRefetch();
-      farmersRefetch();
       chosenFarmerRefetch();
       caringRefetch();
       harvestingRefetch();
@@ -535,7 +458,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       content: (
         <>
           <AssignTasks
-            type="Draft"
+            type={props?.type ?? "Draft"}
             loading={loading}
             saveHandle={handleDone}
             chosenFarmers={chosenFarmers}
@@ -558,7 +481,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
 
   return (
     <Modal
-      width={"60%"}
+      width={breakpoint.sm || breakpoint.md ? "60%" : "100%"}
       height={"40%"}
       open={props?.open}
       onCancel={props?.onClose}

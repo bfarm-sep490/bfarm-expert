@@ -18,9 +18,7 @@ export const CaringModal = (props: CaringCreateProps) => {
     <>
       {" "}
       <Modal
-        title={
-          props?.action === "create" ? "Thêm công việc" : "Cập nhập công việc"
-        }
+        title={props?.action === "create" ? "Thêm công việc" : "Cập nhập công việc"}
         open={props?.open}
         footer={null}
         width={"60%"}

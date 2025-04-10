@@ -1,6 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { DateField, TagField, TextField, Title, useForm, useModalForm } from "@refinedev/antd";
-import { useShow, useNavigation, useBack, useList } from "@refinedev/core";
+import {
+  DateField,
+  TagField,
+  TextField,
+  Title,
+  useForm,
+  useModalForm,
+} from "@refinedev/antd";
+import {
+  useShow,
+  useNavigation,
+  useBack,
+  useList,
+  useOne,
+} from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -25,7 +38,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { CaringTypeTag } from "../type-tag";
 import { StatusTag } from "../status-tag";
-import { values } from "lodash";
+import { set, values } from "lodash";
 
 type HistoryAssignedModalProps = {
   visible: boolean;
@@ -41,7 +54,11 @@ export const AssignedTaskStatus = ({ status }: { status: string }) => {
   );
 };
 
-export const HistoryAssignedModal = ({ visible, onClose, data }: HistoryAssignedModalProps) => {
+export const HistoryAssignedModal = ({
+  visible,
+  onClose,
+  data,
+}: HistoryAssignedModalProps) => {
   const columns = [
     { title: "ID", dataIndex: "farmer_id", key: "farmer_id" },
     { title: "Tên", dataIndex: "farmer_name", key: "farmer_name" },
@@ -57,21 +74,37 @@ export const HistoryAssignedModal = ({ visible, onClose, data }: HistoryAssigned
       dataIndex: "expire_at",
       key: "expire_at",
       render: (value: any) =>
-        value ? <DateField format="hh:mm DD/MM/YYYY" value={value} /> : "Chưa hết hạn",
+        value ? (
+          <DateField format="hh:mm DD/MM/YYYY" value={value} />
+        ) : (
+          "Chưa hết hạn"
+        ),
     },
     {
       title: "Ngày giao việc",
       dataIndex: "create_at",
       key: "create_at",
-      render: (value: any) => <DateField format="hh:mm DD/MM/YYYY" value={value} />,
+      render: (value: any) => (
+        <DateField format="hh:mm DD/MM/YYYY" value={value} />
+      ),
     },
   ];
   return (
-    <Modal title={"Lịch sử giao việc"} visible={visible} onCancel={onClose} footer={null}>
+    <Modal
+      title={"Lịch sử giao việc"}
+      visible={visible}
+      onCancel={onClose}
+      onClose={onClose}
+      width={1000}
+      closable={true}
+      footer={null}
+    >
       <Table
         scroll={{ x: 1200 }}
         columns={columns}
-        dataSource={data.sort((a: any, b: any) => (a.status !== "Active" ? 1 : -1))}
+        dataSource={data.sort((a: any, b: any) =>
+          a.status !== "Active" ? 1 : -1
+        )}
         pagination={{ pageSize: 5 }}
       ></Table>
     </Modal>
@@ -87,14 +120,9 @@ interface ChangeAssignedTasksModalProps {
   type?: string;
 }
 
-export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> = ({
-  visible,
-  onClose,
-  assignedFarmers,
-  start_date,
-  end_date,
-  type,
-}) => {
+export const ChangeAssignedTasksModal: React.FC<
+  ChangeAssignedTasksModalProps
+> = ({ visible, onClose, assignedFarmers, start_date, end_date, type }) => {
   const [newFarmer, setNewFarmer] = useState<any>(null);
   const [reason, setReason] = useState<string>("");
   const { taskId, id } = useParams();
@@ -147,6 +175,8 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
     <Modal
       title="Thay đổi người làm"
       open={visible}
+      onCancel={onClose}
+      onClose={onClose}
       footer={
         <>
           <Flex justify="end" gap={8}>
@@ -159,9 +189,11 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
       }
       width={600}
     >
-      <Typography.Text style={{ fontSize: 12, color: "red", fontStyle: "italic" }}>
-        * Bạn có thể thay đổi người làm cho công việc này. Vui lòng chọn những người đang rảnh việc
-        dưới đây.
+      <Typography.Text
+        style={{ fontSize: 12, color: "red", fontStyle: "italic" }}
+      >
+        * Bạn có thể thay đổi người làm cho công việc này. Vui lòng chọn những
+        người đang rảnh việc dưới đây.
       </Typography.Text>
       <Form
         form={formProps.form}
@@ -193,7 +225,9 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
             label="Chọn người làm mới"
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
-            rules={[{ required: true, message: "Vui lòng chọn người làm mới!" }]}
+            rules={[
+              { required: true, message: "Vui lòng chọn người làm mới!" },
+            ]}
           >
             <Select
               style={{ width: "100%", marginBottom: 16 }}
@@ -201,12 +235,16 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
               value={newFarmer?.id}
               onChange={(value) => {
                 setNewFarmer(
-                  freeFarmers.find((farmer: { id: string; name: string }) => farmer.id === value) ||
-                    null,
+                  freeFarmers.find(
+                    (farmer: { id: string; name: string }) =>
+                      farmer.id === value
+                  ) || null
                 );
               }}
             >
-              {isLoading && <Select.Option value={undefined}>Loading...</Select.Option>}
+              {isLoading && (
+                <Select.Option value={undefined}>Loading...</Select.Option>
+              )}
               {freeFarmers.map((farmer: any) => (
                 <Select.Option key={farmer.id} value={farmer.id}>
                   {farmer.name}
@@ -221,11 +259,25 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
 };
 
 export default ChangeAssignedTasksModal;
-export const ProductiveTaskShow = () => {
+type ProductiveTaskShowProps = {
+  taskId?: number;
+  onClose?: () => void;
+  visible?: boolean;
+  refetch?: () => void;
+};
+export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
   const { taskId } = useParams();
-  const { query: queryResult } = useShow<any>({
+  const {
+    data: queryResult,
+    isLoading: caringLoading,
+    refetch: caringRefetch,
+    isFetching: caringFetching,
+  } = useOne<any>({
     resource: "caring-tasks",
-    id: taskId,
+    id: taskId ?? props?.taskId,
+    queryOptions: {
+      enabled: props?.visible === true,
+    },
   });
   const { token } = theme.useToken();
   const [assignedModal, setAssignedModal] = useState(false);
@@ -267,38 +319,68 @@ export const ProductiveTaskShow = () => {
         ];
     }
   };
-  const { data: historyAssignedData } = useList({
-    resource: `caring-tasks/${taskId}/assigned-farmers`,
+  const {
+    data: historyAssignedData,
+    isLoading: assigned_farmersLoading,
+    refetch: assigned_farmersRefetch,
+  } = useList({
+    resource: `caring-tasks/${taskId ?? props?.taskId}/assigned-farmers`,
+
+    queryOptions: {
+      enabled: props?.visible === true,
+    },
   });
 
   const historyAssignedFarmers = historyAssignedData?.data || [];
   const navigate = useNavigate();
   const [dataVattu, setDataVattu] = useState<any>([]);
-  const [modeVattu, setModeVattu] = useState<"fertilizer" | "pesticide" | "item">("fertilizer");
-  const [open, setOpen] = useState(true);
+  const [modeVattu, setModeVattu] = useState<
+    "fertilizer" | "pesticide" | "item"
+  >("fertilizer");
   const back = useBack();
   const breakpoint = { sm: window.innerWidth > 576 };
-  const { data } = queryResult;
+  const data = queryResult;
   const task = data?.data?.[0];
   const handleModeChange = (mode: "fertilizer" | "pesticide" | "item") => {
     setModeVattu(mode);
     setDataVattu(task ? task["care_" + mode + "s"] : []);
   };
-  const { data: chosenFarmersData } = useList({
+  const {
+    data: chosenFarmersData,
+    isLoading: chosenFarmerLoading,
+    refetch: chosenFarmerRefetch,
+  } = useList({
     resource: `plans/${task?.plan_id}/farmers`,
+
+    queryOptions: {
+      enabled: props?.visible === true,
+    },
   });
   const chosenFarmers = chosenFarmersData?.data || [];
   const columns = getItemsFertilizerPesticide(modeVattu);
-
+  useEffect(() => {
+    if (props?.visible === true && props?.taskId) {
+      chosenFarmerRefetch();
+      assigned_farmersRefetch();
+      caringRefetch();
+      return;
+    } else {
+      setDataVattu([]);
+      setModeVattu("fertilizer");
+      setVisible(false);
+      setAssignedModal(false);
+    }
+  }, [props?.visible]);
   return (
     <Drawer
+      loading={caringLoading && caringFetching}
       style={{ background: token.colorBgLayout }}
       headerStyle={{
         background: token.colorBgContainer,
       }}
-      open={open}
-      width={breakpoint.sm ? "736px" : "100%"}
-      onClose={back}
+      open={props?.visible}
+      width={breakpoint.sm ? "60%" : "100%"}
+      onClose={props?.onClose ?? back}
       title={
         <>
           {task?.status === "Ongoing" && (
@@ -373,7 +455,9 @@ export const ProductiveTaskShow = () => {
         <Divider />
         <Flex justify="space-between" align="center">
           <Typography.Title level={4}>Chi tiết công việc</Typography.Title>
-          {(task?.status === "Ongoing" || task?.status === "Pending") && (
+          {(task?.status === "Ongoing" ||
+            task?.status === "Pending" ||
+            task?.status === "Draft") && (
             <Button
               color="primary"
               variant="solid"
@@ -467,10 +551,12 @@ export const ProductiveTaskShow = () => {
           <Typography.Title level={4}>Người thực hiện</Typography.Title>
           <Space>
             {" "}
-            <Button type="dashed" onClick={() => setVisible(true)}>
+            <Button type="default" onClick={() => setVisible(true)}>
               Lịch sử
             </Button>
-            {(task?.status === "Ongoing" || task?.status === "Pending") && (
+            {(task?.status === "Ongoing" ||
+              task?.status === "Pending" ||
+              task?.status === "Draft") && (
               <Button
                 type="primary"
                 color="cyan"
@@ -487,20 +573,18 @@ export const ProductiveTaskShow = () => {
           dataSource={[
             {
               label: "Id",
-              value: (
-                <TextField
-                  value={
-                    task?.farmer_information?.[0]?.farmer_id || "Chưa giao việc"
-                  }
-                />
-              ),
+              value: <TextField value={task?.farmer_id || "Chưa giao việc"} />,
             },
             {
               label: "Tên nông dân",
               value: (
                 <TextField
                   value={
-                    task?.farmer_information?.[0]?.name || "Chưa giao việc"
+                    task?.farmer_id
+                      ? task?.farmer_information?.find(
+                          (x: any) => x?.farmer_id === task?.farmer_id
+                        )?.farmer_name
+                      : "Chưa giao việc"
                   }
                 />
               ),

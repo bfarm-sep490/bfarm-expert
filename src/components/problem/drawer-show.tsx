@@ -17,6 +17,7 @@ import {
   useCustomMutation,
   useList,
   useOne,
+  useDelete,
 } from "@refinedev/core";
 import {
   Drawer,
@@ -41,6 +42,7 @@ import {
   Select,
   DatePicker,
   InputNumber,
+  notification,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -59,7 +61,14 @@ import {
 } from "@ant-design/icons";
 import { AssignTaskModal } from "../plan/assign-tasks-modal";
 
-export const ProblemShowInProblem = () => {
+type ProblemShowInProblemProps = {
+  problemId?: number;
+  open?: boolean;
+  onClose?: () => void;
+  refetch?: () => void;
+};
+
+export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
   const { id } = useParams();
   const [isAbilityToReport, setIsAbilityToReport] = useState<boolean>(false);
   const [taskId, setTaskId] = useState<number | undefined>(undefined);
@@ -71,6 +80,7 @@ export const ProblemShowInProblem = () => {
   const isLargeScreen = screens?.sm ?? false;
   const [open, setOpen] = useState(false);
   const back = useBack();
+  const [api, contextHolder] = notification.useNotification();
   const breakpoint = { sm: window.innerWidth > 576 };
   const {
     data: queryResult,
@@ -78,7 +88,10 @@ export const ProblemShowInProblem = () => {
     isLoading: problemLoading,
   } = useOne<any>({
     resource: "problems",
-    id,
+    id: props?.problemId ?? id,
+    queryOptions: {
+      enabled: !!(props?.open ?? id),
+    },
   });
   const {
     data: taskData,
@@ -88,10 +101,12 @@ export const ProblemShowInProblem = () => {
     resource: "caring-tasks",
     filters: [{ field: "problem_id", operator: "eq", value: id }],
     queryOptions: {
+      enabled: !!(props?.open ?? id),
       onSuccess(data) {
         if (data?.data !== null) {
           data?.data?.forEach((x) => {
             if (x?.farmer_id === null) {
+              console.log(x?.farmer_id);
               setIsAbilityToReport(true);
               return;
             }
@@ -103,6 +118,36 @@ export const ProblemShowInProblem = () => {
 
   const task = queryResult?.data;
   const tasks = taskData?.data;
+  const { mutate } = useDelete();
+
+  const hanldeDeleteTask = (taskId: number) => {
+    mutate(
+      {
+        resource: "caring-tasks",
+        id: taskId,
+      },
+      {
+        onSuccess: (data) => {
+          if (data?.data !== null) {
+            api.error({
+              message: "Lỗi vui lòng thử lại",
+              description: data?.data as unknown as string,
+            });
+            return;
+          }
+          tasksRefetch();
+          problemRefetch();
+        },
+        onError: (error) => {
+          api.error({
+            message: "Có lỗi xảy ra",
+            description: error?.message || "Vui lòng thử lại sau",
+            placement: "top",
+          });
+        },
+      }
+    );
+  };
   const columns = [
     {
       title: "Tên hoạt động",
@@ -119,13 +164,17 @@ export const ProblemShowInProblem = () => {
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
-      render: (value: any) => <DateField format={"hh:mm DD/MM/YYYY"} value={value} />,
+      render: (value: any) => (
+        <DateField format={"hh:mm DD/MM/YYYY"} value={value} />
+      ),
     },
     {
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
-      render: (value: any) => <DateField format={"hh:mm DD/MM/YYYY"} value={value} />,
+      render: (value: any) => (
+        <DateField format={"hh:mm DD/MM/YYYY"} value={value} />
+      ),
     },
     {
       title: "Nông dân",
@@ -154,7 +203,12 @@ export const ProblemShowInProblem = () => {
       fixed: "right" as const,
       render: (value: any, record: any) => (
         <Flex gap={10}>
-          {record?.status === "Pending" && <DeleteOutlined style={{ color: "red" }} />}
+          {record?.status === "Pending" && (
+            <DeleteOutlined
+              style={{ color: "red" }}
+              onClick={() => hanldeDeleteTask(record?.id)}
+            />
+          )}
           {record?.status !== "Complete" && (
             <EditOutlined
               style={{ color: "green" }}
@@ -168,14 +222,26 @@ export const ProblemShowInProblem = () => {
       ),
     },
   ];
-
+  useEffect(() => {
+    if (props?.open === true) {
+      problemRefetch();
+      tasksRefetch();
+    } else {
+      setIsAbilityToReport(true);
+      setIsModalOpen(false);
+      setOpen(false);
+      setOpenAssignTasks(false);
+      setTaskId(undefined);
+      setDefaultReportStatus("Complete");
+    }
+  }, [props?.open]);
   return (
     <>
       <Drawer
         loading={problemLoading}
-        open={true}
+        open={props?.open ?? true}
         width={isLargeScreen ? "60%" : "100%"}
-        onClose={back}
+        onClose={props?.onClose ?? back}
         style={{ background: token.colorBgLayout }}
         headerStyle={{
           background: token.colorBgContainer,
@@ -215,16 +281,12 @@ export const ProblemShowInProblem = () => {
                     </Button>
                   </Space>
                 )}
-                {isAbilityToReport && (
-                  <Typography.Text color="red" style={{ fontSize: 12 }}>
-                    Có công việc chưa được phân công. Vui lòng kiểm tra lại
-                  </Typography.Text>
-                )}
               </Flex>
             </Flex>
           </>
         }
       >
+        {contextHolder}
         <CaringModal
           refetch={tasksRefetch}
           planId={task?.plan_id}
@@ -246,7 +308,9 @@ export const ProblemShowInProblem = () => {
             Hình ảnh
           </Typography.Title>
           {task?.problem_images?.length > 0 ? (
-            <Image.PreviewGroup items={task?.problem_images?.map((x: any) => x?.url) || []}>
+            <Image.PreviewGroup
+              items={task?.problem_images?.map((x: any) => x?.url) || []}
+            >
               <Flex vertical={false} gap={16} justify="center">
                 <Image
                   width={"60%"}
@@ -258,7 +322,9 @@ export const ProblemShowInProblem = () => {
               </Flex>
             </Image.PreviewGroup>
           ) : (
-            <Typography.Text type="secondary">Không có hình ảnh.</Typography.Text>
+            <Typography.Text type="secondary">
+              Không có hình ảnh.
+            </Typography.Text>
           )}
           <Divider />
           {task?.status !== "Pending" && (
@@ -272,12 +338,17 @@ export const ProblemShowInProblem = () => {
                     dataSource={[
                       {
                         label: "Nội dung",
-                        value: <Typography.Paragraph>{task?.result_content}</Typography.Paragraph>,
+                        value: (
+                          <Typography.Paragraph>
+                            {task?.result_content}
+                          </Typography.Paragraph>
+                        ),
                       },
                     ]}
                     renderItem={(item) => (
                       <List.Item>
-                        <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
+                        <Typography.Text strong>{item.label}:</Typography.Text>{" "}
+                        {item.value}
                       </List.Item>
                     )}
                   />
@@ -340,7 +411,9 @@ export const ProblemShowInProblem = () => {
             title={
               <>
                 <Flex vertical={false} gap={16} justify="space-between">
-                  <Typography.Title level={5}>Danh sách hoạt động</Typography.Title>
+                  <Typography.Title level={5}>
+                    Danh sách hoạt động
+                  </Typography.Title>
                 </Flex>
               </>
             }
@@ -379,6 +452,7 @@ export const ProblemShowInProblem = () => {
             refetch={() => {
               tasksRefetch();
               problemRefetch();
+              if (props?.refetch) props?.refetch();
             }}
             close={() => {
               setIsModalOpen(false);
