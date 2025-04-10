@@ -1,4 +1,10 @@
-import { DashboardOutlined, ExperimentOutlined, ScheduleOutlined } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  ExperimentOutlined,
+  ProductOutlined,
+  ScheduleOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import "dayjs/locale/vi";
 
 import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
@@ -23,11 +29,16 @@ import { ConfigProvider } from "./context";
 import { App as AntdApp } from "antd";
 import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
-import { PlanCreate, PlanEdit, PlanList, PlanShow } from "./pages/plans";
+import { PlanCreate, PlanEdit, PlanList } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
-import { liveProvider } from "@refinedev/ably";
-import { ablyClient } from "./utils/ablyClient";
+import { ProblemListInProblems } from "./pages/problems/list";
+import { ProblemShowV2 } from "./pages/problems/show";
+import { PlanShow } from "./pages/plans/show/show";
+import { HarvestingProductShow } from "./components/production/harvesting/drawer-show";
+import { HarvestingProductionListPage } from "./pages/harvesting-production/list";
+import { PackagedProductListPage } from "./pages/packaging-production/list";
+import { PackagingProductShow } from "./components/production/packaging/drawer-show";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -79,8 +90,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              notificationProvider={useNotificationProvider}
-              liveProvider={liveProvider(ablyClient)}
+              // notificationProvider={useNotificationProvider}
+              // liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",
@@ -91,6 +102,34 @@ const App: React.FC = () => {
                   },
                 },
                 {
+                  name: "products",
+                  meta: {
+                    label: "Sản phẩm",
+                    icon: <ProductOutlined />,
+                  },
+                },
+
+                {
+                  name: "harvesting-products",
+                  list: "/harvesting-products",
+                  show: "/harvesting-products/:id",
+                  meta: {
+                    label: "Thu hoạch",
+                    parent: "products",
+                    canDelete: true,
+                  },
+                },
+                {
+                  name: "packaging-products",
+                  list: "/packaging-products",
+                  show: "/packaging-products/:id",
+                  meta: {
+                    label: "Đóng gói",
+                    parent: "products",
+                    canDelete: true,
+                  },
+                },
+                {
                   name: "plans",
                   list: "/plans",
                   create: "/plans/new",
@@ -98,6 +137,16 @@ const App: React.FC = () => {
                   show: "/plans/:id",
                   meta: {
                     icon: <ScheduleOutlined />,
+                  },
+                },
+                {
+                  name: "problems",
+                  list: "/problems",
+                  show: "/problems/:id",
+                  meta: {
+                    label: "Vấn đề",
+                    icon: <WarningOutlined />,
+                    route: "/problems",
                   },
                 },
                 {
@@ -137,14 +186,57 @@ const App: React.FC = () => {
                   }
                 >
                   <Route index element={<DashboardPage />} />
-
+                  <Route
+                    path="harvesting-products"
+                    element={
+                      <HarvestingProductionListPage>
+                        <Outlet></Outlet>
+                      </HarvestingProductionListPage>
+                    }
+                  >
+                    <Route
+                      path=":productId"
+                      element={<HarvestingProductShow></HarvestingProductShow>}
+                    ></Route>
+                  </Route>
+                  <Route
+                    path="packaging-products"
+                    element={
+                      <PackagedProductListPage>
+                        <Outlet></Outlet>
+                      </PackagedProductListPage>
+                    }
+                  >
+                    <Route
+                      path=":productId"
+                      element={<PackagingProductShow></PackagingProductShow>}
+                    ></Route>
+                  </Route>
                   <Route path="/plans">
                     <Route index element={<PlanList />} />
                     <Route path="new" element={<PlanCreate />} />
-                    <Route path=":id" element={<PlanShow />} />
+                    <Route path=":id">
+                      <Route
+                        index
+                        element={
+                          <PlanShow>
+                            <Outlet></Outlet>
+                          </PlanShow>
+                        }
+                      />
+                    </Route>
                     <Route path="edit/:id" element={<PlanEdit />} />
                   </Route>
-
+                  <Route
+                    path="/problems"
+                    element={
+                      <ProblemListInProblems>
+                        <Outlet></Outlet>
+                      </ProblemListInProblems>
+                    }
+                  >
+                    <Route path=":id" element={<ProblemShowV2 />} />
+                  </Route>
                   <Route path="/plants">
                     <Route
                       path=""

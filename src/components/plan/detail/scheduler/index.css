@@ -1,0 +1,22 @@
+.rbc-row-content {
+  min-height: 110px !important;
+}
+
+.rbc-month-row {
+  overflow: visible !important;
+}
+
+
+/* Assuming your container div has a class named 'calendar-container' */
+.calendar-container {
+  min-height: 100vh;
+}
+
+
+
+Make sure to replace `'calendar-container'` with the actual class name of your container div.
+
+Remember to test your solution thoroughly and consider providing alternative approaches or explanations if applicable.
+
+
+#k3tan #arkan
