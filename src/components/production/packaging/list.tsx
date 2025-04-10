@@ -1,44 +1,44 @@
 import React, { PropsWithChildren } from "react";
-import { BaseRecord, useBack, useList, useTranslate } from "@refinedev/core";
-import {
-  useTable,
-  List,
-  EditButton,
-  ShowButton,
-  ImageField,
-  TagField,
-  EmailField,
-  DateField,
-  TextField,
-} from "@refinedev/antd";
-import { Table, Space, Radio, Button, Breadcrumb, Typography, TableProps, Tag } from "antd";
-import { Link, useLocation, useNavigate, useParams } from "react-router";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { StatusTag } from "../../caring-task/status-tag";
+import { BaseRecord, useBack, useGetIdentity, useList, useTranslate } from "@refinedev/core";
+import { ShowButton, DateField, TextField } from "@refinedev/antd";
+import { Table, Space, Tag } from "antd";
+import { useNavigate } from "react-router";
+import { IIdentity } from "@/interfaces";
 
 export const PackagedProductList = ({ children }: PropsWithChildren) => {
   const back = useBack();
   const navigate = useNavigate();
-  const { id } = useParams();
-
-  const { tableProps } = useTable({
-    resource: `packaging-products`,
-    filters: {
-      initial: [
-        {
-          field: "plan_id",
-          operator: "eq",
-          value: id ?? "",
-        },
-      ],
-    },
+  const { data: user } = useGetIdentity<IIdentity>();
+  const { data: planData, isLoading: planLoading } = useList({
+    resource: `plans`,
+    filters: [
+      {
+        field: "expert_id",
+        operator: "eq",
+        value: user?.id,
+      },
+    ],
   });
-
+  const { data: packagingProductsData, isLoading: packagingProductsLoading } = useList({
+    resource: `packaging-products`,
+  });
+  const products =
+    packagingProductsData?.data?.filter((x) =>
+      planData?.data?.some((item) => item.id === x.plan_id),
+    ) || [];
   const translate = useTranslate();
 
   return (
     <>
-      <Table {...tableProps} rowKey="id" scroll={{ x: "max-content" }}>
+      <Table
+        pagination={{
+          pageSize: 10,
+        }}
+        dataSource={products}
+        loading={packagingProductsLoading || planLoading}
+        rowKey="id"
+        scroll={{ x: "max-content" }}
+      >
         <Table.Column
           dataIndex="id"
           title={translate("ID")}

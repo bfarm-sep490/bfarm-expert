@@ -87,12 +87,7 @@ export interface ICaringTask {
   problem_id?: number;
   task_name: string;
   result_content?: string;
-  task_type:
-    | "Planting"
-    | "Nurturing"
-    | "Watering"
-    | "Fertilizing"
-    | "PestControl";
+  task_type: "Planting" | "Nurturing" | "Watering" | "Fertilizing" | "PestControl";
   start_date: string;
   end_date: string;
   complete_date?: string;

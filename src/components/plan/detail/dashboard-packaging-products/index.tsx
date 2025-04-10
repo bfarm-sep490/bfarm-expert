@@ -27,37 +27,30 @@ export const PackagingProductDashBoard = ({
 
     return packaging_types
       .map((type) => {
-        const relatedOrders =
-          orders?.filter((order) => order.packaging_type_id === type.id) || [];
+        const relatedOrders = orders?.filter((order) => order.packaging_type_id === type.id) || [];
         const estimatedQuantity = relatedOrders.reduce(
           (sum, order) => sum + (Number(order.preorder_quantity) || 0),
-          0
+          0,
         );
 
         const relatedProducts =
-          packaging_products?.filter(
-            (product) => product.packaging_type_id === type.id
-          ) || [];
+          packaging_products?.filter((product) => product.packaging_type_id === type.id) || [];
 
         const actualQuantity = relatedProducts.reduce(
           (sum, product) =>
-            sum +
-            (Number(product.quantity_per_pack) || 0) *
-              (Number(product.pack_quantity) || 0),
-          0
+            sum + (Number(product.quantity_per_pack) || 0) * (Number(product.pack_quantity) || 0),
+          0,
         );
 
         const percentage =
-          estimatedQuantity > 0
-            ? Math.round((actualQuantity / estimatedQuantity) * 100)
-            : 0;
+          estimatedQuantity > 0 ? Math.round((actualQuantity / estimatedQuantity) * 100) : 0;
 
         return {
           id: type.id,
           name: type.name || `Loại ${type.id}`,
           estimated: estimatedQuantity,
           actual: actualQuantity,
-          percentage: percentage > 100 ? 100 : percentage, 
+          percentage: percentage > 100 ? 100 : percentage,
         };
       })
       .filter((item) => item.estimated > 0 || item.actual > 0);
@@ -95,13 +88,10 @@ export const PackagingProductDashBoard = ({
               total: {
                 show: true,
                 label: "Tổng",
-                formatter(w: {
-                  globals: { seriesTotals: any[]; series: string | any[] };
-                }) {
+                formatter(w: { globals: { seriesTotals: any[]; series: string | any[] } }) {
                   if (w.globals.seriesTotals.length === 0) return "0%";
                   const total =
-                    w.globals.seriesTotals.reduce((a, b) => a + b, 0) /
-                    w.globals.series.length;
+                    w.globals.seriesTotals.reduce((a, b) => a + b, 0) / w.globals.series.length;
                   return Math.round(total) + "%";
                 },
               },

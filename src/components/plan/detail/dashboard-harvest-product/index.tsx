@@ -70,18 +70,12 @@ export const HarvestingProductDashBoard = ({
     setState({
       series: [
         total_harvesting_products > 0
-          ? Math.round(
-              (quantity_available_harvesting_products /
-                total_harvesting_products) *
-                100
-            )
+          ? Math.round((quantity_available_harvesting_products / total_harvesting_products) * 100)
           : 0,
       ],
       options: {
         ...state.options,
-        labels: [
-          `${quantity_available_harvesting_products} / ${total_harvesting_products}`,
-        ],
+        labels: [`${quantity_available_harvesting_products} / ${total_harvesting_products}`],
       } as ApexOptions,
     });
   }, [quantity_available_harvesting_products, total_harvesting_products]);

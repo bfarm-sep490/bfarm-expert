@@ -12,7 +12,6 @@ import { useParams, useSearchParams } from "react-router";
 import { Drawer } from "../../drawer";
 import { DateField, DeleteButton, TextField } from "@refinedev/antd";
 import { EditOutlined } from "@ant-design/icons";
-import { FarmerStatus } from "@/interfaces";
 
 type Props = {
   id?: BaseKey;
@@ -20,7 +19,7 @@ type Props = {
   onEdit?: () => void;
 };
 
-const FarmerStatusTag = ({ status }: { status: FarmerStatus }) => {
+const FarmerStatusTag = ({ status }: { status: "Inactive" | "Active" }) => {
   const colorMap = {
     Inactive: "red",
     Active: "success",

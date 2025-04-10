@@ -19,7 +19,7 @@ import { useParams, useSearchParams } from "react-router";
 import { Drawer } from "../../drawer";
 import { UploadOutlined } from "@ant-design/icons";
 import { useStyles } from "./styled";
-import { IFarmer, IFertilizer } from "@/interfaces";
+import { IFertilizer } from "@/interfaces";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { before, set } from "lodash";

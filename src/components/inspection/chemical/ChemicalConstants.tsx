@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { IInspectingResult } from "@/interfaces";
 import { Typography, Tag } from "antd";
 
 export const LIMITS: Record<string, number> = {
@@ -86,89 +85,89 @@ export const chemicalGroups: ChemicalCategory[] = [
   },
 ];
 
-export const getChemicalData = (inspectionResult?: IInspectingResult) =>
+export const getChemicalData = (inspectionResult?: any) =>
   !inspectionResult
     ? []
     : [
         {
           key: "arsen",
           label: `Arsen (${UNITS["arsen"]})`,
-          value: inspectionResult.arsen,
+          value: inspectionResult?.arsen,
         },
 
         {
           key: "plumbum",
           label: `Plumbum (${UNITS["plumbum"]})`,
-          value: inspectionResult.plumbum,
+          value: inspectionResult?.plumbum,
         },
         {
           key: "cadmi",
           label: `Cadmium (${UNITS["cadmi"]})`,
-          value: inspectionResult.cadmi,
+          value: inspectionResult?.cadmi,
         },
         {
           key: "hydragyrum",
           label: `Mercury (${UNITS["hydragyrum"]})`,
-          value: inspectionResult.hydrargyrum,
+          value: inspectionResult?.hydrargyrum,
         },
         {
           key: "salmonella",
           label: `Salmonella (${UNITS["salmonella"]})`,
-          value: inspectionResult.salmonella,
+          value: inspectionResult?.salmonella,
         },
         {
           key: "coliforms",
           label: `Coliforms (${UNITS["coliforms"]})`,
-          value: inspectionResult.coliforms,
+          value: inspectionResult?.coliforms,
         },
         {
           key: "ecoli",
           label: `E. Coli (${UNITS["ecoli"]})`,
-          value: inspectionResult.ecoli,
+          value: inspectionResult?.ecoli,
         },
         {
           key: "glyphosate_glufosinate",
           label: `Glyphosate/Glufosinate (${UNITS["glyphosate_glufosinate"]})`,
-          value: inspectionResult.glyphosate_glufosinate,
+          value: inspectionResult?.glyphosate_glufosinate,
         },
         {
           key: "sulfur_dioxide",
           label: `Sulfur Dioxide (${UNITS["sulfur_dioxide"]})`,
-          value: inspectionResult.sulfur_dioxide,
+          value: inspectionResult?.sulfur_dioxide,
         },
         {
           key: "methyl_bromide",
           label: `Methyl Bromide (${UNITS["methyl_bromide"]})`,
-          value: inspectionResult.methyl_bromide,
+          value: inspectionResult?.methyl_bromide,
         },
         {
           key: "hydrogen_phosphide",
           label: `Hydrogen Phosphide (${UNITS["hydrogen_phosphide"]})`,
-          value: inspectionResult.hydrogen_phosphide,
+          value: inspectionResult?.hydrogen_phosphide,
         },
         {
           key: "dithiocarbamate",
           label: `Dithiocarbamate (${UNITS["dithiocarbamate"]})`,
-          value: inspectionResult.dithiocarbamate,
+          value: inspectionResult?.dithiocarbamate,
         },
         {
           key: "nitrat",
           label: `Nitrat (${UNITS["nitrat"]})`,
-          value: inspectionResult.nitrat,
+          value: inspectionResult?.nitrat,
         },
         {
           key: "nano3_kno3",
           label: `Nano3/KNO3 (${UNITS["nano3_kno3"]})`,
-          value: inspectionResult.nano3_kno3,
+          value: inspectionResult?.nano3_kno3,
         },
         {
           key: "chlorate",
           label: `Chlorate (${UNITS["chlorate"]})`,
-          value: inspectionResult.chlorate,
+          value: inspectionResult?.chlorate,
         },
         {
           key: "perchlorate",
           label: `Perchlorate (${UNITS["perchlorate"]})`,
-          value: inspectionResult.perchlorate,
+          value: inspectionResult?.perchlorate,
         },
       ];

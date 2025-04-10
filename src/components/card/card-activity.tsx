@@ -30,23 +30,14 @@ export const ActivityCard = (props: ActivityCardProps) => {
         }
         extra={
           props?.navigate && (
-            <ShowButton
-              hideText
-              size="small"
-              onClick={() => navigate(`${props.navigate}`)}
-            />
+            <ShowButton hideText size="small" onClick={() => navigate(`${props.navigate}`)} />
           )
         }
       >
-        <Typography.Title
-          level={2}
-          style={{ fontSize: 28, textAlign: "center" }}
-        >
+        <Typography.Title level={2} style={{ fontSize: 28, textAlign: "center" }}>
           {props.completedTasks}
           {props.totalActivity && (
-            <strong style={{ fontSize: 20, color: "gray" }}>
-              /{props?.totalActivity}
-            </strong>
+            <strong style={{ fontSize: 20, color: "gray" }}>/{props?.totalActivity}</strong>
           )}
         </Typography.Title>
         <Typography.Text

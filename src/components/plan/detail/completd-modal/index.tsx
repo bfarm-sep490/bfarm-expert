@@ -2,12 +2,7 @@ import { useEffect } from "react";
 import { useModalForm } from "@refinedev/antd";
 import { Modal, Form, Button, Typography } from "antd";
 import { useNavigate } from "react-router";
-import {
-  useBack,
-  useCustomMutation,
-  useDelete,
-  useUpdate,
-} from "@refinedev/core";
+import { useBack, useCustomMutation, useDelete, useUpdate } from "@refinedev/core";
 
 type Props = {
   visible: boolean;
@@ -44,7 +39,7 @@ export const StatusModal = ({ id, visible, onClose, status }: Props) => {
             onSuccess: () => {
               back();
             },
-          }
+          },
         );
       else {
         deletedMutate(
@@ -57,7 +52,7 @@ export const StatusModal = ({ id, visible, onClose, status }: Props) => {
             onSuccess: () => {
               back();
             },
-          }
+          },
         );
       }
     } catch (error) {
@@ -82,9 +77,7 @@ export const StatusModal = ({ id, visible, onClose, status }: Props) => {
     >
       <Typography.Text>{getMessage()}</Typography.Text>
       <br />
-      <Typography.Text
-        style={{ color: "red", fontSize: 11, fontStyle: "italic" }}
-      >
+      <Typography.Text style={{ color: "red", fontSize: 11, fontStyle: "italic" }}>
         *Chú ý: Hành động này không thể hoàn tác
       </Typography.Text>
     </Modal>

@@ -11,10 +11,11 @@ import type { IPlan } from "../../../interfaces";
 import { Input, InputNumber, Select, Table, theme, Typography, Tag, Space } from "antd";
 import { PaginationTotal } from "../../paginationTotal";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { NumberWithUnit } from "../number-with-unit";
 import { PlanActions } from "../plan-action";
 import dayjs from "dayjs";
+import { use } from "react";
 
 export const PlanListTable = () => {
   const { token } = theme.useToken();
@@ -60,9 +61,14 @@ export const PlanListTable = () => {
         return "default";
     }
   };
-
+  const navigate = useNavigate();
   return (
     <Table
+      onRow={(record) => ({
+        onClick: () => {
+          navigate(`${record.id}`);
+        },
+      })}
       {...tableProps}
       rowKey="id"
       scroll={{ x: true }}

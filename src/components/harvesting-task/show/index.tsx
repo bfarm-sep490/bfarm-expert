@@ -1,11 +1,5 @@
 import { DateField, TagField, TextField, Title } from "@refinedev/antd";
-import {
-  useShow,
-  useNavigation,
-  useBack,
-  useList,
-  useOne,
-} from "@refinedev/core";
+import { useShow, useNavigation, useBack, useList, useOne } from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -23,9 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { StatusTag } from "../../caring-task/status-tag";
-import ChangeAssignedTasksModal, {
-  HistoryAssignedModal,
-} from "@/components/caring-task/show";
+import ChangeAssignedTasksModal, { HistoryAssignedModal } from "@/components/caring-task/show";
 import { set } from "lodash";
 
 type HarvestingTaskShowProps = {
@@ -157,12 +149,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
               dataSource={[
                 {
                   label: "Ngày hoàn thành",
-                  value: (
-                    <DateField
-                      format="hh:mm DD/MM/YYYY"
-                      value={task?.complete_date}
-                    />
-                  ),
+                  value: <DateField format="hh:mm DD/MM/YYYY" value={task?.complete_date} />,
                 },
                 {
                   label: "Sản lượng thu hoạch",
@@ -174,17 +161,12 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
                 },
                 {
                   label: "Nội dung",
-                  value: (
-                    <Typography.Paragraph>
-                      {task?.result_content}
-                    </Typography.Paragraph>
-                  ),
+                  value: <Typography.Paragraph>{task?.result_content}</Typography.Paragraph>,
                 },
               ]}
               renderItem={(item) => (
                 <List.Item>
-                  <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-                  {item.value}
+                  <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
                 </List.Item>
               )}
             />
@@ -199,11 +181,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           {(task?.status === "Ongoing" ||
             task?.status === "Pending" ||
             task?.status === "Draft") && (
-            <Button
-              color="primary"
-              variant="solid"
-              onClick={() => navigate("edit")}
-            >
+            <Button color="primary" variant="solid" onClick={() => navigate("edit")}>
               Thay đổi
             </Button>
           )}
@@ -214,18 +192,11 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           dataSource={[
             {
               label: "Ngày bắt đầu",
-              value: (
-                <DateField
-                  format={"hh:mm DD/MM/YYYY"}
-                  value={task?.start_date}
-                />
-              ),
+              value: <DateField format={"hh:mm DD/MM/YYYY"} value={task?.start_date} />,
             },
             {
               label: "Ngày kết thúc",
-              value: (
-                <DateField format={"hh:mm DD/MM/YYYY"} value={task?.end_date} />
-              ),
+              value: <DateField format={"hh:mm DD/MM/YYYY"} value={task?.end_date} />,
             },
             {
               label: "Trạng thái",
@@ -238,15 +209,12 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
             { label: "Kế hoạch", value: task?.plan_name },
             {
               label: "Mô tả công việc",
-              value: (
-                <Typography.Paragraph>{task?.description}</Typography.Paragraph>
-              ),
+              value: <Typography.Paragraph>{task?.description}</Typography.Paragraph>,
             },
           ]}
           renderItem={(item) => (
             <List.Item>
-              <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-              {item.value}
+              <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
             </List.Item>
           )}
         />
@@ -256,12 +224,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           dataSource={[
             {
               label: "Ngày tạo",
-              value: (
-                <DateField
-                  format={"hh:mm DD/MM/YYYY"}
-                  value={task?.created_at}
-                />
-              ),
+              value: <DateField format={"hh:mm DD/MM/YYYY"} value={task?.created_at} />,
             },
             {
               label: "Người tạo",
@@ -270,10 +233,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
             {
               label: "Câp nhật lần cuối",
               value: task?.updated_at ? (
-                <DateField
-                  format={"hh:mm DD/MM/YYYY"}
-                  value={task?.updated_at}
-                />
+                <DateField format={"hh:mm DD/MM/YYYY"} value={task?.updated_at} />
               ) : (
                 "Chưa cập nhập lần nào"
               ),
@@ -285,8 +245,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           ]}
           renderItem={(item) => (
             <List.Item>
-              <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-              {item.value}
+              <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
             </List.Item>
           )}
         />
@@ -301,11 +260,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
             {(task?.status === "Ongoing" ||
               task?.status === "Pending" ||
               task?.status === "Draft") && (
-              <Button
-                type="primary"
-                color="cyan"
-                onClick={() => setAssignedModal(true)}
-              >
+              <Button type="primary" color="cyan" onClick={() => setAssignedModal(true)}>
                 Thay đổi
               </Button>
             )}
@@ -325,9 +280,8 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
                 <TextField
                   value={
                     task?.farmer_id
-                      ? task?.farmer_information?.find(
-                          (x: any) => x?.farmer_id === task?.farmer_id
-                        )?.farmer_name
+                      ? task?.farmer_information?.find((x: any) => x?.farmer_id === task?.farmer_id)
+                          ?.farmer_name
                       : "Chưa giao việc"
                   }
                 />
@@ -336,8 +290,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           ]}
           renderItem={(item) => (
             <List.Item>
-              <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-              {item.value}
+              <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
             </List.Item>
           )}
         />

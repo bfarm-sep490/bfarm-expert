@@ -1,10 +1,4 @@
-import {
-  DateField,
-  TagField,
-  TextField,
-  Title,
-  useModalForm,
-} from "@refinedev/antd";
+import { DateField, TagField, TextField, Title, useModalForm } from "@refinedev/antd";
 import {
   useShow,
   useNavigation,
@@ -59,7 +53,7 @@ import {
   EditOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import { AssignTaskModal } from "../plan/assign-tasks-modal";
+import { AssignTaskModal } from "../plan/detail/assign-tasks-modal";
 
 type ProblemShowInProblemProps = {
   problemId?: number;
@@ -145,7 +139,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
             placement: "top",
           });
         },
-      }
+      },
     );
   };
   const columns = [
@@ -164,17 +158,13 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
-      render: (value: any) => (
-        <DateField format={"hh:mm DD/MM/YYYY"} value={value} />
-      ),
+      render: (value: any) => <DateField format={"hh:mm DD/MM/YYYY"} value={value} />,
     },
     {
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
-      render: (value: any) => (
-        <DateField format={"hh:mm DD/MM/YYYY"} value={value} />
-      ),
+      render: (value: any) => <DateField format={"hh:mm DD/MM/YYYY"} value={value} />,
     },
     {
       title: "Nông dân",
@@ -183,8 +173,8 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
       render: (value: any, record: any) => (
         <TextField
           value={
-            record?.farmer_information?.find((x: any) => x.farmer_id === value)
-              ?.farmer_name || "Chưa xác định"
+            record?.farmer_information?.find((x: any) => x.farmer_id === value)?.farmer_name ||
+            "Chưa xác định"
           }
         />
       ),
@@ -204,10 +194,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
       render: (value: any, record: any) => (
         <Flex gap={10}>
           {record?.status === "Pending" && (
-            <DeleteOutlined
-              style={{ color: "red" }}
-              onClick={() => hanldeDeleteTask(record?.id)}
-            />
+            <DeleteOutlined style={{ color: "red" }} onClick={() => hanldeDeleteTask(record?.id)} />
           )}
           {record?.status !== "Complete" && (
             <EditOutlined
@@ -249,9 +236,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
         title={
           <>
             <Flex justify="space-between">
-              <Typography.Title level={4}>
-                Chi tiết vấn đề: {task?.problem_name}
-              </Typography.Title>
+              <Typography.Title level={4}>Chi tiết vấn đề: {task?.problem_name}</Typography.Title>
               <Flex>
                 {task?.status === "Pending" && (
                   <Space>
@@ -308,9 +293,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
             Hình ảnh
           </Typography.Title>
           {task?.problem_images?.length > 0 ? (
-            <Image.PreviewGroup
-              items={task?.problem_images?.map((x: any) => x?.url) || []}
-            >
+            <Image.PreviewGroup items={task?.problem_images?.map((x: any) => x?.url) || []}>
               <Flex vertical={false} gap={16} justify="center">
                 <Image
                   width={"60%"}
@@ -322,9 +305,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
               </Flex>
             </Image.PreviewGroup>
           ) : (
-            <Typography.Text type="secondary">
-              Không có hình ảnh.
-            </Typography.Text>
+            <Typography.Text type="secondary">Không có hình ảnh.</Typography.Text>
           )}
           <Divider />
           {task?.status !== "Pending" && (
@@ -338,25 +319,18 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
                     dataSource={[
                       {
                         label: "Nội dung",
-                        value: (
-                          <Typography.Paragraph>
-                            {task?.result_content}
-                          </Typography.Paragraph>
-                        ),
+                        value: <Typography.Paragraph>{task?.result_content}</Typography.Paragraph>,
                       },
                     ]}
                     renderItem={(item) => (
                       <List.Item>
-                        <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-                        {item.value}
+                        <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
                       </List.Item>
                     )}
                   />
                 </Flex>
               ) : (
-                <Typography.Text type="secondary">
-                  Chưa có kết quả.
-                </Typography.Text>
+                <Typography.Text type="secondary">Chưa có kết quả.</Typography.Text>
               )}
               <Divider />
             </>
@@ -376,12 +350,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
               },
               {
                 label: "Ngày phát hiện",
-                value: (
-                  <DateField
-                    format={"hh:mm DD/MM/YYYY"}
-                    value={task?.created_date}
-                  />
-                ),
+                value: <DateField format={"hh:mm DD/MM/YYYY"} value={task?.created_date} />,
               },
 
               {
@@ -390,17 +359,12 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
               },
               {
                 label: "Mô tả vấn đề",
-                value: (
-                  <Typography.Paragraph>
-                    {task?.description}
-                  </Typography.Paragraph>
-                ),
+                value: <Typography.Paragraph>{task?.description}</Typography.Paragraph>,
               },
             ]}
             renderItem={(item) => (
               <List.Item>
-                <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-                {item.value}
+                <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
               </List.Item>
             )}
           />
@@ -411,9 +375,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
             title={
               <>
                 <Flex vertical={false} gap={16} justify="space-between">
-                  <Typography.Title level={5}>
-                    Danh sách hoạt động
-                  </Typography.Title>
+                  <Typography.Title level={5}>Danh sách hoạt động</Typography.Title>
                 </Flex>
               </>
             }

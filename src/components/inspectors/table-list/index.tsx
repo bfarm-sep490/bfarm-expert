@@ -12,7 +12,6 @@ import { Avatar, Button, Input, InputNumber, Select, Table, Typography, theme } 
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router";
 import { PaginationTotal } from "@/components/paginationTotal";
-import { FarmerStatusTag } from "@/components/farmer";
 
 export const InspectorListTable: React.FC = () => {
   const { token } = theme.useToken();
@@ -165,7 +164,6 @@ export const InspectorListTable: React.FC = () => {
             </Select>
           </FilterDropdown>
         )}
-        render={(value) => <FarmerStatusTag value={value} />}
       />
       <Table.Column
         title="Ngày tạo"

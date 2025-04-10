@@ -10,16 +10,7 @@ import {
 } from "@ant-design/icons";
 import { DateField, ShowButton, TextField } from "@refinedev/antd";
 import { BaseRecord, useTranslate } from "@refinedev/core";
-import {
-  Badge,
-  Card,
-  Flex,
-  Segmented,
-  Space,
-  Spin,
-  Table,
-  Typography,
-} from "antd";
+import { Badge, Card, Flex, Segmented, Space, Spin, Table, Typography } from "antd";
 import { ApexOptions } from "apexcharts";
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
@@ -75,8 +66,7 @@ export const ProblemsDashBoard = ({
       },
       yaxis: {
         labels: {
-          formatter: (value: any) =>
-            `${value} ${translate("problems", "vấn đề")}`,
+          formatter: (value: any) => `${value} ${translate("problems", "vấn đề")}`,
         },
       },
     },
@@ -185,86 +175,65 @@ export const ProblemsDashBoard = ({
       loading={loading || chartLoading}
     >
       {loading === false && chartLoading === false && viewComponent === "Chart" && (
-          <>
-            <ReactApexChart
-              options={state3.options as ApexOptions}
-              series={state3.series}
-              type="line"
-              height={180}
+        <>
+          <ReactApexChart
+            options={state3.options as ApexOptions}
+            series={state3.series}
+            type="line"
+            height={180}
+          />
+          <ReactApexChart
+            style={{ marginTop: "0px" }}
+            options={state3.optionsLine as ApexOptions}
+            series={state3.seriesLine}
+            type="area"
+            height={80}
+          />
+        </>
+      )}
+      {loading === false && chartLoading === false && viewComponent === "List" && (
+        <>
+          <Table
+            onRow={(record) => ({
+              onClick: () => {
+                setSelectId(record?.id as number);
+                setOpen(true);
+              },
+            })}
+            dataSource={data}
+            pagination={{
+              pageSize: 5,
+            }}
+            rowKey="id"
+            scroll={{ x: "max-content" }}
+          >
+            <Table.Column
+              dataIndex="id"
+              title={translate("ID")}
+              render={(value) => <TextField value={"#" + value} style={{ fontWeight: "bold" }} />}
             />
-            <ReactApexChart
-              style={{ marginTop: "0px" }}
-              options={state3.optionsLine as ApexOptions}
-              series={state3.seriesLine}
-              type="area"
-              height={80}
+            <Table.Column
+              dataIndex="problem_name"
+              title={translate("problem_name", "Tên vấn đề")}
             />
-          </>
-        )}
-      {loading === false &&
-        chartLoading === false &&
-        viewComponent === "List" && (
-          <>
-            <Table
-              dataSource={data}
-              pagination={{
-                pageSize: 5,
-              }}
-              rowKey="id"
-              scroll={{ x: "max-content" }}
-            >
-              <Table.Column
-                dataIndex="id"
-                title={translate("ID")}
-                render={(value) => (
-                  <TextField
-                    value={"#" + value}
-                    style={{ fontWeight: "bold" }}
-                  />
-                )}
-              />
-              <Table.Column
-                dataIndex="problem_name"
-                title={translate("problem_name", "Tên vấn đề")}
-              />
-              <Table.Column
-                dataIndex="farmer_name"
-                title={translate("farmer_name", "Tên nông dân")}
-              />
-              <Table.Column
-                dataIndex="created_date"
-                title={translate("problem.created_date", "Ngày phát sinh")}
-                render={(value) => (
-                  <DateField format="hh:mm DD/MM/YYYY" value={value} />
-                )}
-              />
+            <Table.Column
+              dataIndex="farmer_name"
+              title={translate("farmer_name", "Tên nông dân")}
+            />
+            <Table.Column
+              dataIndex="created_date"
+              title={translate("problem.created_date", "Ngày phát sinh")}
+              render={(value) => <DateField format="hh:mm DD/MM/YYYY" value={value} />}
+            />
 
-              <Table.Column
-                dataIndex="status"
-                title={translate("problem.status", "Trạng thái")}
-                render={(value) => <ProblemStatusTag status={value} />}
-              />
-
-              <Table.Column
-                fixed="right"
-                title={translate("table.actions", "Hành động")}
-                dataIndex="actions"
-                render={(_, record: BaseRecord) => (
-                  <Space>
-                    <ShowButton
-                      hideText
-                      size="small"
-                      onClick={() => {
-                        setSelectId(record?.id as number);
-                        setOpen(true);
-                      }}
-                    />
-                  </Space>
-                )}
-              />
-            </Table>
-          </>
-        )}
+            <Table.Column
+              dataIndex="status"
+              title={translate("problem.status", "Trạng thái")}
+              render={(value) => <ProblemStatusTag status={value} />}
+            />
+          </Table>
+        </>
+      )}
       <ProblemShowInProblem
         onClose={() => setOpen(false)}
         open={open}

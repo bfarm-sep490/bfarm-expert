@@ -25,14 +25,7 @@ import {
 import { ApexOptions } from "apexcharts";
 import ReactApexChart from "react-apexcharts";
 import { DateField, ShowButton, TextField, useForm } from "@refinedev/antd";
-import {
-  BaseRecord,
-  useCustom,
-  useDelete,
-  useList,
-  useOne,
-  useTranslate,
-} from "@refinedev/core";
+import { BaseRecord, useCustom, useDelete, useList, useOne, useTranslate } from "@refinedev/core";
 import { ProblemStatusTag } from "@/components/problem/status-tag";
 import { useNavigate, useParams } from "react-router";
 import { FarmerScheduleComponent } from "../scheduler/farmer-task-scheduler";
@@ -130,24 +123,19 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
       {
         name: "Chăm sóc",
         data: chosenFarmer?.map(
-          (x: any) =>
-            caring_task?.filter((y: any) => y?.farmer_id === x?.id)?.length ?? 0
+          (x: any) => caring_task?.filter((y: any) => y?.farmer_id === x?.id)?.length ?? 0,
         ),
       },
       {
         name: "Thu hoạch",
         data: chosenFarmer?.map(
-          (x: any) =>
-            harvesting_task?.filter((y: any) => y?.farmer_id === x?.id)
-              ?.length ?? 0
+          (x: any) => harvesting_task?.filter((y: any) => y?.farmer_id === x?.id)?.length ?? 0,
         ),
       },
       {
         name: "Đóng gói",
         data: chosenFarmer?.map(
-          (x: any) =>
-            packaging_task?.filter((y: any) => y?.farmer_id === x?.id)
-              ?.length ?? 0
+          (x: any) => packaging_task?.filter((y: any) => y?.farmer_id === x?.id)?.length ?? 0,
         ),
       },
     ];
@@ -216,12 +204,7 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
         />
       )}
       {loading === false && viewComponent === "List" && (
-        <Table
-          dataSource={chosenFarmer}
-          loading={loading}
-          rowKey="id"
-          scroll={{ x: true }}
-        >
+        <Table dataSource={chosenFarmer} loading={loading} rowKey="id" scroll={{ x: true }}>
           <Table.Column title="ID" dataIndex="id" key="id" width={"auto"} />
 
           <Table.Column
@@ -240,16 +223,13 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
                 <TextField
                   value={
                     (harvesting_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Ongoing"
+                      (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
                     )?.length ?? 0) +
                     (packaging_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Ongoing"
+                      (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
                     )?.length ?? 0) +
                     (caring_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Ongoing"
+                      (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
                     )?.length ?? 0)
                   }
                 />
@@ -265,16 +245,13 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
                 <TextField
                   value={
                     (harvesting_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Complete"
+                      (x: any) => x?.farmer_id === value && x?.status === "Complete",
                     )?.length ?? 0) +
                     (packaging_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Complete"
+                      (x: any) => x?.farmer_id === value && x?.status === "Complete",
                     )?.length ?? 0) +
                     (caring_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Complete"
+                      (x: any) => x?.farmer_id === value && x?.status === "Complete",
                     )?.length ?? 0)
                   }
                 />
@@ -290,16 +267,13 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
                 <TextField
                   value={
                     (harvesting_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Incomplete"
+                      (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
                     )?.length ?? 0) +
                     (packaging_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Incomplete"
+                      (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
                     )?.length ?? 0) +
                     (caring_task?.filter(
-                      (x: any) =>
-                        x?.farmer_id === value && x?.status === "Incomplete"
+                      (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
                     )?.length ?? 0)
                   }
                 />
@@ -387,7 +361,7 @@ export const DeleteFarmerInPlanModal = ({
           }
           onClose?.();
         },
-      }
+      },
     );
   };
   return (
@@ -408,11 +382,8 @@ export const DeleteFarmerInPlanModal = ({
       }
     >
       {error && <Alert message={error} type="error" />}
-      <Typography.Text
-        style={{ fontSize: 12, color: "red", fontStyle: "italic" }}
-      >
-        * Không thể xóa các nông dân đang thực hiện công việc. Bạn có chắc chắn
-        xóa không?
+      <Typography.Text style={{ fontSize: 12, color: "red", fontStyle: "italic" }}>
+        * Không thể xóa các nông dân đang thực hiện công việc. Bạn có chắc chắn xóa không?
       </Typography.Text>
     </Modal>
   );
@@ -483,8 +454,7 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
   const farmers = farmerData?.data;
   const chosenFarmers = chosenFarmrtData?.data;
   const filterFarmers =
-    farmers?.filter((x) => !chosenFarmers?.some((y: any) => y.id === x.id)) ??
-    [];
+    farmers?.filter((x) => !chosenFarmers?.some((y: any) => y.id === x.id)) ?? [];
 
   const { formProps, saveButtonProps } = useForm({
     resource: `plans/${id}/farmers`,
@@ -530,7 +500,7 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
               end: x.end_date,
               status: x.status,
             };
-          }) || []
+          }) || [],
         );
       },
     },
@@ -571,10 +541,7 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
           label="Chọn nông dân"
           rules={[{ required: true, message: "Vui lòng chọn nông dân!" }]}
         >
-          <Space
-            direction="vertical"
-            style={{ width: "100%", marginBottom: 20 }}
-          >
+          <Space direction="vertical" style={{ width: "100%", marginBottom: 20 }}>
             <Flex>
               <Select value={selectFarmer} onChange={handleSelect}>
                 {filterFarmers?.map((farmer) => (
@@ -590,10 +557,7 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
                   Xem lịch
                 </Button>
 
-                <Button
-                  onClick={() => setViewCalendar(false)}
-                  disabled={!viewCalendar}
-                >
+                <Button onClick={() => setViewCalendar(false)} disabled={!viewCalendar}>
                   Ẩn lịch
                 </Button>
               </Space>{" "}

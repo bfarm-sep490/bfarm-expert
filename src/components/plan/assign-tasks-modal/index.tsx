@@ -34,11 +34,7 @@ import dayjs from "dayjs";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { AssignTasks } from "../assign-tasks-sections";
-import {
-  CheckCircleOutlined,
-  FileSearchOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+import { CheckCircleOutlined, FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 interface GainingPlan {
   plan_name: string;
@@ -360,7 +356,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nông dân cho công việc chăm sóc cho công việc " +
             task.name +
             " #ID: " +
-            task.id
+            task.id,
         );
         return false;
       }
@@ -372,7 +368,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nông dân cho công việc thu hoạch cho công việc " +
             task.name +
             " #ID: " +
-            task.id
+            task.id,
         );
         return false;
       }
@@ -384,7 +380,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nhà kiểm định cho công việc kiểm định cho công việc " +
             task.name +
             " #ID: " +
-            task.id
+            task.id,
         );
         return false;
       }
@@ -396,7 +392,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nông dân cho công việc đóng gói cho công việc " +
             task.name +
             " #ID: " +
-            task.id
+            task.id,
         );
         return false;
       }

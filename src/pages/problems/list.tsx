@@ -4,9 +4,7 @@ import { useTable } from "@refinedev/antd";
 import { useGetIdentity, useList } from "@refinedev/core";
 import { IIdentity, IProblem } from "@/interfaces";
 
-export const ProblemListInProblems: React.FC<PropsWithChildren<{}>> = ({
-  children,
-}) => {
+export const ProblemListInProblems: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const { data: problemData, isLoading: problemLoading } = useList({
     resource: "problems",
   });

@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import { useMemo } from "react";
 import { useStyles } from "./styled";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { NumberWithUnit } from "../number-with-unit";
 
 export const PlanListCard = () => {
@@ -103,7 +103,7 @@ export const PlanListCard = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
-
+  const navigate = useNavigate();
   return (
     <>
       <Divider style={{ margin: "16px 0px" }} />
@@ -170,6 +170,9 @@ export const PlanListCard = () => {
         renderItem={(item) => (
           <List.Item style={{ height: "100%" }}>
             <Card
+              onClick={() => {
+                navigate(`${item?.id}`);
+              }}
               hoverable
               bordered={false}
               className={styles.card}

@@ -1,5 +1,4 @@
 import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
-import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Card, Col, Flex, Row, Typography } from "antd";
 import { PropsWithChildren, useState } from "react";
 
