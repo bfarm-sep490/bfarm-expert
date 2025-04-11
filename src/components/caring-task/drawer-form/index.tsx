@@ -200,7 +200,7 @@ export const CaringTaskPage = (props: Props) => {
     { label: t("status.watering", "Tưới nước"), value: "Watering" },
     {
       label: t("status.fertilizering", "Bón phân"),
-      value: "Fertilizering",
+      value: "Fertilizing",
     },
     { label: t("status.pesticiding", "Phun thuốc"), value: "Pesticide" },
     { label: t("status.setup", "Cài đặt"), value: "Setup" },

@@ -253,7 +253,6 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
                       Hủy bỏ
                     </Button>
                     <Button
-                      disabled={isAbilityToReport}
                       color="primary"
                       variant="solid"
                       onClick={() => {
