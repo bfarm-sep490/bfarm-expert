@@ -644,9 +644,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                 <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                   <ActivityCard
                     icon={<AuditOutlined style={{ color: "#fa8c16" }} />}
-                    completedTasks={
-                      packaging_task_dashboard?.complete_quantity || 0
-                    }
+                    completedTasks={packaging_task_dashboard?.complete_quantity || 0}
                     loading={isTaskDashboardLoading}
                     totalActivity={
                       packaging_task_dashboard?.cancel_quantity +
@@ -658,9 +656,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     title="Đóng gói"
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(
-                        packaging_task_dashboard?.last_create_date
-                      ).toLocaleDateString()
+                      new Date(packaging_task_dashboard?.last_create_date).toLocaleDateString()
                     }
                   />
                 </Col>
