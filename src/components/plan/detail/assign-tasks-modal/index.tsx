@@ -131,7 +131,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       onSuccess(data: any) {
         const plan = data?.data;
         formProps?.form?.setFieldsValue({
-          description: data.description,
+          description: plan.description,
           end_date: plan.end_date,
           plant_id: plan.plant_information.plant_id,
           yield_id: plan.yield_information.yield_id,
@@ -256,16 +256,18 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         value: props?.planId || id,
       },
       {
-        field: "status",
+        field: "status_list",
         operator: "eq",
-        value: "Pending",
+        value: ["Pending", "Draft"],
       },
     ],
     queryOptions: {
       onSuccess(data: any) {
         if (props?.problemId)
           setProductiveTasks(
-            data?.data.filter((task: any) => task?.problem_id === props?.problemId) || [],
+            data?.data.filter(
+              (task: any) => task?.problem_id === props?.problemId
+            ) || []
           );
         else setProductiveTasks(data?.data || []);
       },
@@ -285,9 +287,9 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         value: props?.planId || id,
       },
       {
-        field: "status",
+        field: "status_list",
         operator: "eq",
-        value: "Pending",
+        value: ["Pending", "Draft"],
       },
     ],
     queryOptions: {
@@ -310,9 +312,9 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         value: props?.planId || id,
       },
       {
-        field: "status",
+        field: "status_list",
         operator: "eq",
-        value: "Pending",
+        value: ["Pending", "Draft"],
       },
     ],
     queryOptions: {
@@ -335,9 +337,9 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         value: props?.planId || id,
       },
       {
-        field: "status",
+        field: "status_list",
         operator: "eq",
-        value: "Pending",
+        value: ["Pending", "Draft"],
       },
     ],
     queryOptions: {
@@ -414,7 +416,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nông dân cho công việc chăm sóc cho công việc " +
             task.name +
             " #ID: " +
-            task.id,
+            task.id
         );
         return false;
       }
@@ -426,7 +428,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nông dân cho công việc thu hoạch cho công việc " +
             task.name +
             " #ID: " +
-            task.id,
+            task.id
         );
         return false;
       }
@@ -438,7 +440,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nhà kiểm định cho công việc kiểm định cho công việc " +
             task.name +
             " #ID: " +
-            task.id,
+            task.id
         );
         return false;
       }
@@ -450,7 +452,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
           "Chưa chọn nông dân cho công việc đóng gói cho công việc " +
             task.name +
             " #ID: " +
-            task.id,
+            task.id
         );
         return false;
       }
@@ -560,7 +562,11 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         <>
           <Flex justify="end">
             {current > 0 && (
-              <Button loading={loading} style={{ margin: "0 8px" }} onClick={() => prev()}>
+              <Button
+                loading={loading}
+                style={{ margin: "0 8px" }}
+                onClick={() => prev()}
+              >
                 Previous
               </Button>
             )}

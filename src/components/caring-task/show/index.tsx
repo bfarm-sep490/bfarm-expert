@@ -1,5 +1,13 @@
 import { DateField, TagField, TextField, Title, useForm, useModalForm } from "@refinedev/antd";
-import { useShow, useNavigation, useBack, useList, useOne } from "@refinedev/core";
+import {
+  useShow,
+  useNavigation,
+  useBack,
+  useList,
+  useOne,
+  useUpdate,
+  useGetIdentity,
+} from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -25,6 +33,7 @@ import { useNavigate, useParams } from "react-router";
 import { CaringTypeTag } from "../type-tag";
 import { StatusTag } from "../status-tag";
 import { set, values } from "lodash";
+import { IIdentity } from "@/interfaces";
 
 type HistoryAssignedModalProps = {
   visible: boolean;
@@ -92,6 +101,8 @@ interface ChangeAssignedTasksModalProps {
   start_date?: Date;
   end_date?: Date;
   type?: string;
+  taskId?: number;
+  refetch?: () => void;
 }
 
 export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> = ({
@@ -101,28 +112,30 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
   start_date,
   end_date,
   type,
+  taskId,
+  refetch,
 }) => {
   const [newFarmer, setNewFarmer] = useState<any>(null);
   const [reason, setReason] = useState<string>("");
-  const { taskId, id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams();
   const { formProps, saveButtonProps } = useForm({
     resource:
       type === "caring-tasks"
-        ? "caring-tasks"
+        ? `caring-tasks/${taskId}/farmers/${newFarmer?.id}`
         : type === "harvesting-tasks"
-          ? "harvesting-tasks"
-          : "packing-tasks",
-    id: `${taskId}/assigned-farmers`,
+          ? `harvesting-tasks/${taskId}/farmers/${newFarmer?.id}`
+          : `packing-tasks/${taskId}/farmers/${newFarmer?.id}`,
     action: "create",
-    onMutationSuccess() {
-      notification.success({
-        message: "Thay đổi người làm thành công",
-      });
-      navigate("/../..", { replace: true });
-      setNewFarmer(null);
-      setReason("");
-      onClose();
+    createMutationOptions: {
+      onSuccess: () => {
+        notification.success({
+          message: "Thay đổi người làm thành công",
+        });
+        refetch?.();
+        setNewFarmer(null);
+        setReason("");
+        onClose();
+      },
     },
   });
   const { data: freeFarmersData, isLoading } = useList<{
@@ -150,6 +163,10 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
       setReason("");
     }
   }, [visible]);
+  useEffect(() => {
+    formProps?.form?.setFieldValue("reason", reason);
+  }, [reason]);
+
   return (
     <Modal
       title="Thay đổi người làm"
@@ -237,7 +254,7 @@ type ProductiveTaskShowProps = {
   refetch?: () => void;
 };
 export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
-  const { taskId } = useParams();
+  const { taskId, id } = useParams();
   const {
     data: queryResult,
     isLoading: caringLoading,
@@ -301,7 +318,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
       enabled: props?.visible === true,
     },
   });
-
+  const { data: user } = useGetIdentity<IIdentity>();
   const historyAssignedFarmers = historyAssignedData?.data || [];
   const navigate = useNavigate();
   const [dataVattu, setDataVattu] = useState<any>([]);
@@ -319,7 +336,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
     isLoading: chosenFarmerLoading,
     refetch: chosenFarmerRefetch,
   } = useList({
-    resource: `plans/${task?.plan_id}/farmers`,
+    resource: `plans/${id}/farmers`,
 
     queryOptions: {
       enabled: props?.visible === true,
@@ -340,6 +357,36 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
       setAssignedModal(false);
     }
   }, [props?.visible]);
+  const { mutate } = useUpdate({
+    resource: "caring-tasks",
+    id: task?.id,
+    mutationOptions: {
+      onSuccess: () => {
+        notification.success({
+          message: "Thay đổi người làm thành công",
+        });
+        caringRefetch();
+      },
+    },
+  });
+
+  const handleChangeStatus = (type: string) => {
+    mutate({
+      id: task?.id,
+      values: {
+        task_name: task?.task_name,
+        description: task?.description,
+        start_date: task?.start_date,
+        end_date: task?.end_date,
+        task_type: task?.task_type,
+        updated_by: user?.name,
+        status: type,
+        fertilizers: task?.fertilizers,
+        pesticides: task?.pesticides,
+        items: task?.items,
+      },
+    });
+  };
   return (
     <Drawer
       loading={caringLoading && caringFetching}
@@ -355,7 +402,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           {task?.status === "Ongoing" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button onClick={() => handleChangeStatus("Cancel")} color="danger" variant="solid">
                   Hủy bỏ
                 </Button>
               </Space>
@@ -364,10 +411,12 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           {task?.status === "Pending" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button color="danger" variant="solid" onClick={() => handleChangeStatus("Cancel")}>
                   Không chấp nhận
                 </Button>
-                <Button type="primary">Chấp nhận</Button>
+                <Button type="primary" onClick={() => handleChangeStatus("Ongoing")}>
+                  Chấp nhận
+                </Button>
               </Space>
             </Flex>
           )}
@@ -562,11 +611,13 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
         data={historyAssignedFarmers}
       />
       <ChangeAssignedTasksModal
+        taskId={task?.id}
+        refetch={caringRefetch}
         start_date={task?.start_date}
         end_date={task?.end_date}
         onClose={() => setAssignedModal(false)}
         visible={assignedModal}
-        assignedFarmers={chosenFarmers.find((x) => x.id === task.farmer_id)}
+        assignedFarmers={chosenFarmers.find((x) => x.id === task?.farmer_id)}
         type={"caring-tasks"}
       />
     </Drawer>
