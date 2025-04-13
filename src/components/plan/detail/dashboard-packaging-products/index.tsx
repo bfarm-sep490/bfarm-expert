@@ -68,7 +68,7 @@ export const PackagingProductDashBoard = ({
       series,
       options: {
         chart: {
-          height: 350,
+          height: 200,
           type: "radialBar",
         },
         plotOptions: {
@@ -97,7 +97,7 @@ export const PackagingProductDashBoard = ({
               },
             },
             hollow: {
-              size: "40%",
+              size: "60%",
             },
             track: {
               background: "#f2f2f2",
@@ -167,20 +167,15 @@ export const PackagingProductDashBoard = ({
   }
 
   return (
-    <div style={{ ...style }}>
+    <>
       <ReactApexChart
         options={chartData.options as unknown as ApexOptions}
         series={chartData.series}
         type="radialBar"
-        height={200}
+        height={150}
         width="100%"
       />
-      {chartData.series.length === 0 && (
-        <Typography.Text style={{ display: "block", textAlign: "center" }}>
-          Không có dữ liệu để hiển thị
-        </Typography.Text>
-      )}
-    </div>
+    </>
   );
 };
 
