@@ -357,6 +357,59 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       setLoading(false);
     }
   };
+
+  const validateAllTasks = () => {
+    for (const task of productiveTasks) {
+      if (!task.farmer_id) {
+        alert(
+          "Chưa chọn nông dân cho công việc chăm sóc cho công việc " +
+            task.name +
+            " #ID: " +
+            task.id
+        );
+        return false;
+      }
+    }
+
+    for (const task of harvestingTasks) {
+      if (!task.farmer_id) {
+        alert(
+          "Chưa chọn nông dân cho công việc thu hoạch cho công việc " +
+            task.name +
+            " #ID: " +
+            task.id
+        );
+        return false;
+      }
+    }
+
+    for (const task of inspectingTasks) {
+      if (!task.inspector_id) {
+        alert(
+          "Chưa chọn nhà kiểm định cho công việc kiểm định cho công việc " +
+            task.name +
+            " #ID: " +
+            task.id
+        );
+        return false;
+      }
+    }
+
+    for (const task of packagingTasks) {
+      if (!task.farmer_id) {
+        alert(
+          "Chưa chọn nông dân cho công việc đóng gói cho công việc " +
+            task.name +
+            " #ID: " +
+            task.id
+        );
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const [loadingForm, setLoadingForm] = useState(true);
 
   useEffect(() => {
