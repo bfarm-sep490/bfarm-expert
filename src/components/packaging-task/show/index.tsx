@@ -1,5 +1,13 @@
 import { DateField, TagField, TextField, Title } from "@refinedev/antd";
-import { useShow, useNavigation, useBack, useList, useOne } from "@refinedev/core";
+import {
+  useShow,
+  useNavigation,
+  useBack,
+  useList,
+  useOne,
+  useUpdate,
+  useGetIdentity,
+} from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -19,6 +27,7 @@ import { useNavigate, useParams } from "react-router";
 import { StatusTag } from "../../caring-task/status-tag";
 import ChangeAssignedTasksModal, { HistoryAssignedModal } from "@/components/caring-task/show";
 import useToken from "antd/es/theme/useToken";
+import { IIdentity } from "@/interfaces";
 type PackagingTaskShowProps = {
   visible?: boolean;
   onClose?: () => void;
@@ -26,7 +35,7 @@ type PackagingTaskShowProps = {
   refetch?: () => void;
 };
 export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
-  const { taskId } = useParams();
+  const { taskId, id } = useParams();
   const {
     data: queryResult,
     isLoading: packagingLoading,
@@ -61,7 +70,7 @@ export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
   });
   const [assignedModal, setAssignedModal] = useState(false);
   const { data: chosenFarmersData, refetch: chosenFarmerRefetch } = useList({
-    resource: `plans/${task?.plan_id}/farmers`,
+    resource: `plans/${id}/farmers`,
     queryOptions: {
       enabled: props?.visible === true,
     },
@@ -88,6 +97,32 @@ export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
       setVisible(false);
     }
   }, [props?.visible]);
+  const { data: user } = useGetIdentity<IIdentity>();
+  const { mutate } = useUpdate({
+    resource: "packaging-tasks",
+    id: task?.id,
+    mutationOptions: {
+      onSuccess: () => {
+        packagingRefetch();
+      },
+    },
+  });
+
+  const handleChangeStatus = (type: string) => {
+    mutate({
+      id: task?.id,
+      values: {
+        packaging_type_id: task?.packaging_type_id,
+        task_name: task?.task_name,
+        description: task?.description,
+        start_date: task?.start_date,
+        end_date: task?.end_date,
+        updated_by: user?.name,
+        status: type,
+        items: task?.items,
+      },
+    });
+  };
   return (
     <Drawer
       loading={packagingLoading || packagingFetching}
@@ -103,7 +138,7 @@ export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
           {task?.status === "Ongoing" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button onClick={() => handleChangeStatus("Cancel")} color="danger" variant="solid">
                   Hủy bỏ
                 </Button>
               </Space>
@@ -112,10 +147,14 @@ export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
           {task?.status === "Pending" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button onClick={() => handleChangeStatus("Cancel")} color="danger" variant="solid">
                   Không chấp nhận
                 </Button>
-                <Button color="primary" variant="solid">
+                <Button
+                  onClick={() => handleChangeStatus("Ongoing")}
+                  color="primary"
+                  variant="solid"
+                >
                   Tiến hành
                 </Button>
               </Space>
@@ -323,12 +362,14 @@ export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
         data={historyAssignedFarmers}
       />
       <ChangeAssignedTasksModal
+        taskId={task?.id}
+        refetch={packagingRefetch}
         end_date={task?.end_date}
         start_date={task?.start_date}
         type="packaging-tasks"
         onClose={() => setAssignedModal(false)}
         visible={assignedModal}
-        assignedFarmers={chosenFarmers.find((x) => x.id === task.farmer_id)}
+        assignedFarmers={chosenFarmers.find((x) => x.id === task?.farmer_id)}
       />
     </Drawer>
   );

@@ -1,5 +1,13 @@
 import { DateField, TagField, TextField, Title, useForm, useModalForm } from "@refinedev/antd";
-import { useShow, useNavigation, useBack, useList, useOne } from "@refinedev/core";
+import {
+  useShow,
+  useNavigation,
+  useBack,
+  useList,
+  useOne,
+  useUpdate,
+  useGetIdentity,
+} from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -25,6 +33,7 @@ import { useNavigate, useParams } from "react-router";
 import { CaringTypeTag } from "../type-tag";
 import { StatusTag } from "../status-tag";
 import { set, values } from "lodash";
+import { IIdentity } from "@/interfaces";
 
 type HistoryAssignedModalProps = {
   visible: boolean;
@@ -92,6 +101,8 @@ interface ChangeAssignedTasksModalProps {
   start_date?: Date;
   end_date?: Date;
   type?: string;
+  taskId?: number;
+  refetch?: () => void;
 }
 
 export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> = ({
@@ -101,28 +112,30 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
   start_date,
   end_date,
   type,
+  taskId,
+  refetch,
 }) => {
   const [newFarmer, setNewFarmer] = useState<any>(null);
   const [reason, setReason] = useState<string>("");
-  const { taskId, id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams();
   const { formProps, saveButtonProps } = useForm({
     resource:
       type === "caring-tasks"
-        ? "caring-tasks"
+        ? `caring-tasks/${taskId}/farmers/${newFarmer?.id}`
         : type === "harvesting-tasks"
-          ? "harvesting-tasks"
-          : "packing-tasks",
-    id: `${taskId}/farmers/${newFarmer?.id}`,
+          ? `harvesting-tasks/${taskId}/farmers/${newFarmer?.id}`
+          : `packing-tasks/${taskId}/farmers/${newFarmer?.id}`,
     action: "create",
-    onMutationSuccess() {
-      notification.success({
-        message: "Thay đổi người làm thành công",
-      });
-      navigate("/../..", { replace: true });
-      setNewFarmer(null);
-      setReason("");
-      onClose();
+    createMutationOptions: {
+      onSuccess: () => {
+        notification.success({
+          message: "Thay đổi người làm thành công",
+        });
+        refetch?.();
+        setNewFarmer(null);
+        setReason("");
+        onClose();
+      },
     },
   });
   const { data: freeFarmersData, isLoading } = useList<{
@@ -150,6 +163,10 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
       setReason("");
     }
   }, [visible]);
+  useEffect(() => {
+    formProps?.form?.setFieldValue("reason", reason);
+  }, [reason]);
+
   return (
     <Modal
       title="Thay đổi người làm"
@@ -210,16 +227,12 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
               value={newFarmer?.id}
               onChange={(value) => {
                 setNewFarmer(
-                  freeFarmers.find(
-                    (farmer: { id: string; name: string }) =>
-                      farmer.id === value
-                  ) || null
+                  freeFarmers.find((farmer: { id: string; name: string }) => farmer.id === value) ||
+                    null,
                 );
               }}
             >
-              {isLoading && (
-                <Select.Option value={undefined}>Loading...</Select.Option>
-              )}
+              {isLoading && <Select.Option value={undefined}>Loading...</Select.Option>}
               {freeFarmers.map((farmer: any) => (
                 <Select.Option key={farmer.id} value={farmer.id}>
                   {farmer.name}
@@ -241,7 +254,7 @@ type ProductiveTaskShowProps = {
   refetch?: () => void;
 };
 export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
-  const { taskId } = useParams();
+  const { taskId, id } = useParams();
   const {
     data: queryResult,
     isLoading: caringLoading,
@@ -305,13 +318,11 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
       enabled: props?.visible === true,
     },
   });
-
+  const { data: user } = useGetIdentity<IIdentity>();
   const historyAssignedFarmers = historyAssignedData?.data || [];
   const navigate = useNavigate();
   const [dataVattu, setDataVattu] = useState<any>([]);
-  const [modeVattu, setModeVattu] = useState<
-    "fertilizer" | "pesticide" | "item"
-  >("fertilizer");
+  const [modeVattu, setModeVattu] = useState<"fertilizer" | "pesticide" | "item">("fertilizer");
   const back = useBack();
   const breakpoint = { sm: window.innerWidth > 576 };
   const data = queryResult;
@@ -325,7 +336,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
     isLoading: chosenFarmerLoading,
     refetch: chosenFarmerRefetch,
   } = useList({
-    resource: `plans/${task?.plan_id}/farmers`,
+    resource: `plans/${id}/farmers`,
 
     queryOptions: {
       enabled: props?.visible === true,
@@ -346,6 +357,36 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
       setAssignedModal(false);
     }
   }, [props?.visible]);
+  const { mutate } = useUpdate({
+    resource: "caring-tasks",
+    id: task?.id,
+    mutationOptions: {
+      onSuccess: () => {
+        notification.success({
+          message: "Thay đổi người làm thành công",
+        });
+        caringRefetch();
+      },
+    },
+  });
+
+  const handleChangeStatus = (type: string) => {
+    mutate({
+      id: task?.id,
+      values: {
+        task_name: task?.task_name,
+        description: task?.description,
+        start_date: task?.start_date,
+        end_date: task?.end_date,
+        task_type: task?.task_type,
+        updated_by: user?.name,
+        status: type,
+        fertilizers: task?.fertilizers,
+        pesticides: task?.pesticides,
+        items: task?.items,
+      },
+    });
+  };
   return (
     <Drawer
       loading={caringLoading && caringFetching}
@@ -361,7 +402,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           {task?.status === "Ongoing" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button onClick={() => handleChangeStatus("Cancel")} color="danger" variant="solid">
                   Hủy bỏ
                 </Button>
               </Space>
@@ -370,10 +411,12 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           {task?.status === "Pending" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button color="danger" variant="solid" onClick={() => handleChangeStatus("Cancel")}>
                   Không chấp nhận
                 </Button>
-                <Button type="primary">Chấp nhận</Button>
+                <Button type="primary" onClick={() => handleChangeStatus("Ongoing")}>
+                  Chấp nhận
+                </Button>
               </Space>
             </Flex>
           )}
@@ -389,9 +432,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
         {task?.status === "Complete" ? (
           <Flex vertical gap={16}>
             {task.images?.length > 0 && (
-              <Image.PreviewGroup
-                items={task?.care_images?.map((x: any) => x.url) || []}
-              >
+              <Image.PreviewGroup items={task?.care_images?.map((x: any) => x.url) || []}>
                 <Image
                   loading="lazy"
                   style={{ borderRadius: "10px" }}
@@ -418,8 +459,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
               ]}
               renderItem={(item) => (
                 <List.Item>
-                  <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-                  {item.value}
+                  <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
                 </List.Item>
               )}
             />
@@ -433,11 +473,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           {(task?.status === "Ongoing" ||
             task?.status === "Pending" ||
             task?.status === "Draft") && (
-            <Button
-              color="primary"
-              variant="solid"
-              onClick={() => navigate("edit")}
-            >
+            <Button color="primary" variant="solid" onClick={() => navigate("edit")}>
               Thay đổi
             </Button>
           )}
@@ -469,15 +505,12 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
             },
             {
               label: "Mô tả công việc",
-              value: (
-                <Typography.Paragraph>{task?.description}</Typography.Paragraph>
-              ),
+              value: <Typography.Paragraph>{task?.description}</Typography.Paragraph>,
             },
           ]}
           renderItem={(item) => (
             <List.Item>
-              <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-              {item.value}
+              <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
             </List.Item>
           )}
         />
@@ -487,12 +520,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           dataSource={[
             {
               label: "Ngày tạo",
-              value: (
-                <DateField
-                  format={"hh:mm DD/MM/YYYY"}
-                  value={task?.created_at}
-                />
-              ),
+              value: <DateField format={"hh:mm DD/MM/YYYY"} value={task?.created_at} />,
             },
             {
               label: "Người tạo",
@@ -501,10 +529,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
             {
               label: "Câp nhật lần cuối",
               value: task?.updated_at ? (
-                <DateField
-                  format={"hh:mm DD/MM/YYYY"}
-                  value={task?.updated_at}
-                />
+                <DateField format={"hh:mm DD/MM/YYYY"} value={task?.updated_at} />
               ) : (
                 "Chưa cập nhập lần nào"
               ),
@@ -516,8 +541,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           ]}
           renderItem={(item) => (
             <List.Item>
-              <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-              {item.value}
+              <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
             </List.Item>
           )}
         />
@@ -532,11 +556,7 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
             {(task?.status === "Ongoing" ||
               task?.status === "Pending" ||
               task?.status === "Draft") && (
-              <Button
-                type="primary"
-                color="cyan"
-                onClick={() => setAssignedModal(true)}
-              >
+              <Button type="primary" color="cyan" onClick={() => setAssignedModal(true)}>
                 Thay đổi
               </Button>
             )}
@@ -556,9 +576,8 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
                 <TextField
                   value={
                     task?.farmer_id
-                      ? task?.farmer_information?.find(
-                          (x: any) => x?.farmer_id === task?.farmer_id
-                        )?.farmer_name
+                      ? task?.farmer_information?.find((x: any) => x?.farmer_id === task?.farmer_id)
+                          ?.farmer_name
                       : "Chưa giao việc"
                   }
                 />
@@ -567,19 +586,13 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
           ]}
           renderItem={(item) => (
             <List.Item>
-              <Typography.Text strong>{item.label}:</Typography.Text>{" "}
-              {item.value}
+              <Typography.Text strong>{item.label}:</Typography.Text> {item.value}
             </List.Item>
           )}
         />
         <Divider />
-        <Typography.Title level={4}>
-          Phân bón / Thuốc trừ sâu / Vật tư
-        </Typography.Title>
-        <Radio.Group
-          value={modeVattu}
-          onChange={(e) => handleModeChange(e.target.value)}
-        >
+        <Typography.Title level={4}>Phân bón / Thuốc trừ sâu / Vật tư</Typography.Title>
+        <Radio.Group value={modeVattu} onChange={(e) => handleModeChange(e.target.value)}>
           <Radio.Button value="fertilizer">Phân bón</Radio.Button>
           <Radio.Button value="pesticide">Thuốc trừ sâu</Radio.Button>
           <Radio.Button value="item">Vật tư</Radio.Button>
@@ -598,11 +611,13 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
         data={historyAssignedFarmers}
       />
       <ChangeAssignedTasksModal
+        taskId={task?.id}
+        refetch={caringRefetch}
         start_date={task?.start_date}
         end_date={task?.end_date}
         onClose={() => setAssignedModal(false)}
         visible={assignedModal}
-        assignedFarmers={chosenFarmers.find((x) => x.id === task.farmer_id)}
+        assignedFarmers={chosenFarmers.find((x) => x.id === task?.farmer_id)}
         type={"caring-tasks"}
       />
     </Drawer>

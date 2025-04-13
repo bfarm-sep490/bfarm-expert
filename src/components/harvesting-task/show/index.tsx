@@ -1,5 +1,13 @@
 import { DateField, TagField, TextField, Title } from "@refinedev/antd";
-import { useShow, useNavigation, useBack, useList, useOne } from "@refinedev/core";
+import {
+  useShow,
+  useNavigation,
+  useBack,
+  useList,
+  useOne,
+  useUpdate,
+  useGetIdentity,
+} from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -19,6 +27,7 @@ import { useNavigate, useParams } from "react-router";
 import { StatusTag } from "../../caring-task/status-tag";
 import ChangeAssignedTasksModal, { HistoryAssignedModal } from "@/components/caring-task/show";
 import { set } from "lodash";
+import { IIdentity } from "@/interfaces";
 
 type HarvestingTaskShowProps = {
   visible?: boolean;
@@ -28,7 +37,7 @@ type HarvestingTaskShowProps = {
 };
 
 export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
-  const { taskId } = useParams();
+  const { taskId, id } = useParams();
   const {
     data: queryResult,
     isLoading: harvestingTaskLoading,
@@ -41,6 +50,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
       enabled: props?.visible === true,
     },
   });
+  const { data: user } = useGetIdentity<IIdentity>();
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
   const back = useBack();
@@ -65,7 +75,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
     isLoading: chosenFarmerLoading,
     refetch: chosenFarmerRefetch,
   } = useList({
-    resource: `plans/${task?.plan_id}/farmers`,
+    resource: `plans/${id}/farmers`,
     queryOptions: {
       enabled: props?.visible === true,
     },
@@ -90,6 +100,30 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
       setAssignedModal(false);
     }
   }, [props?.visible]);
+  const { mutate } = useUpdate({
+    resource: "harvesting-tasks",
+    id: task?.id,
+    mutationOptions: {
+      onSuccess: () => {
+        harvestingTaskRefetch();
+      },
+    },
+  });
+
+  const handleChangeStatus = (type: string) => {
+    mutate({
+      id: task?.id,
+      values: {
+        task_name: task?.task_name,
+        description: task?.description,
+        start_date: task?.start_date,
+        end_date: task?.end_date,
+        updated_by: user?.name,
+        status: type,
+        items: task?.items,
+      },
+    });
+  };
   return (
     <Drawer
       style={{ background: token.colorBgLayout }}
@@ -104,7 +138,7 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           {task?.status === "Ongoing" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button onClick={() => handleChangeStatus("Cancel")} color="danger" variant="solid">
                   Hủy bỏ
                 </Button>
               </Space>
@@ -113,10 +147,14 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           {task?.status === "Pending" && (
             <Flex justify="end">
               <Space>
-                <Button color="danger" variant="solid">
+                <Button onClick={() => handleChangeStatus("Cancel")} color="danger" variant="solid">
                   Không chấp nhận
                 </Button>
-                <Button color="primary" variant="solid">
+                <Button
+                  onClick={() => handleChangeStatus("Ongoing")}
+                  color="primary"
+                  variant="solid"
+                >
                   Tiến hành
                 </Button>
               </Space>
@@ -309,12 +347,14 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           data={historyAssignedFarmers}
         />
         <ChangeAssignedTasksModal
+          taskId={task?.id}
+          refetch={harvestingTaskRefetch}
           end_date={task?.end_date}
           start_date={task?.start_date}
           type="harvesting-tasks"
           onClose={() => setAssignedModal(false)}
           visible={assignedModal}
-          assignedFarmers={chosenFarmers.find((x) => x.id === task.farmer_id)}
+          assignedFarmers={chosenFarmers.find((x) => x.id === task?.farmer_id)}
         />
       </Flex>
     </Drawer>

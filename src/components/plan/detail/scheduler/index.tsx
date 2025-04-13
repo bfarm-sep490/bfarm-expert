@@ -327,20 +327,22 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
         isLoading || caringFetching || harvestingFetching || inspectingFetching || packagingFetching
       }
     >
-      <Flex justify="end" align="center" gap={10} style={{ marginBottom: 10 }}>
-        <Button
-          icon={<DiffOutlined />}
-          type="default"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          Phân công
-        </Button>
-        <Button icon={<PlusSquareOutlined />} type="primary">
-          Thêm
-        </Button>
-      </Flex>
+      {props?.status !== "Pending" && (
+        <Flex justify="end" align="center" gap={10} style={{ marginBottom: 10 }}>
+          <Button
+            icon={<DiffOutlined />}
+            type="default"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Phân công
+          </Button>
+          <Button icon={<PlusSquareOutlined />} type="primary">
+            Thêm
+          </Button>
+        </Flex>
+      )}
       {isLoading ||
       caringFetching ||
       harvestingFetching ||
@@ -531,7 +533,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
             key="inspecting"
             icon={
               <Badge
-                count={inspectorData?.data?.filter((x) => x?.status === "Pending")?.length}
+                count={inspectionData?.data?.filter((x) => x?.status === "Pending")?.length}
               ></Badge>
             }
           >
