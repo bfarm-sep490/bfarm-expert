@@ -7,7 +7,7 @@ import {
   useOne,
   useInvalidate,
 } from "@refinedev/core";
-import { SaveButton, useStepsForm } from "@refinedev/antd";
+import { SaveButton, useForm, useStepsForm } from "@refinedev/antd";
 import { Form, Button, Steps, Flex, message } from "antd";
 import { useSearchParams } from "react-router";
 import { useFormList } from "@/components/plan";
@@ -61,6 +61,10 @@ export const PlanForm = (props: Props) => {
           };
         },
       },
+      defaultFormValues: {
+        expert_id: expert_id as number,
+        updated_by: expert_name as string,
+      },
       onMutationSuccess: (data) => {
         const newPlanId = data?.data?.id;
         if (newPlanId && !planId) {
@@ -76,7 +80,6 @@ export const PlanForm = (props: Props) => {
         message.error(t("plans.messages.createError", "Failed to create plan"));
       },
     });
-
   useEffect(() => {
     if (current === 4) {
       if (planId) {
@@ -109,14 +112,6 @@ export const PlanForm = (props: Props) => {
     (props.orderIds?.length ?? 0) > 0 || formProps.initialValues?.order_ids?.length > 0;
 
   useEffect(() => {
-    if (expert_id !== undefined) {
-      form.setFieldValue("expert_id", expert_id);
-    }
-
-    if (expert_name !== undefined) {
-      form.setFieldValue("updated_by", expert_name);
-    }
-
     if (props.orderIds && props.orderIds.length > 0) {
       form.setFieldValue(
         "order_ids",
@@ -133,7 +128,7 @@ export const PlanForm = (props: Props) => {
       form.setFieldValue("order_plant_id", order.plant_id);
       form.setFieldValue("order_plant_name", order.plant_name);
     }
-  }, [expert_id, expert_name, props.orderIds, props.totalPreorderQuantity, form, orderData]);
+  }, [props.orderIds, props.totalPreorderQuantity, form, orderData]);
 
   const { formList } = useFormList({
     formProps,
@@ -159,8 +154,6 @@ export const PlanForm = (props: Props) => {
 
     setIsSubmitting(true);
     try {
-      form.setFieldValue("expert_id", expert_id);
-      form.setFieldValue("updated_by", expert_name);
       await submit();
       if (props.action === "edit" || planId) {
         gotoStep(current + 1);
@@ -178,8 +171,6 @@ export const PlanForm = (props: Props) => {
 
     setIsSubmitting(true);
     try {
-      form.setFieldValue("expert_id", expert_id);
-      form.setFieldValue("updated_by", expert_name);
       saveButtonProps.onClick();
       message.success(t("plans.messages.draftSuccess", "Draft saved successfully"));
       go({
@@ -235,12 +226,6 @@ export const PlanForm = (props: Props) => {
       </Steps>
 
       <Form {...formProps} layout="vertical">
-        <Form.Item name="expert_id" hidden>
-          <input />
-        </Form.Item>
-        <Form.Item name="updated_by" hidden>
-          <input />
-        </Form.Item>
         {formList[current]}
       </Form>
 

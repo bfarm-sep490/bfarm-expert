@@ -1,7 +1,8 @@
-import { Modal, Card, Transfer, Typography, Space, Tag, Spin, Tooltip, Button } from "antd";
+import { Modal, Card, Transfer, Typography, Space, Tag, Spin, Button } from "antd";
 import { useState, Key } from "react";
 import { useList } from "@refinedev/core";
-import { InfoCircleOutlined, ShoppingCartOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { IOrder } from "@/interfaces";
 
 const { Text } = Typography;
 
@@ -36,29 +37,22 @@ export const PlanSelectionModal = ({
   const [selectedPlantId, setSelectedPlantId] = useState<number | null>(null);
   const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
 
-  const { data, isLoading } = useList({
-    resource: "orders",
+  const { data, isLoading } = useList<IOrder>({
+    resource: "orders/no-plan",
     filters: [
       {
         field: "status",
         operator: "eq",
         value: "Deposit",
       },
-      {
-        field: "plan_id",
-        operator: "eq",
-        value: null,
-      },
     ],
   });
   const tableData: OrderData[] =
-    data?.data
-      ?.filter((order: any) => order.plan_id === null)
-      ?.map((order: any) => ({
-        key: order.id.toString(),
-        ...order,
-        disabled: selectedPlantId !== null && order.plant_id !== selectedPlantId,
-      })) || [];
+    data?.data?.map((order) => ({
+      key: order.id.toString(),
+      ...order,
+      disabled: selectedPlantId !== null && order.plant_id !== selectedPlantId,
+    })) || [];
 
   const handleTransferChange = (
     nextTargetKeys: Key[],

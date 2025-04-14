@@ -133,19 +133,27 @@ export interface IOrder {
   retailer_name: string;
   plant_id: number;
   plant_name: string;
-  plan_id: number | null;
-  plan_name: string | null;
+  plan_information: Array<{
+    id: number;
+    name: string;
+  }>;
   packaging_type_id: number;
   packaging_type_name: string;
   deposit_price: number;
   total_price: number | null;
-  status: "Deposit" | "Pending" | "Ongoing" | "Completed" | "Cancelled";
+  status: "Deposit" | "Pending" | "Ongoing" | "Complete" | "Cancel";
   address: string;
   phone: string;
   preorder_quantity: number;
   estimate_pick_up_date: string;
   created_at: string;
-  transactions: any[];
+  transactions: Array<{
+    id: number;
+    order_id: number;
+    transaction_type: string;
+    amount: number;
+    created_at: string;
+  }>;
 }
 
 export interface IYield {
