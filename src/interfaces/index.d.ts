@@ -165,6 +165,9 @@ export interface IYield {
   description: string;
   size: string;
   status: string;
+  maximum_quantity: number;
+  plan_id_in_use?: number;
+  estimated_end_date?: string;
 }
 
 export interface IDevice {
@@ -298,4 +301,103 @@ export interface IFertilizer {
   total_quantity: number;
   status: "UnActived" | "InStock" | "OutStock";
   type: "Organic" | "Chemical" | "Mixed";
+}
+
+export interface ITemplatePlanRequest {
+  orders: Array<{
+    id: number;
+    quantity: number;
+  }>;
+  plant_id: number;
+  yield_id: number;
+  start_date: string;
+  estimated_product: number;
+  seed_quantity: number;
+  expert_id: number;
+  created_by: string;
+}
+
+export interface ITemplatePlanResponse {
+  status: number;
+  message: string;
+  data: Array<{
+    id: number;
+    name: string;
+    description: string;
+    plant_id: number;
+    yield_id: number;
+    season_name: string;
+    start_date: string;
+    end_date: string;
+    estimated_product: number;
+    seed_quantity: number;
+    orders: Array<{
+      order_id: number;
+      quantity: number;
+    }>;
+    expert_id: number;
+    plan_name: string | null;
+    created_by: string;
+    caring_tasks: Array<{
+      task_name: string;
+      description: string;
+      task_type: string;
+      start_date: string;
+      end_date: string;
+      created_by: string;
+      fertilizers: Array<{
+        fertilizer_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+      pesticides: Array<{
+        pesticide_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+      items: Array<{
+        item_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+    }>;
+    harvesting_tasks: Array<{
+      task_name: string;
+      description: string;
+      start_date: string;
+      end_date: string;
+      created_by: string;
+      items: Array<{
+        item_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+    }>;
+    inspecting_forms: Array<{
+      task_name: string;
+      description: string;
+      start_date: string;
+      end_date: string;
+      created_by: string;
+    }>;
+    packaging_tasks: Array<{
+      task_name: string;
+      packaging_type_id: number;
+      description: string;
+      start_date: string;
+      end_date: string;
+      created_by: string;
+      total_package_weight: number;
+      items: Array<any>;
+    }>;
+  }>;
+}
+
+export type Template = ITemplatePlanResponse["data"][0];
+
+export interface IPackagingType {
+  id: number;
+  name: string;
+  description: string;
+  status: "Active" | "Inactive";
 }
