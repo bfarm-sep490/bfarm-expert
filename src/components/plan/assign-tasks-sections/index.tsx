@@ -45,6 +45,7 @@ interface Inspector {
 }
 
 type Props = {
+  schedule?: any[];
   formProps: FormProps;
   chosenFarmers: Farmer[];
   productiveTasks: ProductiveTask[];
@@ -63,6 +64,7 @@ type Props = {
 };
 
 export const AssignTasks = ({
+  schedule,
   chosenFarmers,
   formProps,
   harvestingTasks,
@@ -78,16 +80,51 @@ export const AssignTasks = ({
   loading,
   type,
 }: Props) => {
-  const { id } = useParams();
+  const isOverlappingPeriod = (
+    start1: string,
+    end1: string,
+    start2: string,
+    end2: string,
+  ): boolean => {
+    const s1 = new Date(start1).getTime();
+    const e1 = new Date(end1).getTime();
+    const s2 = new Date(start2).getTime();
+    const e2 = new Date(end2).getTime();
 
-  const [viewChart, setViewChart] = React.useState(false);
-  const calculateTaskCountForFarmer = (farmerId: number) => {
-    return (
-      (productiveTasks?.filter((task) => task.farmer_id === farmerId)?.length ?? 0) +
-      (harvestingTasks?.filter((task) => task.farmer_id === farmerId)?.length ?? 0) +
-      (packagingTasks?.filter((task) => task.farmer_id === farmerId)?.length ?? 0)
-    );
+    return s1 < e2 && e1 > s2;
   };
+
+  const filterAvailableFarmers = (
+    record: ProductiveTask | HarvestingTask | PackagingTask,
+    chosenFarmers: Farmer[],
+    chosenSchedule: any[],
+  ): Farmer[] => {
+    return chosenFarmers?.filter((farmer) => {
+      if (record?.farmer_id === farmer.id) return true;
+      const farmerSchedule = chosenSchedule?.find((s) => s?.id === farmer?.id);
+      if (farmerSchedule?.list_schedule?.length === 0) return true;
+      console.log("farmerSchedule", farmerSchedule);
+      const availableSchedule = farmerSchedule?.list_schedule?.some(
+        (schedule: any) =>
+          new Date(schedule?.start_date) <= new Date(record?.start_date) &&
+          new Date(schedule?.end_date) >= new Date(record?.end_date),
+      );
+
+      const isTaskOverlapping = [...productiveTasks, ...harvestingTasks, ...packagingTasks].some(
+        (task) =>
+          task?.farmer_id === farmer.id &&
+          isOverlappingPeriod(
+            task?.start_date,
+            task?.end_date,
+            record?.start_date,
+            record?.end_date,
+          ),
+      );
+      return !availableSchedule && !isTaskOverlapping;
+    });
+  };
+  const { id } = useParams();
+  console.log(schedule, "schedule");
   const {
     data: autoTaskData,
     isLoading: autoTaskLoading,
@@ -100,7 +137,7 @@ export const AssignTasks = ({
     queryOptions: {
       enabled: false,
       onSuccess: (data) => {
-        if (data?.data !== null) {
+        if (data?.data !== null && typeof data?.data === "string") {
           api.warning({
             message: "Vui lòng xem lại các nông dân đã chọn.",
             description: data?.data as unknown as string,
@@ -111,113 +148,53 @@ export const AssignTasks = ({
             message: "Tạo công việc thành công.",
             duration: 2,
           });
+          setProductiveTasks(
+            productiveTasks.map((task) => {
+              const newTask = data?.data?.caringTasks?.find(
+                (x: any) => x?.caringTaskId === task.id,
+              );
+              if (newTask) {
+                return {
+                  ...task,
+                  farmer_id: newTask?.farmerId,
+                };
+              }
+              return task;
+            }),
+          );
+          setHarvestingTasks(
+            harvestingTasks.map((task) => {
+              const newTask = data?.data?.harvestingTasks?.find(
+                (x: any) => x?.harvestingTaskId === task.id,
+              );
+              if (newTask) {
+                return {
+                  ...task,
+                  farmer_id: newTask?.farmerId,
+                };
+              }
+              return task;
+            }),
+          );
+          setPackagingTasks(
+            packagingTasks.map((task) => {
+              const newTask = data?.data?.packagingTasks?.find(
+                (x: any) => x?.packagingTaskId === task.id,
+              );
+              if (newTask) {
+                return {
+                  ...task,
+                  farmer_id: newTask?.farmerId,
+                };
+              }
+              return task;
+            }),
+          );
         }
       },
     },
   });
   const [api, contextHolder] = notification.useNotification();
-
-  useEffect(() => {
-    if ((autoTaskData as any)?.status === 500) {
-      api.error({
-        message: "Có lỗi xảy ra",
-        description: (autoTaskData as any)?.message,
-      });
-    }
-    const {
-      caringTasks,
-      havestingTasks: harvestingAuto,
-      packingTasks: packagingAuto,
-    } = autoTaskData?.data || {};
-    console.log("autoTaskData", autoTaskData);
-    setProductiveTasks(
-      productiveTasks.map((task) => {
-        const newTask = caringTasks?.find((x: any) => x?.caringTaskId === task.id);
-        if (newTask) {
-          return {
-            ...task,
-            farmer_id: newTask?.farmerId,
-          };
-        }
-        return task;
-      }),
-    );
-    setHarvestingTasks(
-      harvestingTasks.map((task) => {
-        const newTask = harvestingAuto?.find((x: any) => x?.harvestingTaskId === task.id);
-        if (newTask) {
-          return {
-            ...task,
-            farmer_id: newTask?.farmerId,
-          };
-        }
-        return task;
-      }),
-    );
-    setPackagingTasks(
-      packagingTasks.map((task) => {
-        const newTask = packagingAuto?.find((x: any) => x?.packagingTaskId === task.id);
-        if (newTask) {
-          return {
-            ...task,
-            farmer_id: newTask?.farmerId,
-          };
-        }
-        return task;
-      }),
-    );
-  }, [autoTaskData]);
-  const [chartState, setChartState] = React.useState<{
-    series: { name: string; data: number[] }[];
-    options: ApexOptions;
-  }>({
-    series: [
-      {
-        name: "Số lượng công việc",
-        data: chosenFarmers?.map((farmer) => calculateTaskCountForFarmer(farmer.id)),
-      },
-    ],
-    options: {
-      chart: {
-        type: "bar",
-        height: 350,
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 4,
-          borderRadiusApplication: "end",
-          horizontal: true,
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      xaxis: {
-        categories: chosenFarmers?.map((farmer) => farmer.name),
-      },
-    },
-  });
-
-  const updateChart = () => {
-    setChartState({
-      series: [
-        {
-          name: "Số lượng công việc",
-          data: chosenFarmers?.map((farmer) => calculateTaskCountForFarmer(farmer.id)),
-        },
-      ],
-      options: {
-        ...chartState.options,
-        xaxis: {
-          categories: chosenFarmers?.map((farmer) => farmer.name),
-        },
-      },
-    });
-  };
-
-  useEffect(() => {
-    updateChart();
-  }, [chosenFarmers, productiveTasks, harvestingTasks, packagingTasks]);
 
   const column_productive: ColumnsType<ProductiveTask> = [
     {
@@ -285,9 +262,9 @@ export const AssignTasks = ({
           }}
           style={{ width: "150px" }}
         >
-          {chosenFarmers.map((farmer) => (
-            <Select.Option key={farmer.id} value={farmer.id}>
-              {farmer.name}
+          {filterAvailableFarmers(record, chosenFarmers, schedule as [])?.map((farmer) => (
+            <Select.Option key={farmer?.id} value={farmer.id}>
+              {farmer?.name}
             </Select.Option>
           ))}
         </Select>
@@ -341,7 +318,7 @@ export const AssignTasks = ({
           }}
           style={{ width: "150px" }}
         >
-          {chosenFarmers.map((farmer) => (
+          {filterAvailableFarmers(record, chosenFarmers, schedule as [])?.map((farmer) => (
             <Select.Option key={farmer.id} value={farmer.id}>
               {farmer.name}
             </Select.Option>
@@ -397,11 +374,12 @@ export const AssignTasks = ({
           }}
           style={{ width: "150px" }}
         >
-          {chosenFarmers.map((chosenFarmer) => (
-            <Select.Option key={chosenFarmer.id} value={chosenFarmer.id}>
-              {chosenFarmer.name}
+          {filterAvailableFarmers(record, chosenFarmers, schedule as [])?.map((farmer) => (
+            <Select.Option key={farmer.id} value={farmer.id}>
+              {farmer.name}
             </Select.Option>
           ))}
+          ss
         </Select>
       ),
     },

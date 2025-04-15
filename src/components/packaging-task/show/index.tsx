@@ -362,6 +362,8 @@ export const PackagingTaskShow = (props: PackagingTaskShowProps) => {
         data={historyAssignedFarmers}
       />
       <ChangeAssignedTasksModal
+        historyAssignedFarmers={(historyAssignedFarmers as []) ?? []}
+        chosenFarmers={(chosenFarmers as []) ?? []}
         taskId={task?.id}
         refetch={packagingRefetch}
         end_date={task?.end_date}

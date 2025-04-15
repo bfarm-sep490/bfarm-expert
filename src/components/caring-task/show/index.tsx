@@ -95,6 +95,7 @@ export const HistoryAssignedModal = ({ visible, onClose, data }: HistoryAssigned
 };
 
 interface ChangeAssignedTasksModalProps {
+  historyAssignedFarmers?: [];
   visible: boolean;
   onClose: () => void;
   assignedFarmers: any;
@@ -103,9 +104,11 @@ interface ChangeAssignedTasksModalProps {
   type?: string;
   taskId?: number;
   refetch?: () => void;
+  chosenFarmers?: [];
 }
 
 export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> = ({
+  historyAssignedFarmers,
   visible,
   onClose,
   assignedFarmers,
@@ -113,8 +116,10 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
   end_date,
   type,
   taskId,
+  chosenFarmers,
   refetch,
 }) => {
+  console.log("historyAssignedFarmers", historyAssignedFarmers);
   const [newFarmer, setNewFarmer] = useState<any>(null);
   const [reason, setReason] = useState<string>("");
   const { id } = useParams();
@@ -124,10 +129,16 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
         ? `caring-tasks/${taskId}/farmers/${newFarmer?.id}`
         : type === "harvesting-tasks"
           ? `harvesting-tasks/${taskId}/farmers/${newFarmer?.id}`
-          : `packing-tasks/${taskId}/farmers/${newFarmer?.id}`,
+          : `packaging-tasks/${taskId}/farmers/${newFarmer?.id}`,
     action: "create",
     createMutationOptions: {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if (data?.data !== null && typeof data?.data !== "string") {
+          notification.error({
+            message: data?.data as unknown as string,
+          });
+          return;
+        }
         notification.success({
           message: "Thay đổi người làm thành công",
         });
@@ -142,7 +153,7 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
     id: string;
     name: string;
   }>({
-    resource: `plans/${id}/free-farmers`,
+    resource: `plans/${id}/busy-farmers`,
     filters: [
       {
         field: "start",
@@ -155,8 +166,14 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
         value: end_date,
       },
     ],
+    queryOptions: {
+      enabled: visible,
+    },
   });
-  const freeFarmers = freeFarmersData?.data || [];
+  const freeFarmers =
+    chosenFarmers
+      ?.filter((x: any) => !freeFarmersData?.data?.some((y) => y.id === x?.id))
+      ?.filter((x: any) => !historyAssignedFarmers?.some((y: any) => y?.farmer_id === x?.id)) || [];
   useEffect(() => {
     if (!visible) {
       setNewFarmer(null);
@@ -611,8 +628,14 @@ export const ProductiveTaskShow = (props: ProductiveTaskShowProps) => {
         data={historyAssignedFarmers}
       />
       <ChangeAssignedTasksModal
+        historyAssignedFarmers={(historyAssignedFarmers as []) ?? []}
+        chosenFarmers={(chosenFarmers as []) ?? []}
         taskId={task?.id}
-        refetch={caringRefetch}
+        refetch={() => {
+          caringRefetch();
+          assigned_farmersRefetch();
+          chosenFarmerRefetch();
+        }}
         start_date={task?.start_date}
         end_date={task?.end_date}
         onClose={() => setAssignedModal(false)}
