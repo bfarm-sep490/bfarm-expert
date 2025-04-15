@@ -347,6 +347,8 @@ export const HarvestingTaskShow = (props: HarvestingTaskShowProps) => {
           data={historyAssignedFarmers}
         />
         <ChangeAssignedTasksModal
+          historyAssignedFarmers={(historyAssignedFarmers as []) ?? []}
+          chosenFarmers={(chosenFarmers as []) ?? []}
           taskId={task?.id}
           refetch={harvestingTaskRefetch}
           end_date={task?.end_date}

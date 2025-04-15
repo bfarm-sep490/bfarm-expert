@@ -53,7 +53,7 @@ import { StatusModal } from "@/components/plan/detail/completd-modal";
 import { ChosenFarmerDashBoard } from "@/components/plan/detail/dashboard-farmers";
 import HarvestingProductDashBoard from "@/components/plan/detail/dashboard-harvest-product";
 import PackagingProductDashBoard from "@/components/plan/detail/dashboard-packaging-products";
-import { OrdersListTabel } from "@/components/plan/detail/orders-list-table";
+import { OrdersListTable } from "@/components/plan/detail/orders-list-table";
 
 interface IGeneralPlan {
   plan_id: number;
@@ -532,7 +532,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
             />
           </Flex>
         </Flex>
-        <OrdersListTabel orders={orders} orderLoading={orderLoading} />
+        <OrdersListTable orders={orders} orderLoading={orderLoading} />
         <Divider />
         <DropDownSection title="Công việc">
           <Flex gap={10} vertical={true}>
@@ -648,80 +648,6 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
             <ScheduleComponent status={general_info?.status} />
           </Flex>
         </DropDownSection>
-        {/* <DropDownSection title="Quan sát">
-          <Row gutter={[16, 16]} justify={"start"} style={{ marginTop: "10px" }}>
-
-            <Col
-              xs={24}
-              md={8}
-              lg={8}
-              xl={8}
-              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-            >
-              {[
-                {
-                  channel: "blcapstone/1",
-                  id: "air_temperature",
-                  title: "Nhiệt độ °C",
-                  icon: <SunOutlined />,
-                },
-                {
-                  channel: "blcapstone/1/air_humidity",
-                  id: "air_humidity",
-                  title: "Độ ẩm không khí %",
-                  icon: <CloudOutlined />,
-                },
-                {
-                  channel: "blcapstone/1/land_humidity",
-                  id: "land_humidity",
-                  title: "Độ ẩm đất %",
-                  icon: <BulbOutlined />,
-                },
-              ].map((item) => (
-                <RealTimeContentCard
-                  key={item.id}
-                  channel_name={item.channel}
-                  component_id={item.id}
-                  title={item.title}
-                  icon={item.icon}
-                />
-              ))}
-            </Col>
-
-            <Col xs={24} md={16} lg={16} xl={16}>
-              <Card
-                title={
-                  <Flex align="center" gap={8}>
-                    <DashboardOutlined />
-                    Hệ thống cảnh báo
-                  </Flex>
-                }
-                style={{ height: "100%" }}
-                extra={<ShowButton hideText size="small" />}
-              >
-                <Typography.Text type="warning">
-                  Chưa có cảnh báo nào
-                </Typography.Text>
-              </Card>
-            </Col>
-          </Row>
-          <Card
-            style={{ marginTop: "10px" }}
-            title="Biểu đồ nhiệt ẩm của khu đất"
-          >
-            <div>
-              <div id="chart">
-                <ReactApexChart
-                  options={state5.options as ApexOptions}
-                  series={state5.series}
-                  type="line"
-                  height={350}
-                />
-              </div>
-              <div id="html-dist"></div>
-            </div>
-          </Card>
-        </DropDownSection> */}
       </div>
       <StatusModal
         visible={completedModal}
