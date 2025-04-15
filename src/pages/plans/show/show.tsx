@@ -316,7 +316,12 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
         <Flex gap={10} vertical={!breakpoint.sm ? true : false}>
           <Card
             title={
-              <Flex vertical={false} gap={10} justify="space-between" align="center">
+              <Flex
+                vertical={false}
+                gap={10}
+                justify="space-between"
+                align="center"
+              >
                 <Typography.Title level={5}> Thông tin chung</Typography.Title>
                 <StatusTag status={general_info?.status || "Default"} />
               </Flex>
@@ -337,7 +342,11 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                 />
                 <Flex
                   gap={breakpoint.sm || breakpoint.md ? 48 : 10}
-                  vertical={!breakpoint.sm || !breakpoint?.md || !breakpoint?.lg ? true : false}
+                  vertical={
+                    !breakpoint.sm || !breakpoint?.md || !breakpoint?.lg
+                      ? true
+                      : false
+                  }
                 >
                   <Flex vertical={true} gap={5}>
                     <Space align="start" style={{ marginTop: 12 }}>
@@ -362,7 +371,8 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                       <UserOutlined style={{ fontSize: 16 }} />
                       <Typography.Text strong>Cây trồng:</Typography.Text>
                       <Typography.Text>
-                        {general_info?.plant_information?.plant_name || "Chưa xác định"}
+                        {general_info?.plant_information?.plant_name ||
+                          "Chưa xác định"}
                       </Typography.Text>
                     </Space>
 
@@ -370,7 +380,10 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                       <GoldOutlined style={{ fontSize: 16 }} />
                       <Typography.Text strong>Khu đất</Typography.Text>
                       <Typography.Text>
-                        <Tag>{general_info?.yield_information?.yield_name || "Chưa xác định"}</Tag>
+                        <Tag>
+                          {general_info?.yield_information?.yield_name ||
+                            "Chưa xác định"}
+                        </Tag>
                       </Typography.Text>
                     </Space>
                   </Flex>
@@ -387,15 +400,22 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                       <Typography.Text strong>Ngày tạo:</Typography.Text>
                       <Typography.Text type="secondary">
                         {general_info?.created_at ? (
-                          <DateField value={general_info?.created_at} format="hh:mm DD/MM/YYYY" />
+                          <DateField
+                            value={general_info?.created_at}
+                            format="hh:mm DD/MM/YYYY"
+                          />
                         ) : (
-                          <Typography.Text type="danger">Chưa xác định</Typography.Text>
+                          <Typography.Text type="danger">
+                            Chưa xác định
+                          </Typography.Text>
                         )}
                       </Typography.Text>
                     </Space>
                     <Space align="start" style={{ marginTop: 12 }}>
                       <GroupOutlined style={{ fontSize: 16 }} />
-                      <Typography.Text strong>Sản lượng dự kiến:</Typography.Text>
+                      <Typography.Text strong>
+                        Sản lượng dự kiến:
+                      </Typography.Text>
                       <Typography.Text>
                         {general_info?.estimated_product || "Không có"}{" "}
                         {general_info?.estimated_unit || "Không có"}
@@ -415,7 +435,11 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
               </Flex>
             </Flex>
           </Card>
-          <Flex vertical style={{ width: !breakpoint.sm ? "100%" : "50%" }} gap={10}>
+          <Flex
+            vertical
+            style={{ width: !breakpoint.sm ? "100%" : "50%" }}
+            gap={10}
+          >
             <Card
               loading={
                 generalLoading ||
@@ -438,7 +462,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                   }}
                 >
                   <Flex style={{ justifyContent: "center" }} gap={10}>
-                    <Typography.Title level={5}>Sản lượng (kg)</Typography.Title>
+                    <Typography.Title level={5}>
+                      Sản lượng (kg)
+                    </Typography.Title>
                   </Flex>
                   <Flex
                     style={{
@@ -453,7 +479,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                           ?.map((x) => x?.available_harvesting_quantity)
                           ?.reduce((acc, curr) => acc + curr, 0) || 0
                       }
-                      total_harvesting_products={general_info?.estimated_product || 0}
+                      total_harvesting_products={
+                        general_info?.estimated_product || 0
+                      }
                     />
                   </Flex>
                 </Flex>
@@ -516,12 +544,22 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                 data={problemsData?.data || []}
               />
 
-              <Flex style={{ width: breakpoint?.sm ? "50%" : "100%" }} gap={10} vertical={true}>
-                <Flex style={{ width: "100%" }} gap={10} vertical={!breakpoint.sm ? true : false}>
+              <Flex
+                style={{ width: breakpoint?.sm ? "50%" : "100%" }}
+                gap={10}
+                vertical={true}
+              >
+                <Flex
+                  style={{ width: "100%" }}
+                  gap={10}
+                  vertical={!breakpoint.sm ? true : false}
+                >
                   <ActivityCard
                     style={{ width: "100%" }}
                     icon={<BranchesOutlined style={{ color: "#52c41a" }} />}
-                    completedTasks={caring_task_dashboard?.complete_quantity || 0}
+                    completedTasks={
+                      caring_task_dashboard?.complete_quantity || 0
+                    }
                     title="Chăm sóc"
                     loading={isTaskDashboardLoading}
                     totalActivity={
@@ -533,7 +571,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     }
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(caring_task_dashboard?.last_create_date).toLocaleDateString()
+                      new Date(
+                        caring_task_dashboard?.last_create_date
+                      ).toLocaleDateString()
                     }
                   />
 
@@ -542,18 +582,26 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     loading={inspectingTaskLoading}
                     icon={<AuditOutlined style={{ color: "#fa8c16" }} />}
                     completedTasks={
-                      inspecting_task_dashboard?.filter((x) => x.status === "Complete")?.length || 0
+                      inspecting_task_dashboard?.filter(
+                        (x) => x.status === "Complete"
+                      )?.length || 0
                     }
                     title="Kiểm định"
                     totalActivity={inspecting_task_dashboard?.length || 0}
                     lastActivityDate={"Lần cuối: 13/12/2025"}
                   />
                 </Flex>
-                <Flex style={{ width: "100%" }} gap={10} vertical={!breakpoint.sm ? true : false}>
+                <Flex
+                  style={{ width: "100%" }}
+                  gap={10}
+                  vertical={!breakpoint.sm ? true : false}
+                >
                   <ActivityCard
                     style={{ width: "100%" }}
                     icon={<GiftOutlined style={{ color: "#52c41a" }} />}
-                    completedTasks={havesting_task_dashboard?.complete_quantity || 0}
+                    completedTasks={
+                      havesting_task_dashboard?.complete_quantity || 0
+                    }
                     loading={isTaskDashboardLoading}
                     title="Thu hoạch"
                     totalActivity={
@@ -565,14 +613,18 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     }
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(havesting_task_dashboard?.last_create_date).toLocaleDateString()
+                      new Date(
+                        havesting_task_dashboard?.last_create_date
+                      ).toLocaleDateString()
                     }
                   />
 
                   <ActivityCard
                     style={{ width: "100%" }}
                     icon={<AuditOutlined style={{ color: "#fa8c16" }} />}
-                    completedTasks={packaging_task_dashboard?.complete_quantity || 0}
+                    completedTasks={
+                      packaging_task_dashboard?.complete_quantity || 0
+                    }
                     loading={isTaskDashboardLoading}
                     totalActivity={
                       packaging_task_dashboard?.cancel_quantity +
@@ -584,7 +636,9 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     title="Đóng gói"
                     lastActivityDate={
                       "Lần cuối: " +
-                      new Date(packaging_task_dashboard?.last_create_date).toLocaleDateString()
+                      new Date(
+                        packaging_task_dashboard?.last_create_date
+                      ).toLocaleDateString()
                     }
                   />
                 </Flex>
