@@ -132,43 +132,6 @@ export const PackagingProductShow = () => {
               </Typography.Text>
             </Flex>
           </Flex>
-          <Divider />
-          <Flex justify="space-between">
-            <Typography.Text strong>Gía cơ bản</Typography.Text>
-            <Typography.Text>{plant?.base_price.toLocaleString() + " VND"}</Typography.Text>
-          </Flex>
-          <Flex justify="space-between">
-            <Typography.Text strong>
-              Tỉ lệ giá{" "}
-              {task?.evaluated_result === "Grade 3"
-                ? "loại 3"
-                : task?.evaluated_result === "Grade 2"
-                  ? "loại 2"
-                  : task?.evaluated_result === "Grade 1"
-                    ? "loại 1"
-                    : task?.evaluated_result}{" "}
-            </Typography.Text>
-            <Typography.Text>
-              {task?.evaluated_result === "Grade 3"
-                ? (plant?.delta_three * 100).toFixed(2) + " %"
-                : task?.evaluated_result === "Grade 2"
-                  ? (plant?.delta_two * 100).toFixed(2) + " %"
-                  : (plant?.delta_one * 100).toFixed(2) + " %"}
-            </Typography.Text>
-          </Flex>
-          <Flex justify="space-between">
-            <Typography.Text strong>Giá thành phẩm</Typography.Text>
-            <Typography.Text>
-              <Typography.Text style={{ fontSize: 18 }} strong>
-                {(task?.evaluated_result === "Grade 3"
-                  ? plant?.delta_three * plant?.base_price * task?.quantity_per_pack
-                  : task?.evaluated_result === "Grade 2"
-                    ? plant?.delta_two * plant?.base_price * task?.quantity_per_pack
-                    : task?.delta_one * plant?.base_price * task?.quantity_per_pack
-                ).toLocaleString() + " VND"}
-              </Typography.Text>
-            </Typography.Text>
-          </Flex>
         </Card>
 
         <Card title="Danh sách đơn hàng" style={{ width: "100%" }}>

@@ -72,7 +72,14 @@ interface GainingPlan {
     status: string;
   }[];
 }
-
+interface FreeFarmer {
+  id: number;
+  name: string;
+  list_schedule: {
+    start_date: string;
+    end_date: string;
+  }[];
+}
 type AssignTaskModalProps = {
   open?: boolean;
   onClose?: () => void;
@@ -91,14 +98,10 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
   const [productiveTasks, setProductiveTasks] = React.useState<any[]>([]);
   const [harvestingTasks, setHarvestingTasks] = React.useState<any[]>([]);
   const [inspectingTasks, setInspectingTasks] = React.useState<any[]>([]);
-  const [farmers, setFarmers] = React.useState<any[]>([]);
   const [inspectors, setInspectors] = React.useState<any[]>([]);
   const [chosenFarmers, setChosenFarmers] = React.useState<any[]>([]);
-  const [plants, setPlants] = React.useState<any[]>([]);
-  const [experts, setExperts] = React.useState<any[]>([]);
-  const [yields, setYields] = React.useState<any[]>([]);
   const [packagingTasks, setPackagingTasks] = React.useState<any[]>([]);
-  const back = useBack();
+  const [farmerSchedule, setFarmerSchedule] = React.useState<FreeFarmer[]>([]);
   const { formProps, formLoading, onFinish } = useForm<GainingPlan>({
     resource: "plans",
     id: `${props?.planId}/tasks-assign`,
@@ -174,62 +177,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
   });
 
   const {
-    data: farmerData,
-    isLoading: farmerLoading,
-    refetch: farmersRefetch,
-  } = useList({
-    resource: `farmers`,
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setFarmers(data?.data || []);
-      },
-    },
-  });
-
-  const {
-    data: expertsData,
-    isLoading: expertLoading,
-    refetch: expertRefetch,
-  } = useList({
-    resource: `experts`,
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setExperts(data?.data || []);
-      },
-    },
-  });
-
-  const {
-    data: yieldsData,
-    isLoading: yieldLoading,
-    refetch: yieldRefetch,
-  } = useList({
-    resource: "yields",
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setYields(data?.data || []);
-      },
-    },
-  });
-
-  const {
-    data: plantData,
-    isLoading: plantLoading,
-    refetch: plantRefetch,
-  } = useList({
-    resource: "plants",
-    queryOptions: {
-      cacheTime: 60000,
-      onSuccess(data: any) {
-        setPlants(data?.data || []);
-      },
-    },
-  });
-
-  const {
     data: inspectorsData,
     isLoading: inspectorLoading,
     refetch: inspectorRefetch,
@@ -255,11 +202,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         operator: "eq",
         value: props?.planId || id,
       },
-      {
-        field: "status_list",
-        operator: "eq",
-        value: ["Pending", "Draft"],
-      },
     ],
     queryOptions: {
       onSuccess(data: any) {
@@ -284,11 +226,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         operator: "eq",
         value: props?.planId || id,
       },
-      {
-        field: "status_list",
-        operator: "eq",
-        value: ["Pending", "Draft"],
-      },
     ],
     queryOptions: {
       onSuccess(data: any) {
@@ -308,11 +245,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         field: "plan_id",
         operator: "eq",
         value: props?.planId || id,
-      },
-      {
-        field: "status_list",
-        operator: "eq",
-        value: ["Pending", "Draft"],
       },
     ],
     queryOptions: {
@@ -334,11 +266,6 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         operator: "eq",
         value: props?.planId || id,
       },
-      {
-        field: "status_list",
-        operator: "eq",
-        value: ["Pending", "Draft"],
-      },
     ],
     queryOptions: {
       onSuccess(data: any) {
@@ -346,7 +273,31 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       },
     },
   });
-
+  const {
+    data: scheduleData,
+    isLoading: scheduleLoading,
+    refetch: scheduleRefetch,
+  } = useList({
+    resource: `plans/${id}/busy-farmers`,
+    filters: [
+      {
+        field: "start",
+        operator: "eq",
+        value: generalData?.data?.start_date,
+      },
+      {
+        field: "end",
+        operator: "eq",
+        value: generalData?.data?.end_date,
+      },
+    ],
+    queryOptions: {
+      enabled: generalData?.data !== null,
+      onSuccess(data: any) {
+        setFarmerSchedule(data?.data || []);
+      },
+    },
+  });
   const next = () => {
     setCurrent(current + 1);
   };
@@ -406,90 +357,31 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       setLoading(false);
     }
   };
-
-  const validateAllTasks = () => {
-    for (const task of productiveTasks) {
-      if (!task.farmer_id) {
-        alert(
-          "Chưa chọn nông dân cho công việc chăm sóc cho công việc " +
-            task.name +
-            " #ID: " +
-            task.id,
-        );
-        return false;
-      }
-    }
-
-    for (const task of harvestingTasks) {
-      if (!task.farmer_id) {
-        alert(
-          "Chưa chọn nông dân cho công việc thu hoạch cho công việc " +
-            task.name +
-            " #ID: " +
-            task.id,
-        );
-        return false;
-      }
-    }
-
-    for (const task of inspectingTasks) {
-      if (!task.inspector_id) {
-        alert(
-          "Chưa chọn nhà kiểm định cho công việc kiểm định cho công việc " +
-            task.name +
-            " #ID: " +
-            task.id,
-        );
-        return false;
-      }
-    }
-
-    for (const task of packagingTasks) {
-      if (!task.farmer_id) {
-        alert(
-          "Chưa chọn nông dân cho công việc đóng gói cho công việc " +
-            task.name +
-            " #ID: " +
-            task.id,
-        );
-        return false;
-      }
-    }
-
-    return true;
-  };
-
   const [loadingForm, setLoadingForm] = useState(true);
 
   useEffect(() => {
     if (
       planLoading === false &&
-      plantLoading === false &&
-      yieldLoading === false &&
-      expertLoading === false &&
-      farmerLoading === false &&
       chosenFarmerLoading === false &&
       caringLoading === false &&
       harvestingLoading === false &&
       inspectingLoading === false &&
       packagingLoading === false &&
       inspectorLoading === false &&
+      scheduleLoading === false &&
       formLoading === false
     ) {
       setLoadingForm(false);
     }
   }, [
     planLoading,
-    plantLoading,
-    yieldLoading,
-    expertLoading,
-    farmerLoading,
     chosenFarmerLoading,
     caringLoading,
     harvestingLoading,
     inspectingLoading,
     packagingLoading,
     inspectorLoading,
+    scheduleLoading,
     formLoading,
   ]);
 
@@ -499,26 +391,20 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       setProductiveTasks([]);
       setHarvestingTasks([]);
       setInspectingTasks([]);
-      setFarmers([]);
       setInspectors([]);
       setChosenFarmers([]);
-      setPlants([]);
-      setExperts([]);
-      setYields([]);
       setPackagingTasks([]);
+      setFarmerSchedule([]);
       formProps.form?.resetFields();
     } else {
       planRefetch();
-      plantRefetch();
-      yieldRefetch();
-      expertRefetch();
-      farmersRefetch();
       chosenFarmerRefetch();
       caringRefetch();
       harvestingRefetch();
       inspectingFormRefetch();
       packagingRefetch();
       inspectorRefetch();
+      scheduleRefetch();
     }
   }, [props?.open]);
 
@@ -528,6 +414,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       content: (
         <>
           <AssignTasks
+            schedule={farmerSchedule}
             type="Draft"
             loading={loading}
             saveHandle={handleDone}
@@ -551,6 +438,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
 
   return (
     <Modal
+      loading={loading}
       width={"60%"}
       height={"40%"}
       open={props?.open}
@@ -578,9 +466,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  if (validateAllTasks()) {
-                    handleDone(props?.type ? props?.type : "Ongoing");
-                  }
+                  handleDone(props?.type ? props?.type : "Ongoing");
                 }}
                 loading={loading}
               >
