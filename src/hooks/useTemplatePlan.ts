@@ -1,98 +1,10 @@
-import { IPlant, IYield } from "@/interfaces";
-import { useCreate, useSelect } from "@refinedev/core";
-
-export type TemplatePlanRequest = {
-  orders: Array<{
-    id: number;
-    quantity: number;
-  }>;
-  plant_id: number;
-  yield_id: number;
-  start_date: string;
-  estimated_product: number;
-  seed_quantity: number;
-  expert_id: number;
-  created_by: string;
-};
-
-export type TemplatePlanResponse = {
-  status: number;
-  message: string;
-  data: Array<{
-    orders: Array<{
-      order_id: number;
-      quantity: number;
-    }>;
-    plant_id: number;
-    yield_id: number;
-    expert_id: number;
-    plan_name: string | null;
-    description: string | null;
-    season_name: string;
-    start_date: string;
-    end_date: string;
-    estimated_product: number;
-    seed_quantity: number;
-    created_by: string;
-    caring_tasks: Array<{
-      task_name: string;
-      description: string;
-      task_type: string;
-      start_date: string;
-      end_date: string;
-      created_by: string;
-      fertilizers: Array<{
-        fertilizer_id: number;
-        quantity: number;
-        unit: string;
-      }>;
-      pesticides: Array<{
-        pesticide_id: number;
-        quantity: number;
-        unit: string;
-      }>;
-      items: Array<{
-        item_id: number;
-        quantity: number;
-        unit: string;
-      }>;
-    }>;
-    harvesting_tasks: Array<{
-      task_name: string;
-      description: string;
-      start_date: string;
-      end_date: string;
-      created_by: string;
-      items: Array<{
-        item_id: number;
-        quantity: number;
-        unit: string;
-      }>;
-    }>;
-    inspecting_forms: Array<{
-      task_name: string;
-      description: string;
-      start_date: string;
-      end_date: string;
-      created_by: string;
-    }>;
-    packaging_tasks: Array<{
-      task_name: string;
-      packaging_type_id: number;
-      description: string;
-      start_date: string;
-      end_date: string;
-      created_by: string;
-      total_package_weight: number;
-      items: Array<any>;
-    }>;
-  }>;
-};
+import { IPlant, IYield, ITemplatePlanResponse, ITemplatePlanRequest } from "@/interfaces";
+import { useCreate, useSelect, useList, useOne } from "@refinedev/core";
 
 export const useTemplatePlan = () => {
-  const { mutate, isLoading, isError, data } = useCreate<TemplatePlanResponse>();
+  const { mutate, isLoading, isError, data } = useCreate<ITemplatePlanResponse>();
 
-  const getTemplatePlan = (values: TemplatePlanRequest) => {
+  const getTemplatePlan = (values: ITemplatePlanRequest) => {
     mutate(
       {
         resource: "plans/template-plan",
@@ -109,6 +21,14 @@ export const useTemplatePlan = () => {
     );
   };
 
+  const { data: plantsData } = useList<IPlant>({
+    resource: "plants",
+  });
+
+  const { data: yieldsData } = useList<IYield>({
+    resource: "yields",
+  });
+
   const { options: plantsOptions } = useSelect<IPlant>({
     resource: "plants",
     optionLabel: "plant_name",
@@ -124,9 +44,27 @@ export const useTemplatePlan = () => {
   return {
     plantsOptions,
     yieldsOptions,
+    plantsData: plantsData?.data || [],
+    yieldsData: yieldsData?.data || [],
     getTemplatePlan,
     isLoading,
     isError,
     data: data?.data,
+  };
+};
+
+export const useSuggestYield = (plantId?: number) => {
+  const { data, isLoading, isError } = useOne<{ data: IYield[] }>({
+    resource: "plants",
+    id: `${plantId}/suggest-yields`,
+    queryOptions: {
+      enabled: !!plantId,
+    },
+  });
+
+  return {
+    suggestYields: data?.data || [],
+    isLoading,
+    isError,
   };
 };
