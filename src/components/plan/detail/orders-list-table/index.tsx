@@ -39,10 +39,7 @@ export const OrdersListTable = (props: OrderListTableProps) => {
   ];
 
   return (
-    <Card
-      title={`Đơn hàng (${props?.orders?.length || 0})`}
-      style={{ marginTop: 10 }}
-    >
+    <Card title={`Đơn hàng (${props?.orders?.length || 0})`} style={{ marginTop: 10 }}>
       <Table
         loading={props?.orderLoading}
         dataSource={props?.orders}
