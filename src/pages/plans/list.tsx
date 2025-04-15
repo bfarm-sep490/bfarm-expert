@@ -1,55 +1,25 @@
 import { useGo, useNavigation, useTranslate } from "@refinedev/core";
 import { CreateButton, List } from "@refinedev/antd";
 
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { Segmented } from "antd";
 import { useLocation } from "react-router";
-import { PlanListCard, PlanListTable, PlanSelectionModal } from "@/components/plan";
+import { PlanListCard, PlanListTable } from "@/components/plan";
 
 type View = "table" | "card";
 
-export const PlanList = () => {
+export const PlanList = ({ children }: PropsWithChildren) => {
   const go = useGo();
   const { replace } = useNavigation();
   const { pathname } = useLocation();
   const { createUrl } = useNavigation();
-  const [showModal, setShowModal] = useState(false);
-
   const [view, setView] = useState<View>((localStorage.getItem("plan-view") as View) || "table");
 
   const handleViewChange = (value: View) => {
     replace("");
     setView(value);
     localStorage.setItem("plan-view", value);
-  };
-
-  const handleCreateWithOrders = (orderIds: string[], totalPreorderQuantity: number) => {
-    go({
-      to: `${createUrl("plans")}`,
-      query: {
-        to: pathname,
-        orderIds: orderIds.join(","),
-        totalPreorderQuantity,
-      },
-      options: {
-        keepQuery: true,
-      },
-      type: "replace",
-    });
-  };
-
-  const handleCreateNormal = () => {
-    go({
-      to: `${createUrl("plans")}`,
-      query: {
-        to: pathname,
-      },
-      options: {
-        keepQuery: true,
-      },
-      type: "replace",
-    });
   };
 
   const t = useTranslate();
@@ -82,7 +52,18 @@ export const PlanList = () => {
             {...props.createButtonProps}
             key="create"
             size="large"
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              return go({
+                to: `${createUrl("plans")}`,
+                query: {
+                  to: pathname,
+                },
+                options: {
+                  keepQuery: true,
+                },
+                type: "replace",
+              });
+            }}
           >
             {t("plans.actions.add", "Add Plan")}
           </CreateButton>,
@@ -92,12 +73,7 @@ export const PlanList = () => {
         {view === "card" && <PlanListCard />}
       </List>
 
-      <PlanSelectionModal
-        open={showModal}
-        onClose={() => setShowModal(false)}
-        onCreateWithOrders={handleCreateWithOrders}
-        onCreateNormal={handleCreateNormal}
-      />
+      {children}
     </>
   );
 };

@@ -1,8 +1,10 @@
 import { Modal, Card, Transfer, Typography, Space, Tag, Spin, Button } from "antd";
-import { useState, Key } from "react";
+import { useState, Key, useEffect } from "react";
 import { useList } from "@refinedev/core";
 import { ShoppingCartOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { IOrder } from "@/interfaces";
+import { useOrderStore } from "@/store/order-store";
+import Paragraph from "antd/es/typography/Paragraph";
 
 const { Text } = Typography;
 
@@ -33,9 +35,16 @@ export const PlanSelectionModal = ({
   onCreateNormal,
 }: PlanSelectionModalProps) => {
   const [option, setOption] = useState<"with_orders" | "normal">("normal");
-  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
-  const [selectedPlantId, setSelectedPlantId] = useState<number | null>(null);
   const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
+
+  const {
+    setOrders,
+    setSelectedOrders,
+    selectedOrders,
+    totalQuantity,
+    selectedPlantId,
+    setSelectedPlantId,
+  } = useOrderStore();
 
   const { data, isLoading } = useList<IOrder>({
     resource: "orders/no-plan",
@@ -47,6 +56,21 @@ export const PlanSelectionModal = ({
       },
     ],
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      const formattedOrders = data.data.map((order) => ({
+        id: order.id,
+        name: `Đơn hàng #${order.id}`,
+        quantity: order.preorder_quantity,
+        estimate_pick_up_date: order.estimate_pick_up_date,
+        plant_id: order.plant_id,
+        selected: false,
+      }));
+      setOrders(formattedOrders);
+    }
+  }, [data, setOrders]);
+
   const tableData: OrderData[] =
     data?.data?.map((order) => ({
       key: order.id.toString(),
@@ -59,14 +83,17 @@ export const PlanSelectionModal = ({
     direction: "left" | "right",
     moveKeys: Key[],
   ) => {
+    if (nextTargetKeys.length === 0) {
+      setSelectedPlantId(null);
+      setSelectedOrders([]);
+      return;
+    }
+
     if (selectedOrders.length === 0 && nextTargetKeys.length > 0) {
       const firstOrder = tableData.find((order) => order.key === nextTargetKeys[0]);
       if (firstOrder) {
         setSelectedPlantId(firstOrder.plant_id);
       }
-    }
-    if (nextTargetKeys.length === 0) {
-      setSelectedPlantId(null);
     }
 
     const validMoveKeys = moveKeys.filter((key) => {
@@ -74,13 +101,24 @@ export const PlanSelectionModal = ({
       return order && !order.disabled;
     });
 
-    setSelectedOrders((prev) => {
-      if (direction === "right") {
-        return [...new Set([...prev, ...validMoveKeys.map(String)])];
-      } else {
-        return prev.filter((key) => !validMoveKeys.map(String).includes(key));
+    if (direction === "right") {
+      const newOrders = validMoveKeys.map((key) => {
+        const order = tableData.find((order) => order.key === key);
+        return {
+          id: key.toString(),
+          quantity: order?.preorder_quantity || 0,
+          estimate_pick_up_date: order?.estimate_pick_up_date || "",
+          plant_id: order?.plant_id || 0,
+        };
+      });
+      setSelectedOrders([...selectedOrders, ...newOrders]);
+    } else {
+      const remainingOrders = selectedOrders.filter((order) => !validMoveKeys.includes(order.id));
+      setSelectedOrders(remainingOrders);
+      if (remainingOrders.length === 0) {
+        setSelectedPlantId(null);
       }
-    });
+    }
   };
 
   const handleSelectChange = (sourceSelectedKeys: Key[], targetSelectedKeys: Key[]) => {
@@ -113,16 +151,13 @@ export const PlanSelectionModal = ({
 
   const handleCreate = () => {
     if (option === "with_orders") {
-      const totalPreorderQuantity = selectedOrders.reduce((total, orderId) => {
-        const order = tableData.find((order) => order.key === orderId);
-        return total + (order?.preorder_quantity || 0);
-      }, 0);
-
-      onCreateWithOrders(selectedOrders, totalPreorderQuantity);
+      onCreateWithOrders(
+        selectedOrders.map((order) => order.id),
+        totalQuantity,
+      );
     } else {
       onCreateNormal();
     }
-    handleClose();
   };
 
   return (
@@ -139,7 +174,7 @@ export const PlanSelectionModal = ({
         <Space key="footer">
           <Text type="secondary">
             {selectedOrders.length > 0
-              ? `Đã chọn ${selectedOrders.length} đơn hàng`
+              ? `Đã chọn ${selectedOrders.length} đơn hàng (Tổng số lượng: ${totalQuantity} kg)`
               : "Chưa chọn đơn hàng nào"}
           </Text>
           <Button onClick={handleClose}>Hủy</Button>
@@ -170,9 +205,16 @@ export const PlanSelectionModal = ({
                 <ShoppingCartOutlined style={{ fontSize: "24px", color: "#1890ff" }} />
                 <Text strong>Tạo từ đơn hàng</Text>
               </Space>
-              <Text type="secondary">
+              <Paragraph
+                type="secondary"
+                ellipsis={{
+                  rows: 1,
+                  expandable: true,
+                  tooltip: true,
+                }}
+              >
                 Tạo kế hoạch từ các đơn hàng đã đặt cọc. Các đơn hàng phải cùng một cây.
-              </Text>
+              </Paragraph>
             </Space>
           </Card>
 
@@ -191,7 +233,15 @@ export const PlanSelectionModal = ({
                 <PlusCircleOutlined style={{ fontSize: "24px", color: "#1890ff" }} />
                 <Text strong>Tạo mới</Text>
               </Space>
-              <Text type="secondary">Tạo kế hoạch mới từ đầu, không liên kết với đơn hàng nào</Text>
+              <Paragraph
+                type="secondary"
+                ellipsis={{
+                  expandable: true,
+                  tooltip: true,
+                }}
+              >
+                Tạo kế hoạch mới từ đầu, không liên kết với đơn hàng nào
+              </Paragraph>
             </Space>
           </Card>
         </div>
@@ -201,7 +251,7 @@ export const PlanSelectionModal = ({
             <Transfer<OrderData>
               dataSource={tableData}
               oneWay
-              targetKeys={selectedOrders}
+              targetKeys={selectedOrders.map((order) => order.id)}
               selectedKeys={selectedKeys}
               onChange={handleTransferChange}
               onSelectChange={handleSelectChange}

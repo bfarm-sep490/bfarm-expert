@@ -92,8 +92,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              // notificationProvider={useNotificationProvider}
-              // liveProvider={liveProvider(ablyClient)}
+              notificationProvider={useNotificationProvider}
+              liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",
@@ -215,8 +215,17 @@ const App: React.FC = () => {
                     ></Route>
                   </Route>
                   <Route path="/plans">
-                    <Route index element={<PlanList />} />
-                    <Route path="new" element={<PlanCreate />} />
+                    <Route
+                      path=""
+                      element={
+                        <PlanList>
+                          <Outlet />
+                        </PlanList>
+                      }
+                    >
+                      <Route path="new" element={<PlanCreate />} />
+                    </Route>
+
                     <Route path=":id">
                       <Route
                         index
@@ -227,8 +236,8 @@ const App: React.FC = () => {
                         }
                       />
                     </Route>
-                    <Route path="edit/:id" element={<PlanEdit />} />
                   </Route>
+
                   <Route
                     path="/problems"
                     element={

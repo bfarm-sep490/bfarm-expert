@@ -1,12 +1,33 @@
-import { PlanForm } from "@/components/plan/plan-form";
+import { PlanDrawer } from "@/components/plan/drawer-form";
+import { useGetToPath, useGo } from "@refinedev/core";
+
 import { useSearchParams } from "react-router";
 
 export const PlanCreate = () => {
+  const getToPath = useGetToPath();
   const [searchParams] = useSearchParams();
-  const orderIds = searchParams.get("orderIds")?.split(",") || [];
-  const totalPreorderQuantity = Number(searchParams.get("totalPreorderQuantity")) || 0;
+  const go = useGo();
 
   return (
-    <PlanForm action="create" orderIds={orderIds} totalPreorderQuantity={totalPreorderQuantity} />
+    <PlanDrawer
+      action="create"
+      onMutationSuccess={() => {
+        go({
+          to:
+            searchParams.get("to") ??
+            getToPath({
+              action: "list",
+            }) ??
+            "",
+          query: {
+            to: undefined,
+          },
+          options: {
+            keepQuery: true,
+          },
+          type: "replace",
+        });
+      }}
+    />
   );
 };
