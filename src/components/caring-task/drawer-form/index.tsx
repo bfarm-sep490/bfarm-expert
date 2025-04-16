@@ -334,7 +334,7 @@ export const CaringTaskPage = (props: Props) => {
           <Form.Item
             label="Mô tả"
             name="description"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
           >
             <Input.TextArea rows={7} />
           </Form.Item>

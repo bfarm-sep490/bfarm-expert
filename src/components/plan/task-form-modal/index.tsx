@@ -352,6 +352,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             <Form.Item
               label={t("plans.fields.description.label", "Description")}
               name="description"
+              rules={[{ required: true, message: t("plans.fields.description.required") }]}
             >
               <Input.TextArea
                 rows={3}

@@ -178,6 +178,7 @@ const useFormList = (props: UseFormListProps) => {
               <FileTextOutlined /> {t("plants.fields.description.label")}
             </span>
           }
+          rules={[{ required: true, message: t("plants.fields.description.required") }]}
           name="description"
         >
           <Input.TextArea

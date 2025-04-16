@@ -97,7 +97,7 @@ export const InspectionDrawerForm = (props: Props) => {
           <Form.Item
             label="Mô tả"
             name="description"
-            rules={[{ required: true, message: "Please enter description!" }]}
+            rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
           >
             <Input.TextArea rows={3} placeholder="Enter description" />
           </Form.Item>
