@@ -1,5 +1,16 @@
 import { DateField } from "@refinedev/antd";
-import { Button, Card, Flex, FormProps, notification, Select, Table, Tabs, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Flex,
+  FormProps,
+  notification,
+  Select,
+  Table,
+  Tabs,
+  Tooltip,
+  Typography,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CaringTypeTag } from "../../../components/caring-task/type-tag";
 import React, { use, useEffect } from "react";
@@ -521,17 +532,29 @@ export const AssignTasks = ({
 
       <Flex justify="end" align="center" style={{ marginBottom: 20, marginTop: 20 }}>
         <Flex gap={10} style={{ marginLeft: 20 }}>
-          <Button icon={<FileSearchOutlined />} loading={isLoading} onClick={handleUpdate}>
-            Lưu
-          </Button>
-          <Button
-            icon={<QuestionCircleOutlined />}
-            loading={autoTaskFetching && autoTaskLoading}
-            type="primary"
-            onClick={() => autoTaskRefetch()}
+          <Tooltip
+            placement="bottom"
+            title={"Nút hỗ trợ lưu bản phân bố công việc nháp"}
+            arrow={true}
           >
-            Tự động
-          </Button>
+            <Button icon={<FileSearchOutlined />} loading={isLoading} onClick={handleUpdate}>
+              Lưu
+            </Button>
+          </Tooltip>
+          <Tooltip
+            placement="bottom"
+            title={"Tự động phân bố công việc cho nông dân với số lượng công việc bằng nhau"}
+            arrow={true}
+          >
+            <Button
+              icon={<QuestionCircleOutlined />}
+              loading={autoTaskFetching && autoTaskLoading}
+              type="primary"
+              onClick={() => autoTaskRefetch()}
+            >
+              Tự động
+            </Button>
+          </Tooltip>
         </Flex>
       </Flex>
       <Tabs defaultActiveKey={"1"} tabPosition={"top"} style={{ minHeight: 220 }}>

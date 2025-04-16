@@ -42,7 +42,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ReportProblemModal } from "./report-modals";
 import { ProblemStatusTag } from "./status-tag";
-import { CaringModal } from "@/pages/problems/create-caring";
 import { StatusTag } from "../caring-task/status-tag";
 import { CaringTypeTag } from "../caring-task/type-tag";
 import {
@@ -54,6 +53,7 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import { AssignTaskModal } from "../plan/detail/assign-tasks-modal";
+import TaskModal from "../task-create-update";
 
 type ProblemShowInProblemProps = {
   problemId?: number;
@@ -70,12 +70,13 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
   const { token } = theme.useToken();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [defaultReportStatus, setDefaultReportStatus] = useState("Resovle");
+  const [selectTaskId, setSelectTaskId] = useState<number | undefined>(undefined);
+  const [methodTask, setMethodTask] = useState<"create" | "edit">("create");
   const screens = Grid.useBreakpoint();
   const isLargeScreen = screens?.sm ?? false;
   const [open, setOpen] = useState(false);
   const back = useBack();
   const [api, contextHolder] = notification.useNotification();
-  const breakpoint = { sm: window.innerWidth > 576 };
   const {
     data: queryResult,
     refetch: problemRefetch,
@@ -100,7 +101,6 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
         if (data?.data !== null) {
           data?.data?.forEach((x) => {
             if (x?.farmer_id === null) {
-              console.log(x?.farmer_id);
               setIsAbilityToReport(true);
               return;
             }
@@ -193,14 +193,15 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
       fixed: "right" as const,
       render: (value: any, record: any) => (
         <Flex gap={10}>
-          {record?.status === "Pending" && (
+          {record?.status === "Draft" && (
             <DeleteOutlined style={{ color: "red" }} onClick={() => hanldeDeleteTask(record?.id)} />
           )}
-          {record?.status !== "Complete" && (
+          {record?.status === "Draft" && (
             <EditOutlined
               style={{ color: "green" }}
               onClick={() => {
-                setTaskId(record?.id);
+                setSelectTaskId(record?.id);
+                setMethodTask("edit");
                 setOpen(true);
               }}
             />
@@ -271,13 +272,16 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
         }
       >
         {contextHolder}
-        <CaringModal
-          refetch={tasksRefetch}
-          planId={task?.plan_id}
-          problemId={task?.id}
-          open={open}
-          taskId={taskId}
+        <TaskModal
           onClose={() => setOpen(false)}
+          visible={open}
+          action={methodTask}
+          planId={task?.plan_id}
+          status="Draft"
+          taskType={"caring"}
+          taskId={selectTaskId}
+          problemId={task?.id}
+          refetch={tasksRefetch}
         />
         <AssignTaskModal
           open={openAssignTasks}
@@ -392,7 +396,8 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    setTaskId(undefined);
+                    setSelectTaskId(undefined);
+                    setMethodTask("create");
                     setOpen(true);
                   }}
                   icon={<PlusCircleOutlined />}
