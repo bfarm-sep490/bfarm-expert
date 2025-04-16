@@ -202,6 +202,11 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         operator: "eq",
         value: props?.planId || id,
       },
+      {
+        field: "status_list",
+        operator: "eq",
+        value: ["Draft"],
+      },
     ],
     queryOptions: {
       onSuccess(data: any) {
@@ -226,6 +231,11 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         operator: "eq",
         value: props?.planId || id,
       },
+      {
+        field: "status_list",
+        operator: "eq",
+        value: ["Draft"],
+      },
     ],
     queryOptions: {
       onSuccess(data: any) {
@@ -246,6 +256,11 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         operator: "eq",
         value: props?.planId || id,
       },
+      {
+        field: "status_list",
+        operator: "eq",
+        value: ["Draft"],
+      },
     ],
     queryOptions: {
       onSuccess(data: any) {
@@ -265,6 +280,11 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
         field: "plan_id",
         operator: "eq",
         value: props?.planId || id,
+      },
+      {
+        field: "status_list",
+        operator: "eq",
+        value: ["Draft"],
       },
     ],
     queryOptions: {

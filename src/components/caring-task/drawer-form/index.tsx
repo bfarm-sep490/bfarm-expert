@@ -32,7 +32,8 @@ type Props = {
   onClose?: () => void;
   problemId?: number;
   planId?: number;
-  taskId?: BaseKey;
+  taskId?: number;
+  status?: string;
   action: "edit" | "create";
   onMutationSuccess?: () => void;
   refetch?: () => void;
@@ -40,11 +41,8 @@ type Props = {
 };
 
 export const CaringTaskPage = (props: Props) => {
-  const { taskId } = useParams();
   const back = useBack();
   const t = useTranslate();
-  const [idProblem, setIdProblem] = useState<number | null>(null);
-  const [idPlan, setIdPlan] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [fertilizerFields, setFertilizerFields] = useState<
@@ -57,30 +55,6 @@ export const CaringTaskPage = (props: Props) => {
     { id: number; quantity: number; id_block: number }[]
   >([]);
 
-  const queryPendingPlans = useList({
-    resource: "plans",
-    filters: [{ field: "status", operator: "eq", value: "Pending" }],
-  });
-
-  const queryOngoingPlans = useList({
-    resource: "plans",
-    filters: [{ field: "status", operator: "eq", value: "Ongoing" }],
-  });
-
-  const plans = [
-    ...(queryPendingPlans.data?.data || []),
-    ...(queryOngoingPlans?.data?.data || []),
-  ];
-
-  const queryPendingProblems = useList({
-    resource: "problems",
-  });
-
-  const filteredProblems = idPlan
-    ? queryPendingProblems.data?.data?.filter(
-        (problem) => problem.plan_id === idPlan
-      )
-    : [];
   const { data: fertilizerData } = useList({
     resource: "fertilizers",
     filters: [
@@ -118,7 +92,7 @@ export const CaringTaskPage = (props: Props) => {
     pesticides: { pesticide_id: number; quantity: number; unit: string }[];
     items: { item_id: number; quantity: number; unit: string }[];
   }>({
-    id: taskId ?? props?.taskId,
+    id: props?.taskId,
     action: props?.action,
     resource: "caring-tasks",
     redirect: false,
@@ -166,8 +140,6 @@ export const CaringTaskPage = (props: Props) => {
             problem_id: caring_tasks.problem_id,
             task_type: caring_tasks.task_type,
           });
-          setIdPlan(caring_tasks.plan_id);
-          setIdProblem(caring_tasks.problem_id);
         }
       },
     },
@@ -192,10 +164,6 @@ export const CaringTaskPage = (props: Props) => {
     },
   });
 
-  const title =
-    props?.action === "edit"
-      ? "Chỉnh sửa công việc chăm sóc #" + taskId
-      : "Thêm công việc chăm sóc";
   const taskTypeOptions = [
     { label: t("status.watering", "Tưới nước"), value: "Watering" },
     {
@@ -285,6 +253,13 @@ export const CaringTaskPage = (props: Props) => {
           >
             <Input name="task_name" />
           </Form.Item>
+          <Form.Item name="plan_id">
+            <Input value={props?.planId} name="plan_id" />
+          </Form.Item>
+
+          <Form.Item name="problem_id">
+            <Input value={props?.problemId} name="prolem_id" />
+          </Form.Item>
           <Form.Item
             label="Loại công việc"
             name="task_type"
@@ -330,7 +305,9 @@ export const CaringTaskPage = (props: Props) => {
               </Form.Item>
             </Col>
           </Row>
-
+          <Form.Item name="status">
+            <Input value={props?.status} name="status" />
+          </Form.Item>
           <Form.Item
             label="Mô tả"
             name="description"
