@@ -182,71 +182,122 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({
           Thông tin cơ bản
         </Title>
         <Row gutter={[24, 24]}>
-          <Col xs={24} sm={12} md={8} lg={6}>
+          <Col xs={24} sm={24} md={12} lg={12}>
             <Card size="small" hoverable>
-              <Statistic
-                title={
-                  <Space>
-                    <UserOutlined />
-                    <span>Tên kế hoạch</span>
-                  </Space>
-                }
-                value={basicInfo.plan_name}
-                valueStyle={{ fontSize: "16px" }}
-              />
+              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <Space>
+                  <UserOutlined style={{ color: token.colorPrimary }} />
+                  <Text strong>Tên kế hoạch</Text>
+                </Space>
+                <Text
+                  ellipsis={{ tooltip: basicInfo.plan_name }}
+                  style={{
+                    fontSize: 16,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {basicInfo.plan_name}
+                </Text>
+              </Space>
             </Card>
           </Col>
-          <Col xs={24} sm={12} md={8} lg={6}>
+          <Col xs={24} sm={24} md={12} lg={12}>
             <Card size="small" hoverable>
-              <Statistic
-                title={
-                  <Space>
-                    <EnvironmentOutlined />
-                    <span>Cây trồng</span>
-                  </Space>
-                }
-                value={basicInfo.plant_name}
-                valueStyle={{ fontSize: "16px" }}
-              />
+              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <Space>
+                  <EnvironmentOutlined style={{ color: token.colorPrimary }} />
+                  <Text strong>Cây trồng</Text>
+                </Space>
+                <Text
+                  ellipsis={{ tooltip: basicInfo.plant_name }}
+                  style={{
+                    fontSize: 16,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {basicInfo.plant_name}
+                </Text>
+              </Space>
             </Card>
           </Col>
-          <Col xs={24} sm={12} md={8} lg={6}>
+          <Col xs={24} sm={24} md={12} lg={12}>
             <Card size="small" hoverable>
-              <Statistic
-                title={
-                  <Space>
-                    <ClockCircleOutlined />
-                    <span>Mùa vụ</span>
-                  </Space>
-                }
-                value={basicInfo.season_name}
-                valueStyle={{ fontSize: "16px" }}
-              />
+              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <Space>
+                  <ClockCircleOutlined style={{ color: token.colorPrimary }} />
+                  <Text strong>Mùa vụ</Text>
+                </Space>
+                <Text
+                  ellipsis={{ tooltip: basicInfo.season_name }}
+                  style={{
+                    fontSize: 16,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {basicInfo.season_name}
+                </Text>
+              </Space>
             </Card>
           </Col>
-          <Col xs={24} sm={12} md={8} lg={6}>
+          <Col xs={24} sm={24} md={12} lg={12}>
             <Card size="small" hoverable>
-              <Statistic
-                title={
-                  <Space>
-                    <EnvironmentOutlined />
-                    <span>Khu đất</span>
-                  </Space>
-                }
-                value={basicInfo.land_name}
-                valueStyle={{ fontSize: "16px" }}
-              />
+              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <Space>
+                  <EnvironmentOutlined style={{ color: token.colorPrimary }} />
+                  <Text strong>Khu đất</Text>
+                </Space>
+                <Text
+                  ellipsis={{ tooltip: basicInfo.land_name }}
+                  style={{
+                    fontSize: 16,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {basicInfo.land_name}
+                </Text>
+              </Space>
             </Card>
           </Col>
           <Col span={24}>
             <Card size="small" hoverable>
               <Space direction="vertical" size="small" style={{ width: "100%" }}>
-                <Text strong>Thời gian thực hiện</Text>
                 <Space>
-                  <Tag icon={<CalendarOutlined />} color="blue">
+                  <CalendarOutlined style={{ color: token.colorPrimary }} />
+                  <Text strong>Thời gian thực hiện</Text>
+                </Space>
+                <Space wrap>
+                  <Tag
+                    icon={<CalendarOutlined />}
+                    color="blue"
+                    style={{
+                      margin: 0,
+                      padding: "4px 8px",
+                      fontSize: 14,
+                    }}
+                  >
                     Bắt đầu: {dayjs(basicInfo.start_date).format("DD/MM/YYYY")}
                   </Tag>
-                  <Tag icon={<CalendarOutlined />} color="green">
+                  <Tag
+                    icon={<CalendarOutlined />}
+                    color="green"
+                    style={{
+                      margin: 0,
+                      padding: "4px 8px",
+                      fontSize: 14,
+                    }}
+                  >
                     Kết thúc: {dayjs(basicInfo.end_date).format("DD/MM/YYYY")}
                   </Tag>
                 </Space>
@@ -510,46 +561,54 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({
   };
 
   return (
-    <Tabs
-      defaultActiveKey="1"
+    <div
       style={{
-        background: token.colorBgContainer,
-        padding: "16px",
-        borderRadius: token.borderRadiusLG,
-        boxShadow: token.boxShadowTertiary,
+        maxWidth: 1024,
+        margin: "0 auto",
+        padding: "0 16px",
       }}
-      items={[
-        {
-          key: "1",
-          label: (
-            <span style={{ fontSize: "16px", fontWeight: 500 }}>
-              <FileTextOutlined style={{ marginRight: 8 }} />
-              Thông tin cơ bản
-            </span>
-          ),
-          children: (
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
-              {renderBasicInfo()}
-              {renderProductionInfo()}
-            </Space>
-          ),
-        },
-        {
-          key: "2",
-          label: (
-            <span style={{ fontSize: "16px", fontWeight: 500 }}>
-              <FieldTimeOutlined style={{ marginRight: 8 }} />
-              Công việc
-            </span>
-          ),
-          children: (
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
-              {renderTaskOverview()}
-              {renderTaskDetails()}
-            </Space>
-          ),
-        },
-      ]}
-    />
+    >
+      <Tabs
+        defaultActiveKey="1"
+        style={{
+          background: token.colorBgContainer,
+          padding: "16px",
+          borderRadius: token.borderRadiusLG,
+          boxShadow: token.boxShadowTertiary,
+        }}
+        items={[
+          {
+            key: "1",
+            label: (
+              <span style={{ fontSize: "16px", fontWeight: 500 }}>
+                <FileTextOutlined style={{ marginRight: 8 }} />
+                Thông tin cơ bản
+              </span>
+            ),
+            children: (
+              <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                {renderBasicInfo()}
+                {renderProductionInfo()}
+              </Space>
+            ),
+          },
+          {
+            key: "2",
+            label: (
+              <span style={{ fontSize: "16px", fontWeight: 500 }}>
+                <FieldTimeOutlined style={{ marginRight: 8 }} />
+                Công việc
+              </span>
+            ),
+            children: (
+              <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                {renderTaskOverview()}
+                {renderTaskDetails()}
+              </Space>
+            ),
+          },
+        ]}
+      />
+    </div>
   );
 };

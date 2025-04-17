@@ -26,22 +26,30 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   identity,
 }) => {
   return (
-    <Space direction="vertical" size="small" style={{ width: "100%" }}>
-      <ProductionInfo
-        formProps={formProps}
-        selectedTemplate={selectedTemplate}
-        yieldsOptions={yieldsOptions}
-      />
+    <div
+      style={{
+        maxWidth: 1024,
+        margin: "0 auto",
+        padding: "0 16px",
+      }}
+    >
+      <Space direction="vertical" size="small" style={{ width: "100%" }}>
+        <ProductionInfo
+          formProps={formProps}
+          selectedTemplate={selectedTemplate}
+          yieldsOptions={yieldsOptions}
+        />
 
-      <TasksTabs
-        formProps={formProps}
-        fertilizersOptions={fertilizersOptions}
-        pesticidesOptions={pesticidesOptions}
-        itemsOptions={itemsOptions}
-        packagingTypesOptions={packagingTypesOptions}
-        identity={identity}
-      />
-    </Space>
+        <TasksTabs
+          formProps={formProps}
+          fertilizersOptions={fertilizersOptions}
+          pesticidesOptions={pesticidesOptions}
+          itemsOptions={itemsOptions}
+          packagingTypesOptions={packagingTypesOptions}
+          identity={identity}
+        />
+      </Space>
+    </div>
   );
 };
 
