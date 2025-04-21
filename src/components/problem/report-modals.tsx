@@ -30,6 +30,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 type ReportProblemProps = {
+  problemsId?: number;
   status?: string;
   open: boolean;
   close: () => void;
@@ -43,7 +44,7 @@ export const ReportProblemModal = (props: ReportProblemProps) => {
     status: string;
   }>({
     resource: "problems",
-    id: `${id}/problem-report`,
+    id: `${props?.problemsId ? props?.problemsId : id}/problem-report`,
     action: "edit",
     queryOptions: {
       enabled: false,

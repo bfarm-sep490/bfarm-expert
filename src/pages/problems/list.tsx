@@ -26,12 +26,14 @@ export const ProblemListInProblems: React.FC<PropsWithChildren<{}>> = ({ childre
       },
     ],
   });
+  console.log("problemData", problemData);
+  console.log("planData", data);
   return (
     <ProblemListTable
       loading={problemLoading || planLoading}
       data={
-        problemData?.data?.filter(
-          (x) => x?.id && data?.data?.some((item) => item.id === x.id),
+        problemData?.data?.filter((x: any) =>
+          data?.data?.some((item) => item.id === x.plan_id),
         ) as IProblem[]
       }
       children={children}

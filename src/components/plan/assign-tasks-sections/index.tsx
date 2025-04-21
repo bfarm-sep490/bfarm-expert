@@ -534,15 +534,6 @@ export const AssignTasks = ({
         <Flex gap={10} style={{ marginLeft: 20 }}>
           <Tooltip
             placement="bottom"
-            title={"Nút hỗ trợ lưu bản phân bố công việc nháp"}
-            arrow={true}
-          >
-            <Button icon={<FileSearchOutlined />} loading={isLoading} onClick={handleUpdate}>
-              Lưu
-            </Button>
-          </Tooltip>
-          <Tooltip
-            placement="bottom"
             title={"Tự động phân bố công việc cho nông dân với số lượng công việc bằng nhau"}
             arrow={true}
           >
