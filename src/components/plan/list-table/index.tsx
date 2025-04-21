@@ -5,9 +5,10 @@ import {
   useNavigation,
   useTranslate,
   useInvalidate,
+  useGetIdentity,
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
-import type { IPlan } from "../../../interfaces";
+import type { IIdentity, IPlan } from "../../../interfaces";
 import { Input, InputNumber, Select, Table, theme, Typography, Tag } from "antd";
 import { PaginationTotal } from "../../paginationTotal";
 import { SearchOutlined } from "@ant-design/icons";
@@ -23,7 +24,7 @@ export const PlanListTable = () => {
   const { pathname } = useLocation();
   const { showUrl } = useNavigation();
   const invalidate = useInvalidate();
-
+  const { data: user } = useGetIdentity<IIdentity>();
   const { tableProps, sorters, filters } = useTable<IPlan, HttpError>({
     filters: {
       initial: [
@@ -41,6 +42,11 @@ export const PlanListTable = () => {
           field: "status",
           operator: "in",
           value: [],
+        },
+        {
+          field: "expert_id",
+          operator: "eq",
+          value: user?.id,
         },
       ],
     },

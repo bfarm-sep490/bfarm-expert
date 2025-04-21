@@ -34,13 +34,13 @@ import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
 import { ProblemListInProblems } from "./pages/problems/list";
 import { ProblemShowV2 } from "./pages/problems/show";
-import { PlanShow } from "./pages/plans/show/show";
 import { HarvestingProductShow } from "./components/production/harvesting/drawer-show";
 import { HarvestingProductionListPage } from "./pages/harvesting-production/list";
 import { PackagedProductListPage } from "./pages/packaging-production/list";
 import { PackagingProductShow } from "./components/production/packaging/drawer-show";
 import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
+import { PlanShow } from "./pages/plans/show/show";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -92,8 +92,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              notificationProvider={useNotificationProvider}
-              liveProvider={liveProvider(ablyClient)}
+              // notificationProvider={useNotificationProvider}
+              // liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",

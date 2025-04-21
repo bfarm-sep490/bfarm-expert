@@ -154,7 +154,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
       {
         field: "status",
         operator: "eq",
-        value: ["Ongoing", "Pending", "Cancel", "Incomplete", "Complete"],
+        value: ["Draft", "Ongoing", "Pending", "Cancel", "Incomplete", "Complete"],
       },
     ],
   });
@@ -170,7 +170,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
       {
         field: "status",
         operator: "eq",
-        value: ["Ongoing", "Pending", "Cancel", "Incomplete", "Complete"],
+        value: ["Draft", "Ongoing", "Pending", "Cancel", "Incomplete", "Complete"],
       },
     ],
   });
@@ -186,7 +186,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
       {
         field: "status",
         operator: "eq",
-        value: ["Ongoing", "Pending", "Cancel", "Incomplete", "Complete"],
+        value: ["Draft", "Ongoing", "Pending", "Cancel", "Incomplete", "Complete"],
       },
     ],
   });
@@ -542,13 +542,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     completedTasks={caring_task_dashboard?.complete_quantity || 0}
                     title="Chăm sóc"
                     loading={isTaskDashboardLoading}
-                    totalActivity={
-                      caring_task_dashboard?.cancel_quantity +
-                        caring_task_dashboard?.complete_quantity +
-                        caring_task_dashboard?.incomplete_quantity +
-                        caring_task_dashboard?.ongoing_quantity +
-                        caring_task_dashboard?.pending_quantity || 0
-                    }
+                    totalActivity={caringData?.data?.length}
                     lastActivityDate={
                       "Lần cuối: " +
                       new Date(caring_task_dashboard?.last_create_date).toLocaleDateString()
@@ -563,7 +557,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                       inspecting_task_dashboard?.filter((x) => x.status === "Complete")?.length || 0
                     }
                     title="Kiểm định"
-                    totalActivity={inspecting_task_dashboard?.length || 0}
+                    totalActivity={inspectingTaskData?.data?.length}
                     lastActivityDate={"Lần cuối: 13/12/2025"}
                   />
                 </Flex>
@@ -574,17 +568,8 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     completedTasks={havesting_task_dashboard?.complete_quantity || 0}
                     loading={isTaskDashboardLoading}
                     title="Thu hoạch"
-                    totalActivity={
-                      havesting_task_dashboard?.cancel_quantity +
-                        havesting_task_dashboard?.complete_quantity +
-                        havesting_task_dashboard?.incomplete_quantity +
-                        havesting_task_dashboard?.ongoing_quantity +
-                        havesting_task_dashboard?.pending_quantity || 0
-                    }
-                    lastActivityDate={
-                      "Lần cuối: " +
-                      new Date(havesting_task_dashboard?.last_create_date).toLocaleDateString()
-                    }
+                    totalActivity={harvestData?.data?.length}
+                    lastActivityDate={"Lần cuối: " + new Date().toLocaleDateString()}
                   />
 
                   <ActivityCard
@@ -592,13 +577,7 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
                     icon={<AuditOutlined style={{ color: "#fa8c16" }} />}
                     completedTasks={packaging_task_dashboard?.complete_quantity || 0}
                     loading={isTaskDashboardLoading}
-                    totalActivity={
-                      packaging_task_dashboard?.cancel_quantity +
-                        packaging_task_dashboard?.complete_quantity +
-                        packaging_task_dashboard?.incomplete_quantity +
-                        packaging_task_dashboard?.ongoing_quantity +
-                        packaging_task_dashboard?.pending_quantity || 0
-                    }
+                    totalActivity={packingData?.data?.length}
                     title="Đóng gói"
                     lastActivityDate={
                       "Lần cuối: " +

@@ -1,8 +1,8 @@
-import { Column, type ColumnConfig } from "@ant-design/plots";
-import { useTranslate } from "@refinedev/core";
-import dayjs from "dayjs";
 import { Suspense } from "react";
+import { useTranslate } from "@refinedev/core";
 
+import { Column, type ColumnConfig } from "@ant-design/plots";
+import dayjs from "dayjs";
 import { useConfigProvider } from "../../../context";
 
 type Props = {

@@ -64,7 +64,7 @@ type ProblemShowInProblemProps = {
 
 export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
   const { id } = useParams();
-  const [isAbilityToReport, setIsAbilityToReport] = useState<boolean>(false);
+  const [isAbilityToReport, setIsAbilityToReport] = useState<boolean>(true);
   const [taskId, setTaskId] = useState<number | undefined>(undefined);
   const [openAssignTasks, setOpenAssignTasks] = useState(false);
   const { token } = theme.useToken();
@@ -94,14 +94,20 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
     refetch: tasksRefetch,
   } = useList({
     resource: "caring-tasks",
-    filters: [{ field: "problem_id", operator: "eq", value: id }],
+    filters: [
+      {
+        field: "problem_id",
+        operator: "eq",
+        value: props?.problemId ? props?.problemId : id,
+      },
+    ],
     queryOptions: {
       enabled: !!(props?.open ?? id),
       onSuccess(data) {
         if (data?.data !== null) {
           data?.data?.forEach((x) => {
             if (x?.farmer_id === null) {
-              setIsAbilityToReport(true);
+              setIsAbilityToReport(false);
               return;
             }
           });
@@ -109,7 +115,17 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
       },
     },
   });
-
+  useEffect(() => {
+    if (taskData?.data) {
+      setIsAbilityToReport(true);
+      taskData?.data?.forEach((x) => {
+        if (x?.farmer_id === null) {
+          setIsAbilityToReport(false);
+          return;
+        }
+      });
+    }
+  }, [taskData]);
   const task = queryResult?.data;
   const tasks = taskData?.data;
   const { mutate } = useDelete();
@@ -238,33 +254,48 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
           <>
             <Flex justify="space-between">
               <Typography.Title level={4}>Chi tiết vấn đề: {task?.problem_name}</Typography.Title>
-              <Flex>
-                {task?.status === "Pending" && (
-                  <Space>
-                    {" "}
-                    <Button
-                      color="danger"
-                      variant="solid"
-                      onClick={() => {
-                        setDefaultReportStatus("Cancel");
-                        setIsModalOpen(true);
-                      }}
-                      icon={<CloseCircleOutlined />}
-                    >
-                      Hủy bỏ
-                    </Button>
-                    <Button
-                      color="primary"
-                      variant="solid"
-                      onClick={() => {
-                        setDefaultReportStatus("Resolve");
-                        setIsModalOpen(true);
-                      }}
-                      icon={<CheckCircleOutlined />}
-                    >
-                      Đồng ý
-                    </Button>
-                  </Space>
+              <Flex vertical={true} gap={8}>
+                <Flex>
+                  {task?.status === "Pending" && (
+                    <Space>
+                      {" "}
+                      <Button
+                        color="danger"
+                        variant="solid"
+                        onClick={() => {
+                          setDefaultReportStatus("Cancel");
+                          setIsModalOpen(true);
+                        }}
+                        icon={<CloseCircleOutlined />}
+                      >
+                        Hủy bỏ
+                      </Button>
+                      <Button
+                        disabled={!isAbilityToReport}
+                        color="primary"
+                        variant="solid"
+                        onClick={() => {
+                          setDefaultReportStatus("Resolve");
+                          setIsModalOpen(true);
+                        }}
+                        icon={<CheckCircleOutlined />}
+                      >
+                        Đồng ý
+                      </Button>
+                    </Space>
+                  )}
+                </Flex>
+                {isAbilityToReport === false && (
+                  <Typography.Text
+                    style={{
+                      fontSize: 9,
+                      color: "red",
+                      fontStyle: "italic",
+                      marginLeft: 8,
+                    }}
+                  >
+                    * Có công việc chưa được phân công.
+                  </Typography.Text>
                 )}
               </Flex>
             </Flex>
@@ -415,6 +446,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
             ></Table>
           </Card>
           <ReportProblemModal
+            problemsId={task?.id}
             refetch={() => {
               tasksRefetch();
               problemRefetch();
