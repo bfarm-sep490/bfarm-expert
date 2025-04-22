@@ -102,14 +102,14 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.start_date).unix() - dayjs(b.start_date).unix(),
     },
     {
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.end_date).unix() - dayjs(b.end_date).unix(),
     },
     {
@@ -214,7 +214,8 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày bắt đầu"
-                        format="DD/MM/YYYY"
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -228,7 +229,8 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày kết thúc"
-                        format="DD/MM/YYYY"
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -263,7 +265,7 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
                                   <Select placeholder="Chọn vật tư" options={itemsOptions} />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={10}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "quantity"]}
@@ -272,31 +274,38 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
                                   <InputNumber
                                     placeholder="Số lượng"
                                     min={0}
+                                    addonAfter={
+                                      <Select
+                                        defaultValue="cái"
+                                        onChange={(value) => {
+                                          form.setFieldValue(["items", name, "unit"], value);
+                                        }}
+                                        options={[
+                                          { value: "cái", label: "cái" },
+                                          { value: "hộp", label: "hộp" },
+                                          { value: "kg", label: "kg" },
+                                        ]}
+                                      />
+                                    }
                                     style={{ width: "100%" }}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={0}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "unit"]}
                                   style={{ marginBottom: 0 }}
+                                  hidden
                                 >
-                                  <Select
-                                    placeholder="Đơn vị"
-                                    options={[
-                                      { value: "cái", label: "cái" },
-                                      { value: "hộp", label: "hộp" },
-                                      { value: "kg", label: "kg" },
-                                    ]}
-                                  />
+                                  <Input />
                                 </Form.Item>
                               </Col>
-                              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+                              <Col span={4} style={{ display: "flex", justifyContent: "center" }}>
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined />}
+                                  icon={<DeleteOutlined spin />}
                                   onClick={() => removeItem(name)}
                                 />
                               </Col>

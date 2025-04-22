@@ -98,14 +98,14 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm:ss"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.start_date).unix() - dayjs(b.start_date).unix(),
     },
     {
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm:ss"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.end_date).unix() - dayjs(b.end_date).unix(),
     },
     {
@@ -209,8 +209,8 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày bắt đầu"
-                        format="DD/MM/YYYY HH:mm:ss"
-                        showTime
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -224,8 +224,8 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày kết thúc"
-                        format="DD/MM/YYYY HH:mm:ss"
-                        showTime
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>

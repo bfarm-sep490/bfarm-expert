@@ -17,12 +17,13 @@ import {
   Col,
   Row,
 } from "antd";
-import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, EditOutlined, SettingOutlined } from "@ant-design/icons";
 import { IIdentity, IPlant } from "@/interfaces";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useGetIdentity } from "@refinedev/core";
 import { useTaskStore } from "@/store/task-store";
+import { TypeTag } from "./TypeTag";
 
 const { Text } = Typography;
 
@@ -99,15 +100,17 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
       title: "Loại công việc",
       dataIndex: "task_type",
       key: "task_type",
-      render: (type: string) => <Tag color={getTaskTypeColor(type)}>{type}</Tag>,
+      render: (type: string) => <TypeTag status={type as any} />,
       sorter: (a: any, b: any) => a.task_type.localeCompare(b.task_type),
       filters: [
-        { text: "Chuẩn bị đất", value: "Chuẩn bị đất" },
-        { text: "Trồng", value: "Trồng" },
-        { text: "Chăm sóc", value: "Chăm sóc" },
-        { text: "Tưới nước", value: "Tưới nước" },
-        { text: "Bón phân", value: "Bón phân" },
-        { text: "Phòng trừ sâu bệnh", value: "Phòng trừ sâu bệnh" },
+        { text: "Chuẩn bị", value: "Setup" },
+        { text: "Trồng", value: "Planting" },
+        { text: "Làm cỏ", value: "Weeding" },
+        { text: "Cắt tỉa", value: "Pruning" },
+        { text: "Chăm sóc", value: "Nurturing" },
+        { text: "Tưới nước", value: "Watering" },
+        { text: "Bón phân", value: "Fertilizing" },
+        { text: "Phòng trừ sâu bệnh", value: "Pesticide" },
       ],
     },
     {
@@ -120,14 +123,14 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.start_date).unix() - dayjs(b.start_date).unix(),
     },
     {
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.end_date).unix() - dayjs(b.end_date).unix(),
     },
     {
@@ -156,12 +159,14 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
 
   const getTaskTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      "Chuẩn bị đất": "blue",
-      Trồng: "green",
-      "Chăm sóc": "orange",
-      "Tưới nước": "cyan",
-      "Bón phân": "purple",
-      "Phòng trừ sâu bệnh": "red",
+      Setup: "blue",
+      Planting: "green",
+      Nurturing: "orange",
+      Watering: "cyan",
+      Fertilizing: "purple",
+      Pesticide: "red",
+      Weeding: "lime",
+      Pruning: "gold",
     };
     return colors[type] || "default";
   };
@@ -220,13 +225,13 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                 form={form}
                 layout="vertical"
                 initialValues={{
-                  task_type: "Chuẩn bị đất",
+                  task_type: "Setup",
                   start_date: dayjs(),
                   end_date: dayjs(),
                   fertilizers: [],
                   pesticides: [],
                   items: [],
-                  created_by: user?.name as string,
+                  created_by: user?.name,
                 }}
               >
                 <Form.Item
@@ -235,6 +240,10 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                   rules={[{ required: true, message: "Vui lòng nhập tên công việc" }]}
                 >
                   <Input placeholder="Tên công việc" />
+                </Form.Item>
+
+                <Form.Item name="created_by" label="Người tạo" hidden>
+                  <Input />
                 </Form.Item>
 
                 <Row gutter={16}>
@@ -247,7 +256,8 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày bắt đầu"
-                        format="DD/MM/YYYY"
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -261,7 +271,8 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày kết thúc"
-                        format="DD/MM/YYYY"
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -276,12 +287,14 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                   <Select
                     placeholder="Loại công việc"
                     options={[
-                      { value: "Chuẩn bị đất", label: "Chuẩn bị đất" },
-                      { value: "Trồng", label: "Trồng" },
-                      { value: "Chăm sóc", label: "Chăm sóc" },
-                      { value: "Tưới nước", label: "Tưới nước" },
-                      { value: "Bón phân", label: "Bón phân" },
-                      { value: "Phòng trừ sâu bệnh", label: "Phòng trừ sâu bệnh" },
+                      { value: "Setup", label: "Chuẩn bị đất" },
+                      { value: "Planting", label: "Trồng" },
+                      { value: "Nurturing", label: "Chăm sóc" },
+                      { value: "Watering", label: "Tưới nước" },
+                      { value: "Fertilizing", label: "Bón phân" },
+                      { value: "Pesticide", label: "Phòng trừ sâu bệnh" },
+                      { value: "Weeding", label: "Làm cỏ" },
+                      { value: "Pruning", label: "Cắt tỉa" },
                     ]}
                   />
                 </Form.Item>
@@ -321,7 +334,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={10}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "quantity"]}
@@ -330,31 +343,38 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                   <InputNumber
                                     placeholder="Số lượng"
                                     min={0}
+                                    addonAfter={
+                                      <Select
+                                        defaultValue="kg"
+                                        onChange={(value) => {
+                                          form.setFieldValue(["fertilizers", name, "unit"], value);
+                                        }}
+                                        options={[
+                                          { value: "kg", label: "kg" },
+                                          { value: "g", label: "g" },
+                                          { value: "l", label: "l" },
+                                        ]}
+                                      />
+                                    }
                                     style={{ width: "100%" }}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={0}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "unit"]}
                                   style={{ marginBottom: 0 }}
+                                  hidden
                                 >
-                                  <Select
-                                    placeholder="Đơn vị"
-                                    options={[
-                                      { value: "kg", label: "kg" },
-                                      { value: "g", label: "g" },
-                                      { value: "l", label: "l" },
-                                    ]}
-                                  />
+                                  <Input />
                                 </Form.Item>
                               </Col>
-                              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+                              <Col span={4} style={{ display: "flex", justifyContent: "center" }}>
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined />}
+                                  icon={<DeleteOutlined spin />}
                                   onClick={() => removeFertilizer(name)}
                                 />
                               </Col>
@@ -396,7 +416,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                   <Select placeholder="Chọn thuốc" options={pesticidesOptions} />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={10}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "quantity"]}
@@ -405,31 +425,38 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                   <InputNumber
                                     placeholder="Số lượng"
                                     min={0}
+                                    addonAfter={
+                                      <Select
+                                        defaultValue="kg"
+                                        onChange={(value) => {
+                                          form.setFieldValue(["pesticides", name, "unit"], value);
+                                        }}
+                                        options={[
+                                          { value: "kg", label: "kg" },
+                                          { value: "g", label: "g" },
+                                          { value: "l", label: "l" },
+                                        ]}
+                                      />
+                                    }
                                     style={{ width: "100%" }}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={0}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "unit"]}
                                   style={{ marginBottom: 0 }}
+                                  hidden
                                 >
-                                  <Select
-                                    placeholder="Đơn vị"
-                                    options={[
-                                      { value: "kg", label: "kg" },
-                                      { value: "g", label: "g" },
-                                      { value: "l", label: "l" },
-                                    ]}
-                                  />
+                                  <Input />
                                 </Form.Item>
                               </Col>
-                              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+                              <Col span={4} style={{ display: "flex", justifyContent: "center" }}>
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined />}
+                                  icon={<DeleteOutlined spin />}
                                   onClick={() => removePesticide(name)}
                                 />
                               </Col>
@@ -471,7 +498,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                   <Select placeholder="Chọn vật tư" options={itemsOptions} />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={10}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "quantity"]}
@@ -480,31 +507,38 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                   <InputNumber
                                     placeholder="Số lượng"
                                     min={0}
+                                    addonAfter={
+                                      <Select
+                                        defaultValue="cái"
+                                        onChange={(value) => {
+                                          form.setFieldValue(["items", name, "unit"], value);
+                                        }}
+                                        options={[
+                                          { value: "cái", label: "cái" },
+                                          { value: "hộp", label: "hộp" },
+                                          { value: "kg", label: "kg" },
+                                        ]}
+                                      />
+                                    }
                                     style={{ width: "100%" }}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={0}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "unit"]}
                                   style={{ marginBottom: 0 }}
+                                  hidden
                                 >
-                                  <Select
-                                    placeholder="Đơn vị"
-                                    options={[
-                                      { value: "cái", label: "cái" },
-                                      { value: "hộp", label: "hộp" },
-                                      { value: "kg", label: "kg" },
-                                    ]}
-                                  />
+                                  <Input />
                                 </Form.Item>
                               </Col>
-                              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+                              <Col span={4} style={{ display: "flex", justifyContent: "center" }}>
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined />}
+                                  icon={<DeleteOutlined spin />}
                                   onClick={() => removeItem(name)}
                                 />
                               </Col>

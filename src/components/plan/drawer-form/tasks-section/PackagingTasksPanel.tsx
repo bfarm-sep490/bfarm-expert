@@ -18,9 +18,10 @@ import {
   Col,
 } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { IPlant } from "@/interfaces";
+import { IIdentity, IPlant } from "@/interfaces";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { useGetIdentity } from "@refinedev/core";
 import { useTaskStore } from "@/store/task-store";
 
 const { Text } = Typography;
@@ -40,6 +41,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [form] = Form.useForm();
   const { incrementCount, decrementCount } = useTaskStore();
+  const { data: user } = useGetIdentity<IIdentity>();
 
   const handleEditTask = (index: number) => {
     const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];
@@ -92,6 +94,12 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       filterSearch: true,
     },
     {
+      title: "Người tạo",
+      dataIndex: "created_by",
+      key: "created_by",
+      render: (createdBy: string) => <Tag color="blue">{createdBy}</Tag>,
+    },
+    {
       title: "Loại đóng gói",
       dataIndex: "packaging_type_id",
       key: "packaging_type_id",
@@ -111,14 +119,14 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.start_date).unix() - dayjs(b.start_date).unix(),
     },
     {
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
-      render: (date: any) => dayjs(date).format("DD/MM/YYYY"),
+      render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.end_date).unix() - dayjs(b.end_date).unix(),
     },
     {
@@ -203,6 +211,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                   end_date: dayjs(),
                   total_package_weight: 0,
                   items: [],
+                  created_by: user?.name,
                 }}
               >
                 <Form.Item
@@ -211,6 +220,10 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                   rules={[{ required: true, message: "Vui lòng nhập tên công việc" }]}
                 >
                   <Input placeholder="Tên công việc" />
+                </Form.Item>
+
+                <Form.Item name="created_by" label="Người tạo" hidden>
+                  <Input />
                 </Form.Item>
 
                 <Row gutter={16}>
@@ -223,7 +236,8 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày bắt đầu"
-                        format="DD/MM/YYYY"
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -237,7 +251,8 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                     >
                       <DatePicker
                         placeholder="Ngày kết thúc"
-                        format="DD/MM/YYYY"
+                        format="DD/MM/YYYY HH:mm"
+                        showTime={{ format: "HH:mm" }}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -293,7 +308,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                                   <Select placeholder="Chọn vật tư" options={itemsOptions} />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={10}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "quantity"]}
@@ -302,31 +317,38 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                                   <InputNumber
                                     placeholder="Số lượng"
                                     min={0}
+                                    addonAfter={
+                                      <Select
+                                        defaultValue="cái"
+                                        onChange={(value) => {
+                                          form.setFieldValue(["items", name, "unit"], value);
+                                        }}
+                                        options={[
+                                          { value: "cái", label: "cái" },
+                                          { value: "hộp", label: "hộp" },
+                                          { value: "kg", label: "kg" },
+                                        ]}
+                                      />
+                                    }
                                     style={{ width: "100%" }}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>
+                              <Col span={0}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "unit"]}
                                   style={{ marginBottom: 0 }}
+                                  hidden
                                 >
-                                  <Select
-                                    placeholder="Đơn vị"
-                                    options={[
-                                      { value: "cái", label: "cái" },
-                                      { value: "hộp", label: "hộp" },
-                                      { value: "kg", label: "kg" },
-                                    ]}
-                                  />
+                                  <Input />
                                 </Form.Item>
                               </Col>
-                              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+                              <Col span={4} style={{ display: "flex", justifyContent: "center" }}>
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined />}
+                                  icon={<DeleteOutlined spin />}
                                   onClick={() => removeItem(name)}
                                 />
                               </Col>
