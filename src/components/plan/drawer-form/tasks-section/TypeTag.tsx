@@ -5,7 +5,7 @@ const getTypeTagValue = (value: string) => {
     case "Setup":
       return "Chuẩn bị đất";
     case "Planting":
-      return "Trồng";
+      return "Trồng cây";
     case "Nurturing":
       return "Chăm sóc";
     case "Watering":

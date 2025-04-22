@@ -165,6 +165,8 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
               }))}
               pagination={false}
               scroll={{ x: true }}
+              size="small"
+              style={{ whiteSpace: "nowrap" }}
             />
 
             <Modal

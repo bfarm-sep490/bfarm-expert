@@ -26,8 +26,6 @@ export const ProblemListInProblems: React.FC<PropsWithChildren<{}>> = ({ childre
       },
     ],
   });
-  console.log("problemData", problemData);
-  console.log("planData", data);
   return (
     <ProblemListTable
       loading={problemLoading || planLoading}

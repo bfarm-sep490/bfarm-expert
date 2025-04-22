@@ -92,8 +92,8 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              // notificationProvider={useNotificationProvider}
-              // liveProvider={liveProvider(ablyClient)}
+              notificationProvider={useNotificationProvider}
+              liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
                   name: "dashboard",

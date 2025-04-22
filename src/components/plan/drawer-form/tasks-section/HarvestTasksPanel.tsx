@@ -169,6 +169,8 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
               }))}
               pagination={false}
               scroll={{ x: true }}
+              size="small"
+              style={{ whiteSpace: "nowrap" }}
             />
 
             <Modal

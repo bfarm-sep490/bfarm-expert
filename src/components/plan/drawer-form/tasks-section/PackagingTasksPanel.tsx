@@ -77,10 +77,10 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
     form.resetFields();
   };
 
-  const handleDeleteTask = (index: number) => {
+  const handleDeleteTask = (record: any) => {
     const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];
     formProps.form?.setFieldsValue({
-      packaging_tasks: currentTasks.filter((_: any, i: number) => i !== index),
+      packaging_tasks: currentTasks.filter((task: any) => task.id !== record.id),
     });
     decrementCount("packaging");
   };
@@ -132,15 +132,15 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
     {
       title: "Hành động",
       key: "action",
-      render: (_: any, record: any, index: number) => (
+      render: (_: any, record: any) => (
         <Space>
           <Tooltip title="Chỉnh sửa">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleEditTask(index)} />
+            <Button type="text" icon={<EditOutlined />} onClick={() => handleEditTask(record.id)} />
           </Tooltip>
           <Popconfirm
             title="Xóa công việc"
             description="Bạn có chắc chắn muốn xóa công việc này?"
-            onConfirm={() => handleDeleteTask(index)}
+            onConfirm={() => handleDeleteTask(record)}
             okText="Xóa"
             cancelText="Hủy"
           >
@@ -186,6 +186,8 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
               }))}
               pagination={false}
               scroll={{ x: true }}
+              size="small"
+              style={{ whiteSpace: "nowrap" }}
             />
 
             <Modal

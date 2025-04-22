@@ -9,7 +9,7 @@ import {
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
 import type { IIdentity, IPlan } from "../../../interfaces";
-import { Input, InputNumber, Select, Table, theme, Typography, Tag } from "antd";
+import { Input, InputNumber, Select, Table, theme, Typography, Tag, Spin } from "antd";
 import { PaginationTotal } from "../../paginationTotal";
 import { SearchOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router";
@@ -24,9 +24,21 @@ export const PlanListTable = () => {
   const { pathname } = useLocation();
   const { showUrl } = useNavigation();
   const invalidate = useInvalidate();
-  const { data: user } = useGetIdentity<IIdentity>();
+  const { data: user, isLoading: isLoadingUser } = useGetIdentity<IIdentity>();
   const { tableProps, sorters, filters } = useTable<IPlan, HttpError>({
+    resource: `plans`,
+    syncWithLocation: true,
+    queryOptions: {
+      enabled: !isLoadingUser && !!user?.id,
+    },
     filters: {
+      permanent: [
+        {
+          field: "expert_id",
+          operator: "eq",
+          value: user?.id,
+        },
+      ],
       initial: [
         {
           field: "description",
@@ -42,11 +54,6 @@ export const PlanListTable = () => {
           field: "status",
           operator: "in",
           value: [],
-        },
-        {
-          field: "expert_id",
-          operator: "eq",
-          value: user?.id,
         },
       ],
     },
@@ -67,6 +74,22 @@ export const PlanListTable = () => {
     }
   };
   const navigate = useNavigate();
+
+  if (isLoadingUser) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "200px",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
+
   return (
     <Table
       {...tableProps}

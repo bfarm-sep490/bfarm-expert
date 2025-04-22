@@ -16,6 +16,7 @@ import {
   Popconfirm,
   Col,
   Row,
+  TableColumnsType,
 } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined, SettingOutlined } from "@ant-design/icons";
 import { IIdentity, IPlant } from "@/interfaces";
@@ -80,15 +81,15 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
     form.resetFields();
   };
 
-  const handleDeleteTask = (index: number) => {
+  const handleDeleteTask = (record: any) => {
     const currentTasks = formProps.form?.getFieldValue("caring_tasks") || [];
     formProps.form?.setFieldsValue({
-      caring_tasks: currentTasks.filter((_: any, i: number) => i !== index),
+      caring_tasks: currentTasks.filter((task: any) => task.id !== record.id),
     });
     decrementCount("caring");
   };
 
-  const columns = [
+  const columns: TableColumnsType<any> = [
     {
       title: "Tên công việc",
       dataIndex: "task_name",
@@ -104,7 +105,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
       sorter: (a: any, b: any) => a.task_type.localeCompare(b.task_type),
       filters: [
         { text: "Chuẩn bị", value: "Setup" },
-        { text: "Trồng", value: "Planting" },
+        { text: "Trồng cây", value: "Planting" },
         { text: "Làm cỏ", value: "Weeding" },
         { text: "Cắt tỉa", value: "Pruning" },
         { text: "Chăm sóc", value: "Nurturing" },
@@ -136,6 +137,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
     {
       title: "Hành động",
       key: "action",
+      fixed: "right",
       render: (_: any, record: any, index: number) => (
         <Space>
           <Tooltip title="Chỉnh sửa">
@@ -144,7 +146,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
           <Popconfirm
             title="Xóa công việc"
             description="Bạn có chắc chắn muốn xóa công việc này?"
-            onConfirm={() => handleDeleteTask(index)}
+            onConfirm={() => handleDeleteTask(record)}
             okText="Xóa"
             cancelText="Hủy"
           >
@@ -204,6 +206,8 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
               }))}
               pagination={false}
               scroll={{ x: true }}
+              size="small"
+              style={{ whiteSpace: "nowrap" }}
             />
 
             <Modal
@@ -288,7 +292,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                     placeholder="Loại công việc"
                     options={[
                       { value: "Setup", label: "Chuẩn bị đất" },
-                      { value: "Planting", label: "Trồng" },
+                      { value: "Planting", label: "Trồng cây" },
                       { value: "Nurturing", label: "Chăm sóc" },
                       { value: "Watering", label: "Tưới nước" },
                       { value: "Fertilizing", label: "Bón phân" },
