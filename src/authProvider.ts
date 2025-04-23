@@ -61,11 +61,25 @@ export const authProvider: AuthProvider = {
           };
         }
 
+        const userRole =
+          tokenPayload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+        if (userRole !== "Expert") {
+          localStorage.removeItem(TOKEN_KEY);
+          return {
+            success: false,
+            error: {
+              message: "Lỗi đăng nhập",
+              name: "Bạn không có quyền truy cập vào hệ thống này",
+            },
+          };
+        }
+
         const userInfo = {
           id: tokenPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
           name: tokenPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
           email: tokenPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-          role: tokenPayload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+          role: userRole,
           avatar: tokenPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri"],
         };
 
@@ -82,24 +96,24 @@ export const authProvider: AuthProvider = {
       return {
         success: false,
         error: {
-          message: "Login failed",
-          name: "Invalid response from server",
+          message: "Lỗi đăng nhập",
+          name: "Tài khoản hoặc mật khẩu không chính xác",
         },
       };
     } catch (error) {
       const errorMessage =
         (axios.isAxiosError(error) && error.response?.data?.message) ||
-        "Login failed. Please check your credentials.";
+        "Lỗi đăng nhập. Vui lòng kiểm tra lại thông tin đăng nhập.";
 
       notification.error({
-        message: "Login Error",
+        message: "Lỗi đăng nhập",
         description: errorMessage,
       });
 
       return {
         success: false,
         error: {
-          message: "Login failed",
+          message: "Lỗi đăng nhập",
           name: errorMessage,
         },
       };
@@ -115,16 +129,16 @@ export const authProvider: AuthProvider = {
       return {
         success: false,
         error: {
-          message: "Register failed",
-          name: "Invalid email or password",
+          message: "Lỗi đăng ký",
+          name: "Email hoặc mật khẩu không chính xác",
         },
       };
     }
   },
   updatePassword: async () => {
     notification.success({
-      message: "Updated Password",
-      description: "Password updated successfully",
+      message: "Cập nhật mật khẩu",
+      description: "Mật khẩu đã được cập nhật thành công",
     });
     return {
       success: true,
@@ -133,7 +147,7 @@ export const authProvider: AuthProvider = {
   forgotPassword: async ({ email }) => {
     notification.success({
       message: "Reset Password",
-      description: `Reset password link sent to "${email}"`,
+      description: `Link khôi phục mật khẩu đã được gửi đến "${email}"`,
     });
     return {
       success: true,
@@ -155,8 +169,8 @@ export const authProvider: AuthProvider = {
         logout: true,
         redirectTo: "/login",
         error: {
-          message: "Session expired",
-          name: "Unauthorized",
+          message: "Phiên đăng nhập đã hết hạn",
+          name: "Không được phép truy cập",
         },
       };
     }
@@ -170,8 +184,8 @@ export const authProvider: AuthProvider = {
       return {
         authenticated: false,
         error: {
-          message: "Check failed",
-          name: "Token not found",
+          message: "Kiểm tra thất bại",
+          name: "Token không tồn tại",
         },
         logout: true,
         redirectTo: "/login",
@@ -185,8 +199,8 @@ export const authProvider: AuthProvider = {
         return {
           authenticated: false,
           error: {
-            message: "Invalid token format",
-            name: "Token decode error",
+            message: "Định dạng token không hợp lệ",
+            name: "Lỗi giải mã token",
           },
           logout: true,
           redirectTo: "/login",
@@ -199,8 +213,8 @@ export const authProvider: AuthProvider = {
         return {
           authenticated: false,
           error: {
-            message: "Session expired",
-            name: "Token expired",
+            message: "Phiên đăng nhập đã hết hạn",
+            name: "Token đã hết hạn",
           },
           logout: true,
           redirectTo: "/login",
@@ -215,8 +229,8 @@ export const authProvider: AuthProvider = {
       return {
         authenticated: false,
         error: {
-          message: "Invalid token",
-          name: "Token verification error",
+          message: "Token không hợp lệ",
+          name: "Lỗi kiểm tra token",
         },
         logout: true,
         redirectTo: "/login",

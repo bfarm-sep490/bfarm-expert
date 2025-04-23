@@ -419,9 +419,6 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
   } = useOne({
     resource: `plans`,
     id: `${id}/general`,
-    queryOptions: {
-      enabled: false,
-    },
   });
 
   const plan = planData?.data;
@@ -439,9 +436,6 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
         value: "Active",
       },
     ],
-    queryOptions: {
-      enabled: false,
-    },
   });
 
   const {
@@ -450,9 +444,6 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
     refetch: chosenFarmersRefetch,
   } = useList({
     resource: `plans/${id}/farmers`,
-    queryOptions: {
-      enabled: false,
-    },
   });
   const [viewCalendar, setViewCalendar] = useState(false);
   const farmers = farmerData?.data;
@@ -489,7 +480,7 @@ export const AddFarmerIntoPlanModal = (props: AddFarmerIntoPlanModalProps) => {
       setSelectFarmer(undefined);
       setEvents([]);
     }
-  }, [props?.visible]);
+  }, [props?.visible, planRefetch, farmerRefetch, chosenFarmersRefetch]);
   const { refetch, isLoading } = useCustom({
     url: `https://api.outfit4rent.online/api/farmers/${selectFarmer}/calendar`,
     method: "get",

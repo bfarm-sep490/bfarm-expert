@@ -110,7 +110,6 @@ const App: React.FC = () => {
                     icon: <ProductOutlined />,
                   },
                 },
-
                 {
                   name: "harvesting-products",
                   list: "/harvesting-products",
@@ -160,6 +159,12 @@ const App: React.FC = () => {
                   meta: {
                     icon: <ExperimentOutlined />,
                   },
+                },
+                {
+                  name: "template",
+                  list: "/template",
+                  edit: "/template/edit/:id",
+                  show: "/template/show/:id",
                 },
               ]}
             >
