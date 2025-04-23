@@ -158,7 +158,7 @@
     "login": {
       "buttons": {
         "forgotPassword": "Forgot password?",
-        "noAccount": "Don’t have an account?",
+        "noAccount": "Don't have an account?",
         "rememberMe": "Remember me",
         "submit": "Login"
       },
@@ -388,5 +388,52 @@
     "suggestErrorDescription": "An error occurred while retrieving suggestions. Please try again later.",
     "type": "Type",
     "unavailable": "Unavailable"
+  },
+  "templates": {
+    "fields": {
+      "plant": "Plant",
+      "description": "Description",
+      "season_type": "Season Type",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "estimated_per_one": "Estimated Per One",
+      "duration_days": "Duration (days)",
+      "task_name": "Task Name",
+      "form_name": "Form Name",
+      "task_type": "Task Type",
+      "start_in": "Start In (days)",
+      "end_in": "End In (days)",
+      "items": "Items",
+      "fertilizers": "Fertilizers",
+      "pesticides": "Pesticides",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "sample_quantity": "Sample Quantity"
+    },
+    "titles": {
+      "basic_info": "Basic Information",
+      "plant_template": "Plant Template",
+      "caring_tasks": "Caring Tasks",
+      "inspecting_tasks": "Inspecting Tasks",
+      "harvesting_tasks": "Harvesting Tasks"
+    },
+    "buttons": {
+      "add_caring_task": "Add Caring Task",
+      "add_inspecting_task": "Add Inspecting Task",
+      "add_harvesting_task": "Add Harvesting Task",
+      "add_item": "Add Item",
+      "add_fertilizer": "Add Fertilizer",
+      "add_pesticide": "Add Pesticide"
+    },
+    "task_types": {
+      "setup": "Setup",
+      "planting": "Planting",
+      "nurturing": "Nurturing",
+      "watering": "Watering",
+      "fertilizing": "Fertilizing",
+      "pesticide": "Pesticide",
+      "weeding": "Weeding",
+      "pruning": "Pruning"
+    }
   }
 }

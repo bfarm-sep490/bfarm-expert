@@ -167,6 +167,7 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
               scroll={{ x: true }}
               size="small"
               style={{ whiteSpace: "nowrap" }}
+              sticky={{ offsetHeader: -25 }}
             />
 
             <Modal

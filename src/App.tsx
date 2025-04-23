@@ -1,6 +1,7 @@
 import {
   DashboardOutlined,
   ExperimentOutlined,
+  FileOutlined,
   ProductOutlined,
   ScheduleOutlined,
   WarningOutlined,
@@ -29,7 +30,7 @@ import { ConfigProvider } from "./context";
 import { App as AntdApp } from "antd";
 import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
-import { PlanCreate, PlanEdit, PlanList } from "./pages/plans";
+import { PlanCreate, PlanList } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
 import { ProblemListInProblems } from "./pages/problems/list";
@@ -41,6 +42,9 @@ import { PackagingProductShow } from "./components/production/packaging/drawer-s
 import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
 import { PlanShow } from "./pages/plans/show/show";
+import { TemplateList } from "./pages/templates/list";
+import { TemplateShow } from "./pages/templates/show";
+import { TemplateEdit } from "./pages/templates";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -163,8 +167,11 @@ const App: React.FC = () => {
                 {
                   name: "template",
                   list: "/template",
-                  edit: "/template/edit/:id",
-                  show: "/template/show/:id",
+                  edit: "/template/:id/edit",
+                  meta: {
+                    label: "Mẫu",
+                    icon: <FileOutlined />,
+                  },
                 },
               ]}
             >
@@ -206,6 +213,17 @@ const App: React.FC = () => {
                       element={<HarvestingProductShow></HarvestingProductShow>}
                     ></Route>
                   </Route>
+                  <Route
+                    path="/template"
+                    element={
+                      <TemplateList>
+                        <Outlet />
+                      </TemplateList>
+                    }
+                  >
+                    <Route path=":id/edit" element={<TemplateEdit />} />
+                  </Route>
+
                   <Route
                     path="packaging-products"
                     element={

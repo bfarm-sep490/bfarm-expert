@@ -208,6 +208,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
               scroll={{ x: true }}
               size="small"
               style={{ whiteSpace: "nowrap" }}
+              sticky={{ offsetHeader: -25 }}
             />
 
             <Modal

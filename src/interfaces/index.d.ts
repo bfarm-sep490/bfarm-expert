@@ -401,3 +401,57 @@ export interface IPackagingType {
   description: string;
   status: "Active" | "Inactive";
 }
+
+export interface ITemplate {
+  id: number;
+  plant_id: number;
+  description: string;
+  season_type: string;
+  start_date: string;
+  end_date: string;
+  estimated_per_one: number;
+  duration_days: number;
+  plant_template: {
+    season_type: string;
+    sample_quantity: number;
+    caring_tasks: Array<{
+      task_name: string;
+      description: string;
+      task_type: string;
+      start_in: number;
+      end_in: number;
+      fertilizers: Array<{
+        fertilizer_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+      pesticides: Array<{
+        pesticide_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+      items: Array<{
+        item_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+    }>;
+    inspecting_tasks: Array<{
+      form_name: string;
+      description: string;
+      start_in: number;
+      end_in: number;
+    }>;
+    harvesting_task_templates: Array<{
+      task_name: string;
+      description: string;
+      start_in: number;
+      end_in: number;
+      items: Array<{
+        item_id: number;
+        quantity: number;
+        unit: string;
+      }>;
+    }>;
+  };
+}

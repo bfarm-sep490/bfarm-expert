@@ -30,7 +30,13 @@
     "rejectAll": "Từ chối tất cả",
     "save": "Lưu",
     "show": "Hiển thị",
-    "undo": "Hoàn tác"
+    "undo": "Hoàn tác",
+    "add_caring_task": "Thêm công việc chăm sóc",
+    "add_inspecting_task": "Thêm công việc kiểm tra",
+    "add_harvesting_task": "Thêm công việc thu hoạch",
+    "add_item": "Thêm vật tư",
+    "add_fertilizer": "Thêm phân bón",
+    "add_pesticide": "Thêm thuốc trừ sâu"
   },
   "categories": {
     "categories": "Danh mục",
@@ -388,5 +394,44 @@
     "suggestErrorDescription": "Đã xảy ra lỗi khi lấy gợi ý. Vui lòng thử lại sau.",
     "type": "Loại",
     "unavailable": "Không khả dụng"
+  },
+  "templates": {
+    "fields": {
+      "plant": "Cây trồng",
+      "description": "Mô tả",
+      "season_type": "Loại mùa vụ",
+      "start_date": "Ngày bắt đầu",
+      "end_date": "Ngày kết thúc",
+      "estimated_per_one": "Ước tính cho một",
+      "duration_days": "Thời gian (ngày)",
+      "task_name": "Tên công việc",
+      "form_name": "Tên biểu mẫu",
+      "task_type": "Loại công việc",
+      "start_in": "Bắt đầu sau (ngày)",
+      "end_in": "Kết thúc sau (ngày)",
+      "items": "Vật tư",
+      "fertilizers": "Phân bón",
+      "pesticides": "Thuốc trừ sâu",
+      "quantity": "Số lượng",
+      "unit": "Đơn vị",
+      "sample_quantity": "Số lượng mẫu"
+    },
+    "titles": {
+      "basic_info": "Thông tin cơ bản",
+      "plant_template": "Mẫu cây trồng",
+      "caring_tasks": "Công việc chăm sóc",
+      "inspecting_tasks": "Công việc kiểm tra",
+      "harvesting_tasks": "Công việc thu hoạch"
+    },
+    "task_types": {
+      "setup": "Chuẩn bị",
+      "planting": "Trồng",
+      "nurturing": "Chăm sóc",
+      "watering": "Tưới nước",
+      "fertilizing": "Bón phân",
+      "pesticide": "Phun thuốc",
+      "weeding": "Làm cỏ",
+      "pruning": "Tỉa cành"
+    }
   }
 }

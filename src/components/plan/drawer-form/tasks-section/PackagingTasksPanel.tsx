@@ -188,6 +188,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
               scroll={{ x: true }}
               size="small"
               style={{ whiteSpace: "nowrap" }}
+              sticky={{ offsetHeader: -25 }}
             />
 
             <Modal

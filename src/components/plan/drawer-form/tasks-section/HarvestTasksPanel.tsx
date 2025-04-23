@@ -171,6 +171,7 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
               scroll={{ x: true }}
               size="small"
               style={{ whiteSpace: "nowrap" }}
+              sticky={{ offsetHeader: -25 }}
             />
 
             <Modal
