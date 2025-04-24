@@ -39,19 +39,18 @@ import { HarvestingProductShow } from "./components/production/harvesting/drawer
 import { HarvestingProductionListPage } from "./pages/harvesting-production/list";
 import { PackagedProductListPage } from "./pages/packaging-production/list";
 import { PackagingProductShow } from "./components/production/packaging/drawer-show";
-import { liveProvider } from "@refinedev/ably";
 import { ablyClient } from "./utils/ablyClient";
 import { PlanShow } from "./pages/plans/show/show";
 import { TemplateList } from "./pages/templates/list";
-import { TemplateShow } from "./pages/templates/show";
 import { TemplateEdit } from "./pages/templates";
+import { liveProvider } from "@refinedev/ably";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
 }
 
 const customTitleHandler = ({ resource }: TitleHandlerOptions): string => {
-  const baseTitle = "BFarmx Expert";
+  const baseTitle = "BFarmX Expert";
   const titleSegment = resource?.meta?.label;
 
   const title = titleSegment ? `${titleSegment} | ${baseTitle}` : baseTitle;

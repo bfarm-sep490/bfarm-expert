@@ -3,8 +3,8 @@ import { disableAutoLogin } from "./hooks";
 import type { AuthProvider } from "@refinedev/core";
 import axios from "axios";
 
-export const TOKEN_KEY = "bfarmx-auth";
-export const USER_KEY = "bfarmx-user";
+export const TOKEN_KEY = "bfarmx-expert-auth";
+export const USER_KEY = "bfarmx-expert-user";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 const authApiClient = axios.create({

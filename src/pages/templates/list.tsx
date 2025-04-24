@@ -254,7 +254,7 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
                 "Please upload an Excel file (.xlsx or .xls) containing your template data. Make sure the file follows the required format.",
               )}
             </Typography.Text>
-            <Button type="primary" icon={<DownloadOutlined />} href="/templates/sample.xlsx">
+            <Button type="primary" icon={<DownloadOutlined />} href="/templates/TemplateForm.xlsx">
               {t("templates.actions.downloadSample", "Download Sample Template")}
             </Button>
             <Upload.Dragger

@@ -81,11 +81,56 @@ body {
     background: transparent;
 }
 
+/* 🔹 TÙY CHỈNH THANH CUỘN CHO NOTIFICATION DROPDOWN */
+.notification-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.notification-scroll:hover {
+    scrollbar-color: #eaeaea transparent;
+}
+
+.notification-scroll::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.notification-scroll:hover::-webkit-scrollbar {
+    opacity: 1;
+}
+
+.notification-scroll::-webkit-scrollbar-thumb {
+    background: #eaeaea;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.notification-scroll:hover::-webkit-scrollbar-thumb {
+    opacity: 1;
+}
+
+.notification-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 /* 🔹 DARK MODE - ĐỔI MÀU THANH CUỘN KHI Ở CHẾ ĐỘ TỐI */
 html[data-theme="dark"] {
     scrollbar-color: #666 transparent;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #666;
+}
+
+html[data-theme="dark"] .notification-scroll:hover {
+    scrollbar-color: #666 transparent;
+}
+
+html[data-theme="dark"] .notification-scroll::-webkit-scrollbar-thumb {
     background: #666;
 }

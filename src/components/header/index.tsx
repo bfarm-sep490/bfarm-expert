@@ -33,6 +33,8 @@ import { useConfigProvider } from "../../context";
 import { useStyles } from "./styled";
 
 import type { IIdentity } from "../../interfaces";
+import { useNotificationSystem } from "@/hooks/useNotificationSystem";
+import { NotificationDropdown } from "./notification-dropdown";
 
 const { Header: AntdHeader } = AntdLayout;
 const { useToken } = theme;
@@ -59,6 +61,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, st
   const { data: user } = useGetIdentity<IIdentity>();
   const screens = useBreakpoint();
   const t = useTranslate();
+
+  const notificationContext = useNotificationSystem();
 
   const currentLocale = locale();
 
@@ -114,6 +118,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, st
   }
   return (
     <AntdHeader style={headerStyles}>
+      {notificationContext}
       <Row
         align="middle"
         style={{
@@ -139,7 +144,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, st
           </AutoComplete>
         </Col>
         <Col>
-          <Space size={screens.md ? 32 : 16} align="center">
+          <Space size={screens.md ? 28 : 12} align="center">
             <Dropdown
               menu={{
                 items: menuItems,
@@ -164,6 +169,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, st
                 setMode(mode === "light" ? "dark" : "light");
               }}
             />
+
+            <NotificationDropdown />
 
             <Space size={screens.md ? 16 : 8} align="center">
               <Text ellipsis className={styles.userName}>

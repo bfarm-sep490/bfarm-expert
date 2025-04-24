@@ -1,6 +1,6 @@
 import { useTranslate, useGetToPath, useGo, useGetIdentity, useSelect } from "@refinedev/core";
 import { SaveButton, useStepsForm } from "@refinedev/antd";
-import { Button, Steps, Flex, Space, Drawer, Spin, theme, Form } from "antd";
+import { Button, Steps, Flex, Drawer, Spin, theme, Form } from "antd";
 import {
   InfoCircleOutlined,
   ToolOutlined,
@@ -130,7 +130,11 @@ export const PlanDrawer = (props: Props) => {
 
   const { current, gotoStep, stepsProps, formProps, saveButtonProps, formLoading } =
     useStepsForm<IPlan>({
-      resource: "plans/with-details",
+      resource: "plans",
+      meta: {
+        dataProviderName: "default",
+        apiUrl: "plans/with-details",
+      },
       action: props?.action,
       redirect: false,
       onMutationSuccess: () => {

@@ -51,7 +51,7 @@ export const BFarmLogoText: React.FC<React.SVGProps<SVGSVGElement>> = (props) =>
       fontSize="18"
       fill="url(#bfarm-text-gradient)"
     >
-      BFarm Expert
+      BFX Expert
     </text>
 
     <defs>
