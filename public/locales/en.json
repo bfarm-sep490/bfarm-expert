@@ -408,9 +408,38 @@
       "pesticides": "Pesticides",
       "quantity": "Quantity",
       "unit": "Unit",
-      "sample_quantity": "Sample Quantity"
+      "sample_quantity": "Sample Quantity",
+      "description_placeholder": "Enter detailed description about the plant template...",
+      "estimated_per_one_placeholder": "Enter estimated yield per plant",
+      "duration_days_placeholder": "Enter cultivation duration in days"
+    },
+    "messages": {
+      "plant_required": "Please select a plant",
+      "season_type_required": "Please select a season type",
+      "description_required": "Please enter description",
+      "description_min_length": "Description must be at least 10 characters",
+      "description_max_length": "Description cannot exceed 500 characters",
+      "start_date_required": "Please select start date",
+      "end_date_required": "Please select end date",
+      "start_date_before_end": "Start date must be before end date",
+      "end_date_after_start": "End date must be after start date",
+      "estimated_per_one_required": "Please enter estimated yield per plant",
+      "estimated_per_one_min": "Estimated yield must be greater than or equal to 0",
+      "duration_days_required": "Please enter cultivation duration",
+      "duration_days_min": "Duration must be greater than 0"
+    },
+    "tooltips": {
+      "estimated_per_one": "Estimated yield per plant (kg)",
+      "duration_days": "Cultivation duration in days"
+    },
+    "seasons": {
+      "spring": "Spring",
+      "summer": "Summer",
+      "autumn": "Autumn",
+      "winter": "Winter"
     },
     "titles": {
+      "edit_template": "Edit Template",
       "basic_info": "Basic Information",
       "plant_template": "Plant Template",
       "caring_tasks": "Caring Tasks",

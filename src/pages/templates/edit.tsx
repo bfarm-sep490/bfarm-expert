@@ -139,11 +139,11 @@ const TaskModal = ({ open, onClose, onSave, initialValues, type }: TaskModalProp
             />
           </Form.Item>
         )}
-        <Form.Item name="start_in" label="Start In (days)" rules={[{ required: true }]}>
-          <InputNumber style={{ width: "100%" }} />
+        <Form.Item name="start_in" label="Start In (hours)" rules={[{ required: true }]}>
+          <InputNumber style={{ width: "100%" }} min={0} addonAfter="hours" />
         </Form.Item>
-        <Form.Item name="end_in" label="End In (days)" rules={[{ required: true }]}>
-          <InputNumber style={{ width: "100%" }} />
+        <Form.Item name="end_in" label="End In (hours)" rules={[{ required: true }]}>
+          <InputNumber style={{ width: "100%" }} min={0} addonAfter="hours" />
         </Form.Item>
 
         {(type === "caring" || type === "harvesting") && (
@@ -576,11 +576,31 @@ export const TemplateEdit = (props: Props) => {
       title: t("templates.fields.start_in"),
       dataIndex: "start_in",
       key: "start_in",
+      render: (value) => `${value} hours`,
     },
     {
       title: t("templates.fields.end_in"),
       dataIndex: "end_in",
       key: "end_in",
+      render: (value) => `${value} hours`,
+    },
+    {
+      title: "Calculated Start Date",
+      key: "calculated_start",
+      render: (_, record) => {
+        const startDate = form.getFieldValue("start_date");
+        if (!startDate || !record.start_in) return "-";
+        return dayjs(startDate).add(record.start_in, "hour").format("YYYY-MM-DD HH:mm");
+      },
+    },
+    {
+      title: "Calculated End Date",
+      key: "calculated_end",
+      render: (_, record) => {
+        const startDate = form.getFieldValue("start_date");
+        if (!startDate || !record.end_in) return "-";
+        return dayjs(startDate).add(record.end_in, "hour").format("YYYY-MM-DD HH:mm");
+      },
     },
     {
       title: t("templates.fields.items"),
@@ -637,14 +657,34 @@ export const TemplateEdit = (props: Props) => {
       key: "description",
     },
     {
-      title: "Start In (days)",
+      title: "Start In",
       dataIndex: "start_in",
       key: "start_in",
+      render: (value) => `${value} hours`,
     },
     {
-      title: "End In (days)",
+      title: "End In",
       dataIndex: "end_in",
       key: "end_in",
+      render: (value) => `${value} hours`,
+    },
+    {
+      title: "Calculated Start Date",
+      key: "calculated_start",
+      render: (_, record) => {
+        const startDate = form.getFieldValue("start_date");
+        if (!startDate || !record.start_in) return "-";
+        return dayjs(startDate).add(record.start_in, "hour").format("YYYY-MM-DD HH:mm");
+      },
+    },
+    {
+      title: "Calculated End Date",
+      key: "calculated_end",
+      render: (_, record) => {
+        const startDate = form.getFieldValue("start_date");
+        if (!startDate || !record.end_in) return "-";
+        return dayjs(startDate).add(record.end_in, "hour").format("YYYY-MM-DD HH:mm");
+      },
     },
     {
       title: t("table.actions"),
@@ -683,14 +723,32 @@ export const TemplateEdit = (props: Props) => {
       key: "description",
     },
     {
-      title: "Start In (days)",
+      title: "Start In (hours)",
       dataIndex: "start_in",
       key: "start_in",
     },
     {
-      title: "End In (days)",
+      title: "End In (hours)",
       dataIndex: "end_in",
       key: "end_in",
+    },
+    {
+      title: "Calculated Start Date",
+      key: "calculated_start",
+      render: (_, record) => {
+        const startDate = form.getFieldValue("start_date");
+        if (!startDate || !record.start_in) return "-";
+        return dayjs(startDate).add(record.start_in, "hour").format("YYYY-MM-DD HH:mm");
+      },
+    },
+    {
+      title: "Calculated End Date",
+      key: "calculated_end",
+      render: (_, record) => {
+        const startDate = form.getFieldValue("start_date");
+        if (!startDate || !record.end_in) return "-";
+        return dayjs(startDate).add(record.end_in, "hour").format("YYYY-MM-DD HH:mm");
+      },
     },
     {
       title: "Items",
@@ -730,34 +788,79 @@ export const TemplateEdit = (props: Props) => {
       width={breakpoint.lg ? "1001px" : "100%"}
       zIndex={1001}
       onClose={onDrawerClose}
-      title={
-        <Flex justify="space-between" align="center">
-          <span>{t("templates.titles.edit_template")}</span>
-          <Space>
-            <Button onClick={onDrawerClose}>{t("buttons.cancel")}</Button>
-            <SaveButton {...saveButtonProps} htmlType="submit" type="primary" icon={null}>
-              {t("buttons.save")}
-            </SaveButton>
-          </Space>
-        </Flex>
-      }
+      title={t("templates.titles.edit_template")}
     >
       <Spin spinning={formLoading}>
         <Form {...formProps} form={form} layout="vertical">
           <Flex vertical gap="large">
             <Card title={t("templates.titles.basic_info")}>
-              <Form.Item
-                label={t("templates.fields.plant")}
-                name="plant_id"
-                className={styles.formItem}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select placeholder={t("templates.fields.plant")} options={plantOptions} />
-              </Form.Item>
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <Form.Item
+                    label={t("templates.fields.plant")}
+                    name="plant_id"
+                    className={styles.formItem}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("templates.messages.plant_required"),
+                      },
+                      {
+                        validator: async (_, value) => {
+                          if (!value) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.plant_required")),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder={t("templates.fields.plant")}
+                      options={plantOptions}
+                      showSearch
+                      filterOption={(input, option) =>
+                        (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                      }
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label={t("templates.fields.season_type")}
+                    name="season_type"
+                    className={styles.formItem}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("templates.messages.season_type_required"),
+                      },
+                      {
+                        validator: async (_, value) => {
+                          if (!value) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.season_type_required")),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder={t("templates.fields.season_type")}
+                      options={[
+                        { value: "spring", label: t("templates.seasons.spring") },
+                        { value: "summer", label: t("templates.seasons.summer") },
+                        { value: "autumn", label: t("templates.seasons.autumn") },
+                        { value: "winter", label: t("templates.seasons.winter") },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
 
               <Form.Item
                 label={t("templates.fields.description")}
@@ -766,88 +869,197 @@ export const TemplateEdit = (props: Props) => {
                 rules={[
                   {
                     required: true,
+                    message: t("templates.messages.description_required"),
+                  },
+                  {
+                    min: 10,
+                    message: t("templates.messages.description_min_length"),
+                  },
+                  {
+                    max: 500,
+                    message: t("templates.messages.description_max_length"),
+                  },
+                  {
+                    validator: async (_, value) => {
+                      if (!value || value.trim().length < 10) {
+                        return Promise.reject(
+                          new Error(t("templates.messages.description_min_length")),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
                   },
                 ]}
               >
-                <Input.TextArea rows={4} />
+                <Input.TextArea
+                  rows={4}
+                  placeholder={t("templates.fields.description_placeholder")}
+                  showCount
+                  maxLength={500}
+                />
               </Form.Item>
 
-              <Form.Item
-                label={t("templates.fields.season_type")}
-                name="season_type"
-                className={styles.formItem}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <Form.Item
+                    label={t("templates.fields.start_date")}
+                    name="start_date"
+                    className={styles.formItem}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("templates.messages.start_date_required"),
+                      },
+                      {
+                        validator: async (_, value) => {
+                          if (!value) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.start_date_required")),
+                            );
+                          }
+                          const endDate = form.getFieldValue("end_date");
+                          if (endDate && dayjs(value).isAfter(dayjs(endDate))) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.start_date_before_end")),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                    getValueProps={(value) => ({
+                      value: value ? dayjs(value) : undefined,
+                    })}
+                    normalize={(value) => {
+                      return value ? value.format("YYYY-MM-DDTHH:mm:ss.SSSZ") : undefined;
+                    }}
+                  >
+                    <DatePicker
+                      showTime
+                      format="YYYY-MM-DD HH:mm:ss"
+                      placeholder={t("templates.fields.start_date")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label={t("templates.fields.end_date")}
+                    name="end_date"
+                    className={styles.formItem}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("templates.messages.end_date_required"),
+                      },
+                      {
+                        validator: async (_, value) => {
+                          if (!value) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.end_date_required")),
+                            );
+                          }
+                          const startDate = form.getFieldValue("start_date");
+                          if (startDate && dayjs(value).isBefore(dayjs(startDate))) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.end_date_after_start")),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                    getValueProps={(value) => ({
+                      value: value ? dayjs(value) : undefined,
+                    })}
+                    normalize={(value) => {
+                      return value ? value.format("YYYY-MM-DDTHH:mm:ss.SSSZ") : undefined;
+                    }}
+                  >
+                    <DatePicker
+                      showTime
+                      format="YYYY-MM-DD HH:mm:ss"
+                      placeholder={t("templates.fields.end_date")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
 
-              <Form.Item
-                label={t("templates.fields.start_date")}
-                name="start_date"
-                className={styles.formItem}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                getValueProps={(value) => ({
-                  value: value ? dayjs(value) : undefined,
-                })}
-                normalize={(value) => {
-                  return value ? value.format("YYYY-MM-DDTHH:mm:ss.SSSZ") : undefined;
-                }}
-              >
-                <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-              </Form.Item>
-
-              <Form.Item
-                label={t("templates.fields.end_date")}
-                name="end_date"
-                className={styles.formItem}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                getValueProps={(value) => ({
-                  value: value ? dayjs(value) : undefined,
-                })}
-                normalize={(value) => {
-                  return value ? value.format("YYYY-MM-DDTHH:mm:ss.SSSZ") : undefined;
-                }}
-              >
-                <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-              </Form.Item>
-
-              <Form.Item
-                label={t("templates.fields.estimated_per_one")}
-                name="estimated_per_one"
-                className={styles.formItem}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-
-              <Form.Item
-                label={t("templates.fields.duration_days")}
-                name="duration_days"
-                className={styles.formItem}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <Form.Item
+                    label={t("templates.fields.estimated_per_one")}
+                    name="estimated_per_one"
+                    className={styles.formItem}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("templates.messages.estimated_per_one_required"),
+                      },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: t("templates.messages.estimated_per_one_min"),
+                      },
+                      {
+                        validator: async (_, value) => {
+                          if (!value || value < 0) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.estimated_per_one_min")),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                    tooltip={t("templates.tooltips.estimated_per_one")}
+                  >
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      min={0}
+                      placeholder={t("templates.fields.estimated_per_one")}
+                      addonAfter="kg"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label={t("templates.fields.duration_days")}
+                    name="duration_days"
+                    className={styles.formItem}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("templates.messages.duration_days_required"),
+                      },
+                      {
+                        type: "number",
+                        min: 1,
+                        message: t("templates.messages.duration_days_min"),
+                      },
+                      {
+                        validator: async (_, value) => {
+                          if (!value || value < 1) {
+                            return Promise.reject(
+                              new Error(t("templates.messages.duration_days_min")),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                    tooltip={t("templates.tooltips.duration_days")}
+                  >
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      min={1}
+                      placeholder={t("templates.fields.duration_days")}
+                      addonAfter="days"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Card>
 
             <Card title={t("templates.titles.plant_template")}>
@@ -906,6 +1118,7 @@ export const TemplateEdit = (props: Props) => {
                         </Form.Item>
                       </>
                     ),
+                    forceRender: true,
                   },
                   {
                     key: "inspecting",
@@ -934,6 +1147,7 @@ export const TemplateEdit = (props: Props) => {
                         </Form.Item>
                       </>
                     ),
+                    forceRender: true,
                   },
                   {
                     key: "harvesting",
@@ -962,10 +1176,17 @@ export const TemplateEdit = (props: Props) => {
                         </Form.Item>
                       </>
                     ),
+                    forceRender: true,
                   },
                 ]}
               />
             </Card>
+          </Flex>
+          <Flex justify="flex-end" gap="small" style={{ marginTop: 16 }}>
+            <Button onClick={onDrawerClose}>{t("buttons.cancel")}</Button>
+            <SaveButton {...saveButtonProps} htmlType="submit" type="primary" icon={null}>
+              {t("buttons.save")}
+            </SaveButton>
           </Flex>
         </Form>
       </Spin>

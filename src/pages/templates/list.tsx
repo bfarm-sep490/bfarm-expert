@@ -392,7 +392,7 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
                       recordItemId={item.id}
                     >
                       {" "}
-                      View
+                      Edit
                     </EditButton>
                     <Tag color={getSeasonColor(item.season_type)} className={styles.seasonTag}>
                       {item.season_type}

@@ -414,9 +414,38 @@
       "pesticides": "Thuốc trừ sâu",
       "quantity": "Số lượng",
       "unit": "Đơn vị",
-      "sample_quantity": "Số lượng mẫu"
+      "sample_quantity": "Số lượng mẫu",
+      "description_placeholder": "Nhập mô tả chi tiết về mẫu cây trồng...",
+      "estimated_per_one_placeholder": "Nhập sản lượng ước tính cho mỗi cây",
+      "duration_days_placeholder": "Nhập thời gian canh tác tính bằng ngày"
+    },
+    "messages": {
+      "plant_required": "Vui lòng chọn cây trồng",
+      "season_type_required": "Vui lòng chọn loại mùa vụ",
+      "description_required": "Vui lòng nhập mô tả",
+      "description_min_length": "Mô tả phải có ít nhất 10 ký tự",
+      "description_max_length": "Mô tả không được vượt quá 500 ký tự",
+      "start_date_required": "Vui lòng chọn ngày bắt đầu",
+      "end_date_required": "Vui lòng chọn ngày kết thúc",
+      "start_date_before_end": "Ngày bắt đầu phải trước ngày kết thúc",
+      "end_date_after_start": "Ngày kết thúc phải sau ngày bắt đầu",
+      "estimated_per_one_required": "Vui lòng nhập sản lượng ước tính cho mỗi cây",
+      "estimated_per_one_min": "Sản lượng ước tính phải lớn hơn hoặc bằng 0",
+      "duration_days_required": "Vui lòng nhập thời gian canh tác",
+      "duration_days_min": "Thời gian canh tác phải lớn hơn 0"
+    },
+    "tooltips": {
+      "estimated_per_one": "Sản lượng ước tính cho mỗi cây (kg)",
+      "duration_days": "Thời gian canh tác tính bằng ngày"
+    },
+    "seasons": {
+      "spring": "Mùa xuân",
+      "summer": "Mùa hè",
+      "autumn": "Mùa thu",
+      "winter": "Mùa đông"
     },
     "titles": {
+      "edit_template": "Chỉnh sửa mẫu",
       "basic_info": "Thông tin cơ bản",
       "plant_template": "Mẫu cây trồng",
       "caring_tasks": "Công việc chăm sóc",
