@@ -130,11 +130,7 @@ export const PlanDrawer = (props: Props) => {
 
   const { current, gotoStep, stepsProps, formProps, saveButtonProps, formLoading } =
     useStepsForm<IPlan>({
-      resource: "plans",
-      meta: {
-        dataProviderName: "default",
-        apiUrl: "plans/with-details",
-      },
+      resource: "plans/with-details",
       action: props?.action,
       redirect: false,
       onMutationSuccess: () => {

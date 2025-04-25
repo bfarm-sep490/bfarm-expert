@@ -30,7 +30,7 @@ import { ConfigProvider } from "./context";
 import { App as AntdApp } from "antd";
 import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
-import { PlanCreate, PlanList } from "./pages/plans";
+import { PlanCreate, PlanList, PlanShow } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
 import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
 import { ProblemListInProblems } from "./pages/problems/list";
@@ -40,7 +40,6 @@ import { HarvestingProductionListPage } from "./pages/harvesting-production/list
 import { PackagedProductListPage } from "./pages/packaging-production/list";
 import { PackagingProductShow } from "./components/production/packaging/drawer-show";
 import { ablyClient } from "./utils/ablyClient";
-import { PlanShow } from "./pages/plans/show/show";
 import { TemplateList } from "./pages/templates/list";
 import { TemplateEdit } from "./pages/templates";
 import { liveProvider } from "@refinedev/ably";
@@ -141,6 +140,9 @@ const App: React.FC = () => {
                   show: "/plans/:id",
                   meta: {
                     icon: <ScheduleOutlined />,
+                    live: {
+                      channel: "plans",
+                    },
                   },
                 },
                 {
@@ -164,11 +166,13 @@ const App: React.FC = () => {
                   },
                 },
                 {
-                  name: "template",
-                  list: "/template",
-                  edit: "/template/:id/edit",
+                  name: "templates",
+                  list: "/templates",
+                  edit: "/templates/:id/edit",
+                  show: "/templates/:id",
                   meta: {
                     label: "Mẫu",
+                    canDelete: true,
                     icon: <FileOutlined />,
                   },
                 },
@@ -213,7 +217,7 @@ const App: React.FC = () => {
                     ></Route>
                   </Route>
                   <Route
-                    path="/template"
+                    path="/templates"
                     element={
                       <TemplateList>
                         <Outlet />

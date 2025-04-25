@@ -1,5 +1,13 @@
-import { type HttpError, useGo, useList, useNavigation, useTranslate } from "@refinedev/core";
-import { useSimpleList, List as RefineList, EditButton, Edit } from "@refinedev/antd";
+import {
+  type HttpError,
+  useGo,
+  useList,
+  useNavigation,
+  useTranslate,
+  useSelect,
+  useCreate,
+} from "@refinedev/core";
+import { useSimpleList, List as RefineList, EditButton } from "@refinedev/antd";
 import {
   Card,
   Divider,
@@ -13,6 +21,11 @@ import {
   Upload,
   Button,
   message,
+  Descriptions,
+  Spin,
+  Tabs,
+  Table,
+  Space,
 } from "antd";
 import { PaginationTotal } from "../../components/paginationTotal";
 import {
@@ -28,6 +41,8 @@ import { PropsWithChildren, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { NumberWithUnit } from "../../components/number-with-unit";
 import { createStyles } from "antd-style";
+import { IPlant, ITemplate, IItem, IFertilizer, IPesticide } from "@/interfaces";
+import type { ColumnType } from "antd/es/table";
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -114,6 +129,11 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
   const { showUrl } = useNavigation();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewData, setReviewData] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { mutate: createTemplate, isLoading: isCreating } = useCreate<ITemplate>();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -127,11 +147,37 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
     setIsModalOpen(false);
   };
 
+  const handleReviewCancel = () => {
+    setIsReviewModalOpen(false);
+    setReviewData(null);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await createTemplate({
+        resource: "templates",
+        values: reviewData,
+        successNotification: {
+          message: "Template created successfully",
+          type: "success",
+        },
+        errorNotification: {
+          message: "Failed to create template",
+          type: "error",
+        },
+      });
+      setIsReviewModalOpen(false);
+      setReviewData(null);
+    } catch (error) {
+      console.error("Error creating template:", error);
+    }
+  };
+
   const {
     listProps: templateListProps,
     filters,
     setFilters,
-  } = useSimpleList<any, HttpError>({
+  } = useSimpleList<ITemplate, HttpError>({
     pagination: {
       current: 1,
       pageSize: 12,
@@ -147,7 +193,15 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
     },
   });
 
-  const { data: plantData, isLoading: plantIsLoading } = useList<any, HttpError>({
+  const { refetch } = useList<ITemplate, HttpError>({
+    resource: "templates",
+    pagination: {
+      current: 1,
+      pageSize: 12,
+    },
+  });
+
+  const { data: plantData, isLoading: plantIsLoading } = useList<IPlant, HttpError>({
     resource: "plants",
     pagination: {
       mode: "off",
@@ -225,6 +279,200 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
     return date.toLocaleDateString();
   };
 
+  const { options: itemsOptions } = useSelect<IItem>({
+    resource: "items",
+    optionLabel: "name",
+    optionValue: "id",
+  });
+
+  const { options: fertilizersOptions } = useSelect<IFertilizer>({
+    resource: "fertilizers",
+    optionLabel: "name",
+    optionValue: "id",
+  });
+
+  const { options: pesticidesOptions } = useSelect<IPesticide>({
+    resource: "pesticides",
+    optionLabel: "name",
+    optionValue: "id",
+  });
+
+  const { options: plantOptions } = useSelect<IPlant>({
+    resource: "plants",
+    optionLabel: "plant_name",
+    optionValue: "id",
+  });
+
+  const renderItems = (items: any[]) => {
+    if (!items?.length) return "-";
+    return (
+      <div>
+        {items.map((item, index) => {
+          const itemName = itemsOptions?.find(
+            (opt: { value: string; label: string }) => opt.value === item.item_id,
+          )?.label;
+          return (
+            <div key={index}>
+              {`${itemName}: ${item.quantity} ${item.unit}`}
+              {index < items.length - 1 && <br />}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderFertilizers = (fertilizers: any[]) => {
+    if (!fertilizers?.length) return "-";
+    return (
+      <div>
+        {fertilizers.map((fertilizer, index) => {
+          const fertilizerName = fertilizersOptions?.find(
+            (opt: { value: string; label: string }) => opt.value === fertilizer.fertilizer_id,
+          )?.label;
+          return (
+            <div key={index}>
+              {`${fertilizerName}: ${fertilizer.quantity} ${fertilizer.unit}`}
+              {index < fertilizers.length - 1 && <br />}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderPesticides = (pesticides: any[]) => {
+    if (!pesticides?.length) return "-";
+    return (
+      <div>
+        {pesticides.map((pesticide, index) => {
+          const pesticideName = pesticidesOptions?.find(
+            (opt: { value: string; label: string }) => opt.value === pesticide.pesticide_id,
+          )?.label;
+          return (
+            <div key={index}>
+              {`${pesticideName}: ${pesticide.quantity} ${pesticide.unit}`}
+              {index < pesticides.length - 1 && <br />}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const caringColumns: ColumnType<any>[] = [
+    {
+      title: "Task Name",
+      dataIndex: "task_name",
+      key: "task_name",
+      fixed: "left" as const,
+      width: 200,
+      render: (text: string) => <div style={{ whiteSpace: "nowrap" }}>{text}</div>,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Task Type",
+      dataIndex: "task_type",
+      key: "task_type",
+    },
+    {
+      title: "Start In",
+      dataIndex: "start_in",
+      key: "start_in",
+      render: (value: number) => `${value} hours`,
+    },
+    {
+      title: "End In",
+      dataIndex: "end_in",
+      key: "end_in",
+      render: (value: number) => `${value} hours`,
+    },
+    {
+      title: "Items",
+      dataIndex: "items",
+      key: "items",
+      render: renderItems,
+    },
+    {
+      title: "Fertilizers",
+      dataIndex: "fertilizers",
+      key: "fertilizers",
+      render: renderFertilizers,
+    },
+    {
+      title: "Pesticides",
+      dataIndex: "pesticides",
+      key: "pesticides",
+      render: renderPesticides,
+    },
+  ];
+
+  const inspectingColumns: ColumnType<any>[] = [
+    {
+      title: "Form Name",
+      dataIndex: "form_name",
+      key: "form_name",
+      fixed: "left" as const,
+      width: 200,
+      render: (text: string) => <div style={{ whiteSpace: "nowrap" }}>{text}</div>,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Start In",
+      dataIndex: "start_in",
+      key: "start_in",
+      render: (value: number) => `${value} hours`,
+    },
+    {
+      title: "End In",
+      dataIndex: "end_in",
+      key: "end_in",
+      render: (value: number) => `${value} hours`,
+    },
+  ];
+
+  const harvestingColumns: ColumnType<any>[] = [
+    {
+      title: "Task Name",
+      dataIndex: "task_name",
+      key: "task_name",
+      fixed: "left" as const,
+      width: 200,
+      render: (text: string) => <div style={{ whiteSpace: "nowrap" }}>{text}</div>,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Start In",
+      dataIndex: "start_in",
+      key: "start_in",
+      render: (value: number) => `${value} hours`,
+    },
+    {
+      title: "End In",
+      dataIndex: "end_in",
+      key: "end_in",
+      render: (value: number) => `${value} hours`,
+    },
+    {
+      title: "Items",
+      dataIndex: "items",
+      key: "items",
+      render: renderItems,
+    },
+  ];
+
   return (
     <>
       <RefineList
@@ -261,15 +509,20 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
               name="file"
               multiple={false}
               accept=".xlsx,.xls"
-              action="/api/templates/upload"
+              action="https://api.bfarmx.space/api/templates/excel"
               onChange={(info) => {
-                const { status } = info.file;
+                const { status, response } = info.file;
                 if (status === "done") {
                   message.success(`${info.file.name} file uploaded successfully.`);
                   handleOk();
+                  setReviewData(response.data);
+                  setIsReviewModalOpen(true);
                 } else if (status === "error") {
-                  message.error(`${info.file.name} file upload failed.`);
+                  message.error(response?.message || `${info.file.name} file upload failed.`);
                 }
+              }}
+              headers={{
+                accept: "*/*",
               }}
             >
               <p className="ant-upload-drag-icon">
@@ -283,6 +536,153 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
               </p>
             </Upload.Dragger>
           </Flex>
+        </Modal>
+
+        <Modal
+          title="Review Template Data"
+          open={isReviewModalOpen}
+          onCancel={handleReviewCancel}
+          width={1000}
+          footer={[
+            <Button key="cancel" onClick={handleReviewCancel}>
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" onClick={handleSubmit} loading={isCreating}>
+              Submit
+            </Button>,
+          ]}
+        >
+          {reviewData && (
+            <Spin spinning={isCreating}>
+              <Flex vertical gap="large">
+                <Card
+                  title="Basic Information"
+                  styles={{
+                    header: {
+                      background: token.colorPrimaryBg,
+                      borderBottom: `1px solid ${token.colorBorder}`,
+                    },
+                    body: {
+                      padding: "24px",
+                    },
+                  }}
+                >
+                  <Flex vertical gap="middle">
+                    <Descriptions bordered column={2} size="middle">
+                      <Descriptions.Item label="Plant" span={2}>
+                        <Typography.Text strong>
+                          {plants.find((plant) => plant.id === reviewData.plant_id)?.plant_name ||
+                            reviewData.plant_id}
+                        </Typography.Text>
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Season Type">
+                        <Tag color={getSeasonColor(reviewData.season_type)}>
+                          {reviewData.season_type}
+                        </Tag>
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Duration">
+                        {reviewData.duration_days} days
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Start Date">
+                        {formatDate(reviewData.start_date)}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="End Date">
+                        {formatDate(reviewData.end_date)}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Estimated Yield">
+                        <NumberWithUnit value={reviewData.estimated_per_one} unit="kg/cây" />
+                      </Descriptions.Item>
+                    </Descriptions>
+
+                    <Card
+                      title="Description"
+                      styles={{
+                        header: {
+                          background: token.colorPrimaryBg,
+                          borderBottom: `1px solid ${token.colorBorder}`,
+                        },
+                        body: {
+                          padding: "16px",
+                        },
+                      }}
+                    >
+                      <Typography.Paragraph style={{ margin: 0 }}>
+                        {reviewData.description}
+                      </Typography.Paragraph>
+                    </Card>
+                  </Flex>
+                </Card>
+
+                <Card
+                  title="Plant Template"
+                  styles={{
+                    header: {
+                      background: token.colorPrimaryBg,
+                      borderBottom: `1px solid ${token.colorBorder}`,
+                    },
+                  }}
+                >
+                  <Descriptions bordered column={2} size="middle">
+                    <Descriptions.Item label="Season Type">
+                      <Tag color={getSeasonColor(reviewData.plant_template.season_type)}>
+                        {reviewData.plant_template.season_type}
+                      </Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Sample Quantity">
+                      {reviewData.plant_template.sample_quantity}
+                    </Descriptions.Item>
+                  </Descriptions>
+
+                  <Tabs
+                    items={[
+                      {
+                        key: "caring",
+                        label: "Caring Tasks",
+                        children: (
+                          <Table
+                            columns={caringColumns}
+                            dataSource={reviewData.plant_template.caring_tasks}
+                            pagination={false}
+                            scroll={{ x: true, y: 400 }}
+                            size="small"
+                            style={{ whiteSpace: "nowrap" }}
+                          />
+                        ),
+                      },
+                      {
+                        key: "inspecting",
+                        label: "Inspecting Tasks",
+                        children: (
+                          <Table
+                            columns={inspectingColumns}
+                            dataSource={reviewData.plant_template.inspecting_tasks}
+                            pagination={false}
+                            scroll={{ x: true, y: 400 }}
+                            size="small"
+                            style={{ whiteSpace: "nowrap" }}
+                          />
+                        ),
+                      },
+                      {
+                        key: "harvesting",
+                        label: "Harvesting Tasks",
+                        children: (
+                          <Table
+                            columns={harvestingColumns}
+                            dataSource={reviewData.plant_template.harvesting_task_templates}
+                            pagination={false}
+                            scroll={{ x: true, y: 400 }}
+                            size="small"
+                            style={{ whiteSpace: "nowrap" }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Card>
+              </Flex>
+            </Spin>
+          )}
         </Modal>
 
         <Divider style={{ margin: "16px 0px" }} />
@@ -364,12 +764,12 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
                 <Card
                   onClick={() => {
                     go({
-                      to: `/template/${item.id}/edit`,
+                      to: `/templates/${item.id}/edit`,
                       type: "push",
                     });
                   }}
                   hoverable
-                  bordered={false}
+                  variant="outlined"
                   className={styles.card}
                   styles={{
                     body: {

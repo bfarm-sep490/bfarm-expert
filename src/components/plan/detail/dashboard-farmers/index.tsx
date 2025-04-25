@@ -6,6 +6,7 @@ import {
   LoadingOutlined,
   PlusSquareOutlined,
   ReloadOutlined,
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
 import {
   Alert,
@@ -21,13 +22,14 @@ import {
   Spin,
   Table,
   Typography,
+  Tooltip,
+  theme,
 } from "antd";
 import { ApexOptions } from "apexcharts";
 import ReactApexChart from "react-apexcharts";
-import { DateField, ShowButton, TextField, useForm } from "@refinedev/antd";
-import { BaseRecord, useCustom, useDelete, useList, useOne, useTranslate } from "@refinedev/core";
-import { ProblemStatusTag } from "@/components/problem/status-tag";
-import { useNavigate, useParams } from "react-router";
+import { useForm } from "@refinedev/antd";
+import { useCustom, useDelete, useList, useOne, useTranslate } from "@refinedev/core";
+import { useParams } from "react-router";
 import { FarmerScheduleComponent } from "../scheduler/farmer-task-scheduler";
 
 type ChosenDashBoardProps = {
@@ -53,7 +55,7 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
   style,
 }) => {
   const [api, contextHolder] = notification.useNotification();
-  const [viewComponent, setViewComponent] = useState("Chart");
+  const [viewComponent, setViewComponent] = useState("List");
   const translate = useTranslate();
   const [loadingChart, setLoadingChart] = useState(false);
   const [deletedId, setDeletedId] = useState<number | undefined>(undefined);
@@ -118,6 +120,8 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
     series: [],
   });
 
+  const { token } = theme.useToken();
+
   useEffect(() => {
     if (loading === true) return;
     setLoadingChart(true);
@@ -160,18 +164,29 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
 
   return (
     <Card
-      style={style}
+      style={{
+        ...style,
+        borderRadius: token.borderRadiusLG,
+        boxShadow: token.boxShadow,
+      }}
       title={
         <Flex justify="space-between" align="center">
-          <Flex gap={10}>
-            <Typography.Title level={5}>
+          <Flex gap={10} align="center">
+            <Typography.Title level={5} style={{ margin: 0 }}>
               Nông dân tham gia ({chosenFarmer?.length})
             </Typography.Title>
-            {loading || loadingChart ? (
-              <Spin indicator={<LoadingOutlined spin />} size="small" />
-            ) : (
-              <ReloadOutlined onClick={refetch} />
-            )}
+            <Tooltip title="Làm mới dữ liệu">
+              {loading || loadingChart ? (
+                <Spin indicator={<LoadingOutlined spin />} size="small" />
+              ) : (
+                <Button
+                  type="text"
+                  icon={<ReloadOutlined />}
+                  onClick={refetch}
+                  style={{ padding: "4px 8px" }}
+                />
+              )}
+            </Tooltip>
           </Flex>
           <Segmented
             disabled={loading || loadingChart}
@@ -179,128 +194,254 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
             vertical={false}
             onChange={(value) => setViewComponent(value)}
             options={[
-              { value: "List", icon: <BarsOutlined /> },
-              { value: "Chart", icon: <BarChartOutlined /> },
+              {
+                value: "List",
+                icon: <BarsOutlined />,
+                label: "Danh sách",
+              },
+              {
+                value: "Chart",
+                icon: <BarChartOutlined />,
+                label: "Biểu đồ",
+              },
             ]}
+            style={{
+              backgroundColor: token.colorBgContainer,
+              padding: "4px",
+            }}
           />
         </Flex>
       }
       loading={loading}
+      bodyStyle={{ padding: "16px" }}
     >
       {contextHolder}
       {status !== "Pending" && (
-        <Flex justify="end" align="center" gap={10} style={{ marginBottom: 10 }}>
+        <Flex justify="end" align="center" gap={10} style={{ marginBottom: 16 }}>
           <Button
             icon={<PlusSquareOutlined />}
             type="primary"
             onClick={() => setAddModalVisible(true)}
+            style={{
+              borderRadius: token.borderRadius,
+              boxShadow: token.boxShadowSecondary,
+            }}
           >
-            Thêm
+            Thêm nông dân
           </Button>
         </Flex>
       )}
       {loading === false && viewComponent === "Chart" && (
-        <ReactApexChart
-          options={chartConfig.options}
-          series={chartConfig.series}
-          type="bar"
-          height={350}
-        />
+        <div
+          style={{
+            padding: "16px",
+            backgroundColor: token.colorBgContainer,
+            borderRadius: token.borderRadius,
+            boxShadow: token.boxShadowTertiary,
+          }}
+        >
+          <ReactApexChart
+            options={{
+              ...chartConfig.options,
+              theme: {
+                mode: "light",
+              },
+              chart: {
+                ...chartConfig.options.chart,
+                background: "transparent",
+                toolbar: {
+                  show: true,
+                  tools: {
+                    download: true,
+                    selection: true,
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                    reset: true,
+                  },
+                },
+              },
+              plotOptions: {
+                bar: {
+                  ...chartConfig.options.plotOptions?.bar,
+                  columnWidth: "60%",
+                  distributed: false,
+                  dataLabels: {
+                    position: "top",
+                  },
+                },
+              },
+              colors: [token.colorPrimary, token.colorSuccess, token.colorWarning],
+              grid: {
+                borderColor: token.colorBorder,
+                strokeDashArray: 4,
+              },
+              tooltip: {
+                theme: "light",
+                style: {
+                  fontSize: "12px",
+                },
+              },
+            }}
+            series={chartConfig.series}
+            type="bar"
+            height={350}
+          />
+        </div>
       )}
       {loading === false && viewComponent === "List" && (
-        <Table dataSource={chosenFarmer} loading={loading} rowKey="id" scroll={{ x: true }}>
-          <Table.Column title="ID" dataIndex="id" key="id" width={"auto"} />
-
+        <Table
+          dataSource={chosenFarmer}
+          loading={loading}
+          rowKey="id"
+          scroll={{ x: true }}
+          style={{
+            borderRadius: token.borderRadius,
+            overflow: "hidden",
+          }}
+          pagination={{
+            position: ["bottomCenter"],
+            showSizeChanger: true,
+            showQuickJumper: true,
+            pageSizeOptions: ["10", "20", "50", "100"],
+          }}
+        >
+          <Table.Column title="ID" dataIndex="id" key="id" width={80} fixed="left" />
           <Table.Column
             title={translate("farmer_name", "Tên nông dân")}
             dataIndex="name"
             key="name"
-            width={"auto"}
+            width={200}
+            fixed="left"
           />
           <Table.Column
-            title={translate("Đang thực thi", "Đang thực thi")}
+            title={
+              <Tooltip title="Số lượng công việc đang thực hiện">
+                <Space>
+                  Đang thực thi
+                  <QuestionCircleOutlined style={{ color: token.colorTextSecondary }} />
+                </Space>
+              </Tooltip>
+            }
             key="OngoingTask"
             dataIndex={"id"}
-            width={"auto"}
+            width={120}
+            align="center"
             render={(value, record: any) => {
+              const count =
+                (harvesting_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
+                )?.length ?? 0) +
+                (packaging_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
+                )?.length ?? 0) +
+                (caring_task?.filter((x: any) => x?.farmer_id === value && x?.status === "Ongoing")
+                  ?.length ?? 0);
               return (
-                <TextField
-                  value={
-                    (harvesting_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
-                    )?.length ?? 0) +
-                    (packaging_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
-                    )?.length ?? 0) +
-                    (caring_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Ongoing",
-                    )?.length ?? 0)
-                  }
-                />
+                <Typography.Text
+                  style={{
+                    color: count > 0 ? token.colorSuccess : token.colorTextSecondary,
+                    fontWeight: 500,
+                  }}
+                >
+                  {count}
+                </Typography.Text>
               );
             }}
           />
           <Table.Column
-            title={translate("Đã hoàn thành", "Đã hoàn thành")}
+            title={
+              <Tooltip title="Số lượng công việc đã hoàn thành">
+                <Space>
+                  Đã hoàn thành
+                  <QuestionCircleOutlined style={{ color: token.colorTextSecondary }} />
+                </Space>
+              </Tooltip>
+            }
             dataIndex={"id"}
-            width={"auto"}
+            width={120}
+            align="center"
             render={(value, record: any) => {
+              const count =
+                (harvesting_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Complete",
+                )?.length ?? 0) +
+                (packaging_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Complete",
+                )?.length ?? 0) +
+                (caring_task?.filter((x: any) => x?.farmer_id === value && x?.status === "Complete")
+                  ?.length ?? 0);
               return (
-                <TextField
-                  value={
-                    (harvesting_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Complete",
-                    )?.length ?? 0) +
-                    (packaging_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Complete",
-                    )?.length ?? 0) +
-                    (caring_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Complete",
-                    )?.length ?? 0)
-                  }
-                />
+                <Typography.Text
+                  style={{
+                    color: token.colorSuccess,
+                    fontWeight: 500,
+                  }}
+                >
+                  {count}
+                </Typography.Text>
               );
             }}
           />
           <Table.Column
-            title={translate("Không hoành thành", "Không hoành thành")}
+            title={
+              <Tooltip title="Số lượng công việc chưa hoàn thành">
+                <Space>
+                  Chưa hoàn thành
+                  <QuestionCircleOutlined style={{ color: token.colorTextSecondary }} />
+                </Space>
+              </Tooltip>
+            }
             dataIndex={"id"}
-            width={"auto"}
+            width={120}
+            align="center"
             render={(value, record: any) => {
+              const count =
+                (harvesting_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
+                )?.length ?? 0) +
+                (packaging_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
+                )?.length ?? 0) +
+                (caring_task?.filter(
+                  (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
+                )?.length ?? 0);
               return (
-                <TextField
-                  value={
-                    (harvesting_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
-                    )?.length ?? 0) +
-                    (packaging_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
-                    )?.length ?? 0) +
-                    (caring_task?.filter(
-                      (x: any) => x?.farmer_id === value && x?.status === "Incomplete",
-                    )?.length ?? 0)
-                  }
-                />
+                <Typography.Text
+                  style={{
+                    color: count > 0 ? token.colorError : token.colorTextSecondary,
+                    fontWeight: 500,
+                  }}
+                >
+                  {count}
+                </Typography.Text>
               );
             }}
           />
-
           <Table.Column
-            title={translate("Actions", "Hành động")}
+            title="Hành động"
             key="actions"
             fixed="right"
+            width={80}
             align="center"
             render={(value, record: any) => (
-              <Button
-                shape="circle"
-                danger
-                onClick={() => {
-                  setDeletedId(record.id);
-                  setDeleteModalVisible(true);
-                }}
-              >
-                <DeleteOutlined />
-              </Button>
+              <Tooltip title="Xóa nông dân">
+                <Button
+                  shape="circle"
+                  danger
+                  onClick={() => {
+                    setDeletedId(record.id);
+                    setDeleteModalVisible(true);
+                  }}
+                  style={{
+                    border: "none",
+                    boxShadow: token.boxShadowSecondary,
+                  }}
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Tooltip>
             )}
           />
         </Table>

@@ -1,22 +1,295 @@
-.rbc-row-content {
-  min-height: 110px !important;
+/* Theme variables */
+:root {
+  --calendar-bg: #ffffff;
+  --calendar-border: #f0f0f0;
+  --calendar-text: #000000;
+  --calendar-header-bg: #fafafa;
+  --calendar-event-bg: #ffffff;
+  --calendar-hover-bg: #f5f5f5;
+  --calendar-scrollbar-track: #f1f1f1;
+  --calendar-scrollbar-thumb: #888;
+  --calendar-scrollbar-thumb-hover: #555;
+  --calendar-today-bg: #e6f7ff;
+  --calendar-selected-bg: #e6f7ff;
+  --calendar-selected-border: #1890ff;
+  --tooltip-bg: #ffffff;
+  --tooltip-text: #000000;
+  --tooltip-border: #d9d9d9;
+  --event-pending-bg: #fff7e6;
+  --event-pending-border: #ffd591;
+  --event-complete-bg: #f6ffed;
+  --event-complete-border: #b7eb8f;
+  --event-ongoing-bg: #e6f4ff;
+  --event-ongoing-border: #91caff;
+  --event-cancel-bg: #fff1f0;
+  --event-cancel-border: #ffa39e;
+  --event-incomplete-bg: #fafafa;
+  --event-incomplete-border: #d9d9d9;
+}
+
+[data-theme='dark'] {
+  --calendar-bg: #141414;
+  --calendar-border: #303030;
+  --calendar-text: #ffffff;
+  --calendar-header-bg: #1f1f1f;
+  --calendar-event-bg: #1f1f1f;
+  --calendar-hover-bg: #2a2a2a;
+  --calendar-scrollbar-track: #1f1f1f;
+  --calendar-scrollbar-thumb: #555;
+  --calendar-scrollbar-thumb-hover: #666;
+  --calendar-today-bg: #111b26;
+  --calendar-selected-bg: #111b26;
+  --calendar-selected-border: #177ddc;
+  --tooltip-bg: #1f1f1f;
+  --tooltip-text: #ffffff;
+  --tooltip-border: #434343;
+  --event-pending-bg: #2b2111;
+  --event-pending-border: #5c3a1a;
+  --event-complete-bg: #1f2611;
+  --event-complete-border: #3f4a1a;
+  --event-ongoing-bg: #111b26;
+  --event-ongoing-border: #153450;
+  --event-cancel-bg: #2a1215;
+  --event-cancel-border: #58181c;
+  --event-incomplete-bg: #1f1f1f;
+  --event-incomplete-border: #434343;
+}
+
+element.style
+
+/* Calendar base styles */
+.rbc-calendar {
+  background: var(--calendar-bg);
+  color: var(--calendar-text);
+  border: 1px solid var(--calendar-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rbc-header {
+  background: var(--calendar-header-bg);
+  color: var(--calendar-text);
+  border-bottom: 1px solid var(--calendar-border);
+  padding: 8px 0;
+}
+
+.rbc-show-more {
+  background: transparent;
+  color: var(--calendar-text);
+}
+
+.rbc-today {
+  background: var(--calendar-today-bg);
+}
+
+.rbc-month-view {
+  border: 1px solid var(--calendar-border);
 }
 
 .rbc-month-row {
-  overflow: visible !important;
+  border-bottom: 1px solid var(--calendar-border);
 }
 
+.rbc-day-bg+.rbc-day-bg {
+  border-left: 1px solid var(--calendar-border);
+}
 
-/* Assuming your container div has a class named 'calendar-container' */
+.rbc-off-range-bg {
+  background: var(--calendar-hover-bg);
+}
+
+.rbc-toolbar {
+  background: var(--calendar-header-bg);
+  border-bottom: 1px solid var(--calendar-border);
+  padding: 8px;
+}
+
+.rbc-toolbar button {
+  color: var(--calendar-text);
+  background: var(--calendar-bg);
+  border: 1px solid var(--calendar-border);
+  transition: all 0.3s ease;
+}
+
+.rbc-toolbar button:hover {
+  background: var(--calendar-hover-bg);
+}
+
+.rbc-toolbar button.rbc-active {
+  background: var(--calendar-hover-bg);
+  color: var(--calendar-text);
+}
+
+/* Event styles */
+.rbc-event {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.rbc-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Event status styles */
+.rbc-event[data-status="Pending"] {
+  background: var(--event-pending-bg);
+  border: 1px solid var(--event-pending-border);
+}
+
+.rbc-event[data-status="Complete"] {
+  background: var(--event-complete-bg);
+  border: 1px solid var(--event-complete-border);
+}
+
+.rbc-event[data-status="Ongoing"] {
+  background: var(--event-ongoing-bg);
+  border: 1px solid var(--event-ongoing-border);
+}
+
+.rbc-overlay {
+  background: var(--calendar-bg);
+  color: var(--calendar-text);
+}
+
+.rbc-event[data-status="Cancel"] {
+  background: var(--event-cancel-bg);
+  border: 1px solid var(--event-cancel-border);
+}
+
+.rbc-event[data-status="Incomplete"] {
+  background: var(--event-incomplete-bg);
+  border: 1px solid var(--event-incomplete-border);
+}
+
+/* Tooltip styles */
+.ant-tooltip-inner {
+  background: var(--tooltip-bg) !important;
+  color: var(--tooltip-text) !important;
+  border: 1px solid var(--tooltip-border) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.ant-tooltip-arrow-content {
+  background: var(--tooltip-bg) !important;
+  border: 1px solid var(--tooltip-border) !important;
+}
+
+/* Selected state */
+.rbc-selected {
+  background: var(--calendar-selected-bg);
+  border-color: var(--calendar-selected-border);
+}
+
+/* Custom scrollbar */
+.rbc-calendar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--calendar-scrollbar-thumb) var(--calendar-scrollbar-track);
+}
+
+.rbc-calendar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.rbc-calendar::-webkit-scrollbar-track {
+  background: var(--calendar-scrollbar-track);
+  border-radius: 4px;
+}
+
+.rbc-calendar::-webkit-scrollbar-thumb {
+  background: var(--calendar-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.rbc-calendar::-webkit-scrollbar-thumb:hover {
+  background: var(--calendar-scrollbar-thumb-hover);
+}
+
+/* Container styles */
 .calendar-container {
-  min-height: 100vh;
+  height: 800px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
+.calendar-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
+/* Event styles */
+.calendar-event {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
 
-Make sure to replace `'calendar-container'` with the actual class name of your container div.
+.calendar-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-Remember to test your solution thoroughly and consider providing alternative approaches or explanations if applicable.
+/* Responsive styles */
+@media (max-width: 768px) {
+  .calendar-container {
+    height: 600px;
+  }
 
+  .event-content {
+    padding: 2px !important;
+  }
 
-#k3tan #arkan
+  .rbc-toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rbc-toolbar button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Button and icon styles */
+.reload-icon {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.reload-icon:hover {
+  transform: rotate(180deg);
+}
+
+.hover-button {
+  transition: all 0.3s ease;
+}
+
+.hover-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#k3tan #arkan {
+  background-color: #000000;
+}

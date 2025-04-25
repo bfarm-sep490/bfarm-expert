@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar, dateFnsLocalizer, View } from "react-big-calendar";
-import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { BaseRecord, useList, useTranslate } from "@refinedev/core";
-import { Navigate, useNavigate, useParams } from "react-router";
+import { useList, useTranslate } from "@refinedev/core";
+import { useParams } from "react-router";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 
 import {
@@ -12,14 +11,14 @@ import {
   Button,
   Card,
   Flex,
-  InputNumber,
   notification,
   Segmented,
-  Space,
   Spin,
   Table,
   Tabs,
   Typography,
+  Tooltip,
+  Skeleton,
 } from "antd";
 import { vi } from "date-fns/locale/vi";
 import "./index.css";
@@ -31,11 +30,10 @@ import {
   LoadingOutlined,
   PlusSquareOutlined,
   ReloadOutlined,
-  SearchOutlined,
 } from "@ant-design/icons";
 import { StatusTag } from "@/components/caring-task/status-tag";
 import { CaringTypeTag } from "@/components/caring-task/type-tag";
-import { DateField, ShowButton, TextField } from "@refinedev/antd";
+import { DateField, TextField } from "@refinedev/antd";
 
 import { InspectionsShow } from "@/components/inspection";
 import { AssignTaskModal } from "../assign-tasks-modal";
@@ -53,15 +51,96 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Defined status color map outside to ensure it's always available
-const STATUS_COLOR_MAP = {
-  Pending: { color: "#DC6B08", bg: "#FFF7E6" },
-  Complete: { color: "#389E0D", bg: "#F6FFED" },
-  Ongoing: { color: "#0973E4", bg: "#E6F4FF" },
-  Cancel: { color: "#D81322", bg: "#FFF1F0" },
-  Incomplete: { color: "#FAFAFA", bg: "#FAFAFA" },
-  default: { color: "#000000", bg: "#FFFFFF" }, // Fallback colors
-};
+type ThemeType = "light" | "dark";
+type StatusType = "Pending" | "Complete" | "Ongoing" | "Cancel" | "Incomplete";
+
+interface StatusColor {
+  color: string;
+  bg: string;
+  hover: string;
+}
+
+interface StatusColorMap {
+  [key: string]: {
+    light: StatusColor;
+    dark: StatusColor;
+  };
+}
+
+const STATUS_COLOR_MAP: StatusColorMap = {
+  Pending: {
+    light: {
+      color: "#2F4F4F", // Dark Slate Gray - Màu đất
+      bg: "#F5F5DC", // Beige - Màu đất nhạt
+      hover: "#DEB887", // Burlywood - Màu đất ấm
+    },
+    dark: {
+      color: "#D2B48C", // Tan - Màu đất sáng
+      bg: "#2F4F4F", // Dark Slate Gray - Màu đất tối
+      hover: "#3B444B", // Darker Slate Gray
+    },
+  },
+  Complete: {
+    light: {
+      color: "#228B22", // Forest Green - Màu cây xanh
+      bg: "#F0FFF0", // Honeydew - Màu xanh nhạt
+      hover: "#98FB98", // Pale Green - Màu xanh nhạt ấm
+    },
+    dark: {
+      color: "#90EE90", // Light Green - Màu xanh sáng
+      bg: "#1B4D3E", // Dark Green - Màu xanh tối
+      hover: "#2E8B57", // Sea Green - Màu xanh biển
+    },
+  },
+  Ongoing: {
+    light: {
+      color: "#4169E1", // Royal Blue - Màu blockchain
+      bg: "#E6F0FF", // Light Blue - Màu xanh nhạt
+      hover: "#87CEEB", // Sky Blue - Màu trời
+    },
+    dark: {
+      color: "#6495ED", // Cornflower Blue - Màu xanh sáng
+      bg: "#1E3A5F", // Dark Blue - Màu xanh tối
+      hover: "#2B4B7B", // Darker Blue
+    },
+  },
+  Cancel: {
+    light: {
+      color: "#8B4513", // Saddle Brown - Màu đất khô
+      bg: "#FFF5EE", // Seashell - Màu nhạt
+      hover: "#D2B48C", // Tan - Màu đất
+    },
+    dark: {
+      color: "#CD853F", // Peru - Màu đất sáng
+      bg: "#3B2F2F", // Dark Brown - Màu đất tối
+      hover: "#4B3A2F", // Darker Brown
+    },
+  },
+  Incomplete: {
+    light: {
+      color: "#808080", // Gray - Màu xám
+      bg: "#F5F5F5", // White Smoke - Màu xám nhạt
+      hover: "#D3D3D3", // Light Gray - Màu xám nhạt hơn
+    },
+    dark: {
+      color: "#A9A9A9", // Dark Gray - Màu xám sáng
+      bg: "#2F2F2F", // Dark Gray - Màu xám tối
+      hover: "#3F3F3F", // Darker Gray
+    },
+  },
+  default: {
+    light: {
+      color: "#2F4F4F", // Dark Slate Gray - Màu đất
+      bg: "#FFFFFF", // White - Màu trắng
+      hover: "#F5F5F5", // White Smoke - Màu xám nhạt
+    },
+    dark: {
+      color: "#D2B48C", // Tan - Màu đất sáng
+      bg: "#1F1F1F", // Dark - Màu tối
+      hover: "#2F2F2F", // Darker - Màu tối hơn
+    },
+  },
+} as const;
 
 var defaultMessages = {
   date: "Ngày",
@@ -72,7 +151,7 @@ var defaultMessages = {
   work_week: "Tuần làm việc",
   day: "Ngày",
   month: "Tháng",
-  previous: "Sau",
+  previous: "Trước",
   next: "Tiếp",
   yesterday: "Hôm qua",
   tomorrow: "Ngày mai",
@@ -288,6 +367,70 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
     farmers,
   ]);
 
+  const renderLoadingSkeleton = () => (
+    <div style={{ padding: 24 }}>
+      <Skeleton active paragraph={{ rows: 4 }} />
+      <Skeleton active paragraph={{ rows: 4 }} />
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </div>
+  );
+
+  const renderEventContent = (event: any) => {
+    const theme = (document.documentElement.getAttribute("data-theme") || "light") as ThemeType;
+    const status = (event.status || "default") as StatusType;
+    const statusColor = STATUS_COLOR_MAP[status]?.[theme] || STATUS_COLOR_MAP.default[theme];
+
+    return (
+      <Tooltip
+        title={
+          <div style={{ padding: 8 }}>
+            <Typography.Text strong>{event.title}</Typography.Text>
+            <br />
+            <Typography.Text type="secondary">{event.actor_name}</Typography.Text>
+            <br />
+            <Typography.Text type="secondary">
+              {format(event.start, "HH:mm")} - {format(event.end, "HH:mm")}
+            </Typography.Text>
+          </div>
+        }
+      >
+        <Flex
+          dir="row"
+          justify="space-between"
+          align="center"
+          style={{
+            width: "100%",
+            padding: "0 4px",
+            transition: "all 0.3s ease",
+          }}
+          className="event-content"
+        >
+          <Typography.Text
+            strong
+            style={{
+              color: statusColor.color,
+              fontSize: window.innerWidth > 768 ? 14 : 12,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "70%",
+            }}
+          >
+            {event.title}
+          </Typography.Text>
+          <Flex align="center" gap={8}>
+            {window.innerWidth > 768 && (
+              <Typography.Text style={{ color: "gray", fontSize: 12 }}>
+                {event?.actor_name}
+              </Typography.Text>
+            )}
+            <Avatar src={event?.avatar} alt="" size={"small"} />
+          </Flex>
+        </Flex>
+      </Tooltip>
+    );
+  };
+
   return (
     <Card
       title={
@@ -301,7 +444,14 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
             packagingFetching ? (
               <Spin indicator={<LoadingOutlined spin />} size="small"></Spin>
             ) : (
-              <ReloadOutlined onClick={refetchAll} />
+              <ReloadOutlined
+                onClick={refetchAll}
+                style={{
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease",
+                }}
+                className="reload-icon"
+              />
             )}
           </Flex>
           <Segmented
@@ -315,6 +465,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
             size="large"
             vertical={false}
             onChange={(value) => setViewComponent(value)}
+            defaultValue="Schedule"
             options={[
               { value: "List", icon: <BarsOutlined /> },
               { value: "Schedule", icon: <CalendarOutlined /> },
@@ -325,15 +476,18 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
       loading={
         isLoading || caringFetching || harvestingFetching || inspectingFetching || packagingFetching
       }
+      style={{
+        borderRadius: 8,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+      }}
     >
       {props?.status !== "Pending" && (
         <Flex justify="end" align="center" gap={10} style={{ marginBottom: 10 }}>
           <Button
             icon={<DiffOutlined />}
             type="default"
-            onClick={() => {
-              setOpen(true);
-            }}
+            onClick={() => setOpen(true)}
+            className="hover-button"
           >
             Phân công
           </Button>
@@ -341,6 +495,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
             onClick={() => setCreateTaskOpen(true)}
             icon={<PlusSquareOutlined />}
             type="primary"
+            className="hover-button"
           >
             Thêm
           </Button>
@@ -351,89 +506,68 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
       harvestingFetching ||
       inspectingFetching ||
       packagingFetching ? (
-        <Spin>Đang tải ....</Spin>
+        renderLoadingSkeleton()
       ) : (
         <>
           {viewComponent === "Schedule" && (
-            <Calendar
-              popup
-              messages={defaultMessages}
-              localizer={localizer}
-              onDoubleClickEvent={(event) => {
-                if (event.type === "Kiểm định") {
-                  setTaskId(event.id);
-                  setTaskType("Inspecting");
-                  setShowTask(true);
-                } else if (event.type === "Đóng gói") {
-                  setTaskId(event.id);
-                  setTaskType("packaging");
-                  setShowTask(true);
-                } else if (event.type === "Chăm sóc") {
-                  setTaskId(event.id);
-                  setTaskType("caring");
-                  setShowTask(true);
-                } else if (event.type === "Thu hoạch") {
-                  setTaskId(event.id);
-                  setTaskType("harvesting");
-                  setShowTask(true);
-                } else {
-                  return;
-                }
-              }}
-              events={events.map((event) => {
-                const statusColor = STATUS_COLOR_MAP[event.status] || STATUS_COLOR_MAP.default;
+            <div className="calendar-container">
+              <Calendar
+                popup
+                messages={defaultMessages}
+                localizer={localizer}
+                onDoubleClickEvent={(event) => {
+                  if (event.type === "Kiểm định") {
+                    setTaskId(event.id);
+                    setTaskType("Inspecting");
+                    setShowTask(true);
+                  } else if (event.type === "Đóng gói") {
+                    setTaskId(event.id);
+                    setTaskType("packaging");
+                    setShowTask(true);
+                  } else if (event.type === "Chăm sóc") {
+                    setTaskId(event.id);
+                    setTaskType("caring");
+                    setShowTask(true);
+                  } else if (event.type === "Thu hoạch") {
+                    setTaskId(event.id);
+                    setTaskType("harvesting");
+                    setShowTask(true);
+                  }
+                }}
+                events={events.map((event) => {
+                  return {
+                    title: renderEventContent(event),
+                    start: new Date(event.start),
+                    end: new Date(event.end),
+                    status: event.status,
+                    id: event.id,
+                    type: event.type,
+                  };
+                })}
+                view={view as View}
+                date={currentDate}
+                onView={(newView) => setView(newView)}
+                onNavigate={(newDate) => setCurrentDate(newDate)}
+                views={["month", "week", "day", "agenda"]}
+                eventPropGetter={(event) => {
+                  const theme = (document.documentElement.getAttribute("data-theme") ||
+                    "light") as ThemeType;
+                  const status = (event.status || "default") as StatusType;
+                  const statusColor =
+                    STATUS_COLOR_MAP[status]?.[theme] || STATUS_COLOR_MAP.default[theme];
 
-                return {
-                  title: (
-                    <Flex
-                      dir="row"
-                      justify="space-between"
-                      align="center"
-                      style={{
-                        width: "100%",
-                        padding: "0 4px",
-                      }}
-                    >
-                      <Typography.Text strong style={{ color: statusColor.color }}>
-                        {event.title}
-                      </Typography.Text>
-                      <Flex align="center" gap={8}>
-                        {window.innerWidth > 768 && (
-                          <Typography.Text style={{ color: "gray", fontSize: 12 }}>
-                            {event?.actor_name}
-                          </Typography.Text>
-                        )}
-                        <Avatar src={event?.avatar} alt="" size={"small"} />
-                      </Flex>
-                    </Flex>
-                  ),
-                  start: new Date(event.start),
-                  end: new Date(event.end),
-                  status: event.status,
-                  id: event.id,
-                  type: event.type,
-                };
-              })}
-              view={view as View}
-              date={currentDate}
-              onView={(newView) => setView(newView)}
-              onNavigate={(newDate) => setCurrentDate(newDate)}
-              views={["month", "week", "day", "agenda"]}
-              style={{ height: 800 }}
-              eventPropGetter={(event) => {
-                const statusColor =
-                  STATUS_COLOR_MAP[event.status as keyof typeof STATUS_COLOR_MAP] ||
-                  STATUS_COLOR_MAP.default;
-
-                return {
-                  style: {
-                    border: `1px solid ${statusColor.color}`,
-                    backgroundColor: statusColor.bg,
-                    color: statusColor.color,
-                  },
-                };
-              }}
-            />
+                  return {
+                    style: {
+                      border: `1px solid ${statusColor.color}`,
+                      backgroundColor: statusColor.bg,
+                      color: statusColor.color,
+                      transition: "all 0.3s ease",
+                    },
+                    className: "calendar-event",
+                  };
+                }}
+              />
+            </div>
           )}
         </>
       )}

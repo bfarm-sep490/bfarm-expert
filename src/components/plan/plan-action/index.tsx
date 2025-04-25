@@ -46,33 +46,6 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
   };
 
   const items: MenuProps["items"] = [
-    {
-      key: "edit",
-      label: (
-        <Button
-          type="text"
-          size="small"
-          style={{ width: "100%", textAlign: "left", padding: "4px 8px" }}
-          onClick={() => {
-            return go({
-              to: `${editUrl("plans", record.id)}`,
-              query: {
-                to: pathname,
-              },
-              options: {
-                keepQuery: true,
-              },
-              type: "replace",
-            });
-          }}
-        >
-          {t("actions.edit")}
-        </Button>
-      ),
-    },
-    {
-      type: "divider",
-    },
     ...(record.status !== "Ongoing"
       ? [
           {
