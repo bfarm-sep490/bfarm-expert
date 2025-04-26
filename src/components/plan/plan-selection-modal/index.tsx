@@ -18,6 +18,7 @@ interface OrderData {
   plant_id: number;
   plant_name: string;
   retailer_id: number;
+  packaging_type_id: number;
   disabled?: boolean;
 }
 
@@ -109,6 +110,7 @@ export const PlanSelectionModal = ({
           quantity: order?.preorder_quantity || 0,
           estimate_pick_up_date: order?.estimate_pick_up_date || "",
           plant_id: order?.plant_id || 0,
+          packaging_type_id: order?.packaging_type_id || 0,
         };
       });
       setSelectedOrders([...selectedOrders, ...newOrders]);

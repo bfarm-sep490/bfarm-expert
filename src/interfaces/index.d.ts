@@ -198,6 +198,7 @@ export interface IPlant {
   delta_three: number;
   preservation_day: number;
   estimated_per_one: number;
+  average_estimated_per_one: number;
   status: string;
 }
 
@@ -454,4 +455,24 @@ export interface ITemplate {
       }>;
     }>;
   };
+}
+
+export interface IPackagingProduct {
+  id: number;
+  order_id: number | null;
+  plan_id: number;
+  packaging_type_id: number | null;
+  plan_name: string;
+  plant_id: number;
+  plant_name: string;
+  packaging_date: string;
+  expired_date: string | null;
+  quantity_per_pack: number;
+  total_packs: number;
+  available_packs: number;
+  status: string;
+  evaluated_result: "Grade 1" | "Grade 2" | "Grade 3" | string;
+  retailer_id: number;
+  retailer_name: string | null;
+  received_pack_quantity: number;
 }

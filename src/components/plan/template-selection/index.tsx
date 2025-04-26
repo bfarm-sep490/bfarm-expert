@@ -134,7 +134,7 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
       yield_id: values.yield_id,
       start_date: dayjs(values.start_date).format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
       estimated_product: values.estimated_product,
-      seed_quantity: 50,
+      seed_quantity: 70,
       expert_id: expert_id as number,
       created_by: expert_name as string,
     });

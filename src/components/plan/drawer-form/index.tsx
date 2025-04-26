@@ -1,4 +1,11 @@
-import { useTranslate, useGetToPath, useGo, useGetIdentity, useSelect } from "@refinedev/core";
+import {
+  useTranslate,
+  useGetToPath,
+  useGo,
+  useGetIdentity,
+  useSelect,
+  useList,
+} from "@refinedev/core";
 import { SaveButton, useStepsForm } from "@refinedev/antd";
 import { Button, Steps, Flex, Drawer, Spin, theme, Form } from "antd";
 import {
@@ -143,8 +150,36 @@ export const PlanDrawer = (props: Props) => {
         harvesting_tasks: [],
         inspecting_forms: [],
         packaging_tasks: [],
+        order_ids: selectedOrders.map((order) => order.id),
       },
     });
+
+  // Cập nhật order_ids khi selectedOrders thay đổi
+  useEffect(() => {
+    if (formProps.form) {
+      formProps.form.setFieldsValue({
+        order_ids: selectedOrders.map((order) => order.id),
+      });
+    }
+  }, [selectedOrders, formProps.form]);
+
+  // Tự động điền thông tin từ orders khi không có template
+  useEffect(() => {
+    if (formProps.form && selectedOrders.length > 0 && !selectedTemplate) {
+      // Lấy thông tin từ order đầu tiên
+      const firstOrder = selectedOrders[0];
+
+      // Tính tổng quantity từ tất cả orders
+      const totalQuantity = selectedOrders.reduce((sum, order) => sum + order.quantity, 0);
+
+      // Cập nhật form với thông tin từ orders
+      formProps.form.setFieldsValue({
+        plant_id: firstOrder.plant_id,
+        estimated_product: totalQuantity,
+        // Các trường khác có thể thêm vào tùy theo yêu cầu
+      });
+    }
+  }, [selectedOrders, selectedTemplate, formProps.form]);
 
   // Update form values when template is selected
   useEffect(() => {
@@ -225,6 +260,7 @@ export const PlanDrawer = (props: Props) => {
             formProps={formProps}
             selectedTemplate={selectedTemplate}
             plantsOptions={plantsOptions}
+            isPlantFromOrder={selectedOrders.length > 0}
           />
         );
       case 1:
@@ -238,6 +274,7 @@ export const PlanDrawer = (props: Props) => {
             itemsOptions={itemsOptions}
             packagingTypesOptions={packagingTypesOptions}
             identity={identity}
+            orders={selectedOrders}
           />
         );
       case 2:

@@ -13,6 +13,13 @@ interface TasksSectionProps {
   itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
   identity: { name: string } | undefined;
+  orders: {
+    id: string;
+    quantity: number;
+    estimate_pick_up_date: string;
+    plant_id: number;
+    packaging_type_id: number;
+  }[];
 }
 
 export const TasksSection: React.FC<TasksSectionProps> = ({
@@ -24,6 +31,7 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   itemsOptions,
   packagingTypesOptions,
   identity,
+  orders,
 }) => {
   return (
     <div
@@ -47,6 +55,7 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
           itemsOptions={itemsOptions}
           packagingTypesOptions={packagingTypesOptions}
           identity={identity}
+          orders={orders}
         />
       </Space>
     </div>

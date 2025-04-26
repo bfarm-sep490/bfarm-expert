@@ -20,7 +20,7 @@ import {
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { IIdentity, IPlant } from "@/interfaces";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetIdentity } from "@refinedev/core";
 import { useTaskStore } from "@/store/task-store";
 
@@ -30,18 +30,64 @@ interface PackagingTasksPanelProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
   itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
+  orders: {
+    id: string;
+    quantity: number;
+    estimate_pick_up_date: string;
+    plant_id: number;
+    packaging_type_id: number;
+  }[];
 }
 
 export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
   formProps,
   itemsOptions,
   packagingTypesOptions,
+  orders,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [form] = Form.useForm();
   const { incrementCount, decrementCount } = useTaskStore();
   const { data: user } = useGetIdentity<IIdentity>();
+
+  useEffect(() => {
+    const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];
+
+    // Only create tasks if there are no existing tasks
+    if (currentTasks.length === 0) {
+      const newTasks =
+        orders.length > 0
+          ? orders.map((order) => ({
+              task_name: `Đóng gói cho Order ${order.id}`,
+              order_id: order.id,
+              created_by: user?.name,
+              start_date: dayjs(),
+              end_date: dayjs(),
+              packaging_type_id: order.packaging_type_id || 1,
+              description: "",
+              total_package_weight: order.quantity,
+              items: [],
+            }))
+          : [
+              {
+                task_name: "Đóng gói sản phẩm",
+                order_id: null,
+                created_by: user?.name,
+                start_date: dayjs(),
+                end_date: dayjs(),
+                packaging_type_id: 1,
+                description: "Đóng gói sản phẩm",
+                total_package_weight: 50,
+                items: [],
+              },
+            ];
+
+      formProps.form?.setFieldsValue({
+        packaging_tasks: newTasks,
+      });
+    }
+  }, [orders, formProps.form, user?.name]);
 
   const handleEditTask = (index: number) => {
     const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];
@@ -79,8 +125,21 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
 
   const handleDeleteTask = (record: any) => {
     const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];
+
+    // Kiểm tra nếu task có order_id thì không cho xóa
+    if (record.order_id) {
+      Modal.error({
+        title: "Không thể xóa",
+        content:
+          "Không thể xóa task đang gắn với order. Vui lòng hủy liên kết với order trước khi xóa.",
+      });
+      return;
+    }
+
+    // Xóa task dựa vào index
+    const updatedTasks = currentTasks.filter((_: any, index: number) => index !== record.key);
     formProps.form?.setFieldsValue({
-      packaging_tasks: currentTasks.filter((task: any) => task.id !== record.id),
+      packaging_tasks: updatedTasks,
     });
     decrementCount("packaging");
   };
@@ -93,6 +152,16 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       sorter: (a: any, b: any) => a.task_name.localeCompare(b.task_name),
       filterSearch: true,
     },
+    ...(orders.length > 0
+      ? [
+          {
+            title: "Order ID",
+            dataIndex: "order_id",
+            key: "order_id",
+            render: (orderId: string) => <Tag color="green">Order {orderId}</Tag>,
+          },
+        ]
+      : []),
     {
       title: "Người tạo",
       dataIndex: "created_by",
@@ -135,7 +204,11 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       render: (_: any, record: any) => (
         <Space>
           <Tooltip title="Chỉnh sửa">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleEditTask(record.id)} />
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => handleEditTask(record.key)}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa công việc"
@@ -143,9 +216,10 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
             onConfirm={() => handleDeleteTask(record)}
             okText="Xóa"
             cancelText="Hủy"
+            disabled={!!record.order_id}
           >
-            <Tooltip title="Xóa">
-              <Button type="text" danger icon={<DeleteOutlined />} />
+            <Tooltip title={record.order_id ? "Không thể xóa task đang gắn với order" : "Xóa"}>
+              <Button type="text" danger icon={<DeleteOutlined />} disabled={!!record.order_id} />
             </Tooltip>
           </Popconfirm>
         </Space>
@@ -215,8 +289,29 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                   total_package_weight: 0,
                   items: [],
                   created_by: user?.name,
+                  order_id: null,
                 }}
               >
+                {orders.length > 0 && (
+                  <Form.Item
+                    name="order_id"
+                    label="Order"
+                    rules={[{ required: false, message: "Vui lòng chọn order" }]}
+                  >
+                    <Select
+                      placeholder="Chọn order"
+                      options={[
+                        { label: "Không có order", value: null },
+                        ...orders.map((order) => ({
+                          label: `Order ${order.id}`,
+                          value: order.id,
+                        })),
+                      ]}
+                      disabled={editingTaskIndex !== null}
+                    />
+                  </Form.Item>
+                )}
+
                 <Form.Item
                   name="task_name"
                   label="Tên công việc"

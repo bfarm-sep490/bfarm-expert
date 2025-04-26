@@ -16,6 +16,13 @@ interface TasksTabsProps {
   itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
   identity: { name: string } | undefined;
+  orders: {
+    id: string;
+    quantity: number;
+    estimate_pick_up_date: string;
+    plant_id: number;
+    packaging_type_id: number;
+  }[];
 }
 
 export const TasksTabs: React.FC<TasksTabsProps> = ({
@@ -25,6 +32,7 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
   itemsOptions,
   packagingTypesOptions,
   identity,
+  orders,
 }) => {
   const { counts, setCount } = useTaskStore();
 
@@ -95,6 +103,7 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
                 formProps={formProps}
                 itemsOptions={itemsOptions}
                 packagingTypesOptions={packagingTypesOptions}
+                orders={orders}
               />
             ),
           },

@@ -135,7 +135,6 @@ export const AssignTasks = ({
     });
   };
   const { id } = useParams();
-  console.log(schedule, "schedule");
   const {
     data: autoTaskData,
     isLoading: autoTaskLoading,

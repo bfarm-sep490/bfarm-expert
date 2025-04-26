@@ -9,11 +9,12 @@ interface Order {
   selected: boolean;
 }
 
-interface SelectedOrder {
+export interface SelectedOrder {
   id: string;
   quantity: number;
   estimate_pick_up_date: string;
   plant_id: number;
+  packaging_type_id: number;
 }
 
 interface OrderStore {

@@ -1,25 +1,110 @@
-import { useTranslate } from "@refinedev/core";
+import { useList, useTranslate } from "@refinedev/core";
 import { UseFormReturnType } from "@refinedev/antd";
-import { Space, Form, Input, Select, DatePicker, theme, Row, Col, Card, Typography } from "antd";
-import { ShopOutlined, TagOutlined, FileTextOutlined, CalendarOutlined } from "@ant-design/icons";
+import {
+  Space,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  theme,
+  Row,
+  Col,
+  Card,
+  Typography,
+  Image,
+  Tag,
+} from "antd";
+import {
+  ShopOutlined,
+  TagOutlined,
+  FileTextOutlined,
+  CalendarOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import { IPlant, Template } from "@/interfaces";
 import dayjs from "dayjs";
+import React from "react";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface BasicInformationProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
   selectedTemplate: Template | null;
   plantsOptions: { label: string; value: number }[];
+  isPlantFromOrder?: boolean;
 }
+
+// Custom option renderer cho plant selection
+const PlantOption = ({ data }: { data: IPlant }) => {
+  const { token } = theme.useToken();
+
+  return (
+    <div style={{ padding: "8px 0" }}>
+      <Space align="start" size="middle">
+        <Image
+          src={data.image_url}
+          alt={data.plant_name}
+          width={60}
+          height={60}
+          style={{ objectFit: "cover", borderRadius: token.borderRadius }}
+          fallback="https://via.placeholder.com/60"
+        />
+        <Space direction="vertical" size="small" style={{ flex: 1 }}>
+          <Text strong>{data.plant_name}</Text>
+          <Space size="small">
+            <Tag color="blue">{data.type}</Tag>
+            <Tag color="green">{data.status}</Tag>
+          </Space>
+          <Text type="secondary" style={{ fontSize: "12px" }}>
+            <InfoCircleOutlined style={{ marginRight: 4 }} />
+            {data.description}
+          </Text>
+          <Space size="small">
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              Tỷ lệ sản xuất: {data.average_estimated_per_one} kg/hạt
+            </Text>
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              Giá cơ bản: {data.base_price.toLocaleString()} đ/kg
+            </Text>
+          </Space>
+        </Space>
+      </Space>
+    </div>
+  );
+};
 
 export const BasicInformation: React.FC<BasicInformationProps> = ({
   formProps,
   selectedTemplate,
   plantsOptions,
+  isPlantFromOrder = false,
 }) => {
   const t = useTranslate();
   const { token } = theme.useToken();
+
+  // Lấy thông tin chi tiết của cây trồng
+  const { data: plantData } = useList<IPlant>({
+    resource: "plants",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: plantsOptions.map((option) => option.value),
+      },
+    ],
+  });
+
+  // Tạo map để truy cập nhanh thông tin cây trồng
+  const plantMap = React.useMemo(() => {
+    if (!plantData?.data) return {};
+    return plantData.data.reduce(
+      (acc, plant) => {
+        acc[plant.id] = plant;
+        return acc;
+      },
+      {} as Record<number, IPlant>,
+    );
+  }, [plantData]);
 
   const validateEndDate = (_: any, value: dayjs.Dayjs) => {
     const startDate = formProps.form?.getFieldValue("start_date");
@@ -86,6 +171,7 @@ export const BasicInformation: React.FC<BasicInformationProps> = ({
                   { type: "number", message: "Vui lòng chọn cây trồng" },
                 ]}
                 initialValue={selectedTemplate?.plant_id}
+                extra={isPlantFromOrder ? "Cây trồng đã được chọn từ đơn hàng" : undefined}
               >
                 <Select
                   size="large"
@@ -94,6 +180,12 @@ export const BasicInformation: React.FC<BasicInformationProps> = ({
                   showSearch
                   optionFilterProp="label"
                   notFoundContent="Không tìm thấy cây trồng"
+                  optionRender={(option) => {
+                    const plant = plantMap[option.value as number];
+                    return plant ? <PlantOption data={plant} /> : option.label;
+                  }}
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  disabled={isPlantFromOrder}
                 />
               </Form.Item>
             </Col>
@@ -115,11 +207,13 @@ export const BasicInformation: React.FC<BasicInformationProps> = ({
                   size="large"
                   placeholder={t("plans.fields.season.placeholder")}
                   options={[
+                    { value: "Mùa Xuân", label: "Mùa Xuân" },
+                    { value: "Mùa Hạ", label: "Mùa Hạ" },
+                    { value: "Mùa Thu", label: "Mùa Thu" },
+                    { value: "Mùa Đông", label: "Mùa Đông" },
                     { value: "Quanh năm", label: "Quanh năm" },
-                    { value: "Xuân", label: "Xuân" },
-                    { value: "Hạ", label: "Hạ" },
-                    { value: "Thu", label: "Thu" },
-                    { value: "Đông", label: "Đông" },
+                    { value: "Mùa Chính", label: "Mùa Chính" },
+                    { value: "Mùa Phụ", label: "Mùa Phụ" },
                   ]}
                   notFoundContent="Không tìm thấy mùa vụ"
                 />

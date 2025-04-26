@@ -1,8 +1,21 @@
-import { useTranslate } from "@refinedev/core";
+import { useList, useTranslate, useOne } from "@refinedev/core";
 import { UseFormReturnType } from "@refinedev/antd";
-import { Space, Form, Select, InputNumber, Card, Typography, Flex, Row, Col, theme } from "antd";
+import {
+  Space,
+  Form,
+  Select,
+  InputNumber,
+  Card,
+  Typography,
+  Flex,
+  Row,
+  Col,
+  theme,
+  Tag,
+} from "antd";
 import { NumberOutlined, EnvironmentOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { IPlant, Template } from "@/interfaces";
+import React, { useEffect, useState } from "react";
 
 const { Text } = Typography;
 
@@ -12,6 +25,37 @@ interface ProductionInfoProps {
   yieldsOptions: { label: string; value: number }[];
 }
 
+// Custom option renderer cho yield selection
+const YieldOption = ({ data }: { data: any }) => {
+  const { token } = theme.useToken();
+
+  return (
+    <div style={{ padding: "8px 0" }}>
+      <Space direction="vertical" size="small" style={{ width: "100%" }}>
+        <Text strong>{data.yield_name}</Text>
+        <Space size="small">
+          <Tag color="blue">{data.type}</Tag>
+          <Tag color={data.status === "Available" ? "green" : "red"}>{data.status}</Tag>
+        </Space>
+        <Text type="secondary" style={{ fontSize: "12px" }}>
+          <InfoCircleOutlined style={{ marginRight: 4 }} />
+          {data.description}
+        </Text>
+        <Space size="small">
+          <Text type="secondary" style={{ fontSize: "12px" }}>
+            Diện tích: {data.area.toLocaleString()} {data.area_unit}
+          </Text>
+          {data.maximum_quantity > 0 && (
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              Sản lượng tối đa: {data.maximum_quantity.toLocaleString()} kg
+            </Text>
+          )}
+        </Space>
+      </Space>
+    </div>
+  );
+};
+
 export const ProductionInfo: React.FC<ProductionInfoProps> = ({
   formProps,
   selectedTemplate,
@@ -19,6 +63,101 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
 }) => {
   const t = useTranslate();
   const { token } = theme.useToken();
+  const [estimatedPerOne, setEstimatedPerOne] = useState<number | null>(null);
+  const [calculationInfo, setCalculationInfo] = useState<string>("");
+
+  // Lấy thông tin cây trồng để lấy average_estimated_per_one
+  const { data: plantData } = useOne({
+    resource: "plants",
+    id: formProps.form?.getFieldValue("plant_id"),
+    queryOptions: {
+      enabled: !!formProps.form?.getFieldValue("plant_id"),
+    },
+  });
+
+  // Lấy template data để lấy estimated_per_one
+  const { data: templateData } = useList({
+    resource: "templates",
+    filters: [
+      {
+        field: "plant_id",
+        operator: "eq",
+        value: formProps.form?.getFieldValue("plant_id"),
+      },
+      {
+        field: "season_type",
+        operator: "eq",
+        value: formProps.form?.getFieldValue("season_name"),
+      },
+      {
+        field: "start",
+        operator: "eq",
+        value: formProps.form?.getFieldValue("start_date")?.format("MM-DD"),
+      },
+    ],
+    queryOptions: {
+      enabled:
+        !!formProps.form?.getFieldValue("plant_id") &&
+        !!formProps.form?.getFieldValue("season_name") &&
+        !!formProps.form?.getFieldValue("start_date"),
+    },
+  });
+
+  // Lấy thông tin chi tiết của yield
+  const { data: yieldData } = useList({
+    resource: "yields",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: yieldsOptions.map((option) => option.value),
+      },
+    ],
+  });
+
+  // Tạo map để truy cập nhanh thông tin yield
+  const yieldMap = React.useMemo(() => {
+    if (!yieldData?.data) return {};
+    return yieldData.data.reduce(
+      (acc, yield_) => {
+        if (typeof yield_.id === "number") {
+          acc[yield_.id] = yield_;
+        }
+        return acc;
+      },
+      {} as Record<number, any>,
+    );
+  }, [yieldData]);
+
+  // Cập nhật estimated_per_one khi có template data hoặc plant data
+  useEffect(() => {
+    if (templateData?.data?.[0]?.estimated_per_one) {
+      setEstimatedPerOne(templateData.data[0].estimated_per_one);
+      setCalculationInfo(
+        `Tỷ lệ sản xuất: 1 hạt giống = ${templateData.data[0].estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+      );
+    } else if (plantData?.data?.average_estimated_per_one) {
+      setEstimatedPerOne(plantData.data.average_estimated_per_one);
+      setCalculationInfo(
+        `Tỷ lệ sản xuất: 1 hạt giống = ${plantData.data.average_estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+      );
+    } else {
+      setEstimatedPerOne(1);
+      setCalculationInfo(
+        `Tỷ lệ sản xuất: 1 hạt giống = 1 kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+      );
+    }
+  }, [templateData, plantData, formProps.form]);
+
+  // Tính toán seed_quantity khi estimated_product thay đổi
+  const handleEstimatedProductChange = (value: number | null) => {
+    if (formProps.form && value) {
+      const seedQuantity = Math.ceil(value / (estimatedPerOne || 1));
+      formProps.form.setFieldsValue({
+        seed_quantity: seedQuantity,
+      });
+    }
+  };
 
   const validateEstimatedProduct = (_: any, value: number) => {
     if (value <= 0) {
@@ -84,6 +223,11 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
                 showSearch
                 optionFilterProp="label"
                 notFoundContent="Không tìm thấy khu đất"
+                optionRender={(option) => {
+                  const yield_ = yieldMap[option.value as number];
+                  return yield_ ? <YieldOption data={yield_} /> : option.label;
+                }}
+                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
               />
             </Form.Item>
           </Col>
@@ -122,6 +266,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
                   return Math.min(Math.max(parsed, 0), 1000000) as 0 | 1000000;
                 }}
                 step={100}
+                onChange={handleEstimatedProductChange}
               />
             </Form.Item>
           </Col>
@@ -142,6 +287,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
                 title: "Lượng giống cần sử dụng (kg)",
                 icon: <InfoCircleOutlined />,
               }}
+              extra={calculationInfo}
             >
               <InputNumber
                 size="large"
@@ -157,6 +303,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
                   return Math.min(Math.max(parsed, 0), 10000) as 0 | 10000;
                 }}
                 step={10}
+                disabled
               />
             </Form.Item>
           </Col>
