@@ -205,8 +205,6 @@
   "plans": {
     "fields": {
       "date": "Dates",
-      "description": "Description",
-      "end_date": "End Date",
       "estimated_product": {
         "label": "Estimated Product",
         "placeholder": "Enter estimated product",
@@ -364,7 +362,6 @@
     },
     "validation": {
       "start_date_before_end": "Start date must be before end date",
-      "end_date_after_start": "End date must be after start date",
       "estimated_product_min": "Estimated product must be greater than 0",
       "estimated_product_max": "Estimated product cannot exceed 1,000,000 kg",
       "seed_quantity_min": "Seed quantity must be greater than 0",
