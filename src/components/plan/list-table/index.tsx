@@ -3,9 +3,9 @@ import {
   getDefaultFilter,
   useGo,
   useNavigation,
-  useTranslate,
   useInvalidate,
   useGetIdentity,
+  useTranslate,
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
 import type { IIdentity, IPlan } from "../../../interfaces";
@@ -320,8 +320,8 @@ export const PlanListTable = () => {
         key="dates"
         render={(_, record: IPlan) => (
           <Typography.Text type="secondary" style={{ fontSize: "12px", whiteSpace: "nowrap" }}>
-            {t("plans.fields.start_date")}: {dayjs(record.start_date).format("YYYY-MM-DD")} |{" "}
-            {t("plans.fields.end_date")}: {dayjs(record.end_date).format("YYYY-MM-DD")}
+            {t("plans.fields.start_date.label")}: {dayjs(record.start_date).format("YYYY-MM-DD")} |{" "}
+            {t("plans.fields.end_date.label")}: {dayjs(record.end_date).format("YYYY-MM-DD")}
           </Typography.Text>
         )}
       />
