@@ -167,7 +167,6 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
       style={{
         ...style,
         borderRadius: token.borderRadiusLG,
-        boxShadow: token.boxShadow,
       }}
       title={
         <Flex justify="space-between" align="center">
@@ -175,18 +174,16 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
             <Typography.Title level={5} style={{ margin: 0 }}>
               Nông dân tham gia ({chosenFarmer?.length})
             </Typography.Title>
-            <Tooltip title="Làm mới dữ liệu">
-              {loading || loadingChart ? (
-                <Spin indicator={<LoadingOutlined spin />} size="small" />
-              ) : (
-                <Button
-                  type="text"
-                  icon={<ReloadOutlined />}
-                  onClick={refetch}
-                  style={{ padding: "4px 8px" }}
-                />
-              )}
-            </Tooltip>
+            {loading || loadingChart ? (
+              <Spin indicator={<LoadingOutlined spin />} size="small" />
+            ) : (
+              <Button
+                type="text"
+                icon={<ReloadOutlined />}
+                onClick={refetch}
+                style={{ padding: "4px 8px" }}
+              />
+            )}
           </Flex>
           <Segmented
             disabled={loading || loadingChart}
@@ -197,23 +194,16 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
               {
                 value: "List",
                 icon: <BarsOutlined />,
-                label: "Danh sách",
               },
               {
                 value: "Chart",
                 icon: <BarChartOutlined />,
-                label: "Biểu đồ",
               },
             ]}
-            style={{
-              backgroundColor: token.colorBgContainer,
-              padding: "4px",
-            }}
           />
         </Flex>
       }
       loading={loading}
-      bodyStyle={{ padding: "16px" }}
     >
       {contextHolder}
       {status !== "Pending" && (
@@ -295,16 +285,9 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
           dataSource={chosenFarmer}
           loading={loading}
           rowKey="id"
-          scroll={{ x: true }}
-          style={{
-            borderRadius: token.borderRadius,
-            overflow: "hidden",
-          }}
+          scroll={{ x: "max-content" }}
           pagination={{
             position: ["bottomCenter"],
-            showSizeChanger: true,
-            showQuickJumper: true,
-            pageSizeOptions: ["10", "20", "50", "100"],
           }}
         >
           <Table.Column title="ID" dataIndex="id" key="id" width={80} fixed="left" />
@@ -436,7 +419,6 @@ export const ChosenFarmerDashBoard: React.FC<ChosenDashBoardProps> = ({
                   }}
                   style={{
                     border: "none",
-                    boxShadow: token.boxShadowSecondary,
                   }}
                 >
                   <DeleteOutlined />

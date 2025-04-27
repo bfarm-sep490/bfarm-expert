@@ -42,6 +42,7 @@ export interface IPlan {
   estimated_product: number;
   estimated_unit: string;
   qr_code: string;
+  order_ids: number[];
   seed_quantity: number;
   created_by: string;
   created_at: string;

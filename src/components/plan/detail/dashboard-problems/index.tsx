@@ -7,10 +7,11 @@ import {
   DashboardOutlined,
   LoadingOutlined,
   ReloadOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { DateField, ShowButton, TextField } from "@refinedev/antd";
 import { BaseRecord, useTranslate } from "@refinedev/core";
-import { Badge, Card, Flex, Segmented, Space, Spin, Table, Typography } from "antd";
+import { Badge, Card, Flex, Segmented, Space, Spin, Table, Typography, Tag } from "antd";
 import { ApexOptions } from "apexcharts";
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
@@ -35,6 +36,7 @@ export const ProblemsDashBoard = ({
   const [viewComponent, setViewComponent] = useState("List");
   const [chartLoading, setChartLoading] = useState(false);
   const translate = useTranslate();
+
   const [state3, setState3] = React.useState({
     series: [
       {
@@ -50,24 +52,43 @@ export const ProblemsDashBoard = ({
         toolbar: {
           show: false,
         },
+        background: "transparent",
       },
-      colors: ["#FF4560"],
+      colors: ["#FF4D4F"],
       stroke: {
         width: 2,
+        curve: "smooth",
       },
       dataLabels: {
         enabled: false,
       },
       markers: {
-        size: 0,
+        size: 4,
+        hover: {
+          size: 6,
+        },
       },
       xaxis: {
         type: "datetime",
+        labels: {
+          style: {
+            colors: "#8c8c8c",
+          },
+        },
       },
       yaxis: {
         labels: {
+          style: {
+            colors: "#8c8c8c",
+          },
           formatter: (value: any) => `${value} ${translate("problems", "vấn đề")}`,
         },
+      },
+      grid: {
+        borderColor: "#f0f0f0",
+      },
+      tooltip: {
+        theme: "light",
       },
     },
     seriesLine: [
@@ -88,8 +109,9 @@ export const ProblemsDashBoard = ({
         selection: {
           enabled: true,
         },
+        background: "transparent",
       },
-      colors: ["#008FFB"],
+      colors: ["#FF4D4F"],
       stroke: {
         width: [1, 2],
         curve: "smooth",
@@ -97,8 +119,10 @@ export const ProblemsDashBoard = ({
       fill: {
         type: "gradient",
         gradient: {
-          opacityFrom: 0.85,
-          opacityTo: 0.1,
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.2,
+          stops: [0, 90, 100],
         },
       },
       xaxis: {
@@ -106,9 +130,22 @@ export const ProblemsDashBoard = ({
         tooltip: {
           enabled: false,
         },
+        labels: {
+          style: {
+            colors: "#8c8c8c",
+          },
+        },
       },
       yaxis: {
         tickAmount: 2,
+        labels: {
+          style: {
+            colors: "#8c8c8c",
+          },
+        },
+      },
+      grid: {
+        borderColor: "#f0f0f0",
       },
     },
   });
@@ -117,7 +154,7 @@ export const ProblemsDashBoard = ({
     const problemsPerDay: { [key: string]: number } = {};
 
     data?.forEach((problem) => {
-      const date = new Date(problem?.created_date).toISOString().split("T")[0]; // Get the date in YYYY-MM-DD format
+      const date = new Date(problem?.created_date).toISOString().split("T")[0];
       if (problemsPerDay[date]) {
         problemsPerDay[date] += 1;
       } else {
@@ -149,38 +186,50 @@ export const ProblemsDashBoard = ({
 
   return (
     <Card
-      style={style}
+      style={{
+        ...style,
+        height: "100%",
+        borderRadius: 8,
+        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+      }}
+      bodyStyle={{
+        padding: 0,
+        height: "calc(100% - 56px)",
+        display: "flex",
+        flexDirection: "column",
+      }}
       title={
         <Flex justify="space-between" align="center">
-          <Flex gap={10}>
-            <Typography.Title level={5}>Vấn đề</Typography.Title>
+          <Flex gap={10} align="center">
+            <WarningOutlined style={{ color: "#FF4D4F", fontSize: 20 }} />
+            <Typography.Title level={5} style={{ margin: 0 }}>
+              Vấn đề
+            </Typography.Title>
             {loading || chartLoading ? (
-              <Spin indicator={<LoadingOutlined spin />} size="small"></Spin>
+              <Spin indicator={<LoadingOutlined spin />} size="small" />
             ) : (
-              <ReloadOutlined onClick={refetch} />
+              <ReloadOutlined
+                onClick={refetch}
+                style={{
+                  color: "#1890ff",
+                  cursor: "pointer",
+                  fontSize: 16,
+                }}
+              />
             )}
           </Flex>
-          {/* <Segmented
-            disabled={loading || chartLoading}
-            size="large"
-            vertical={false}
-            onChange={(value) => setViewComponent(value)}
-            options={[
-              { value: "List", icon: <BarsOutlined /> },
-              { value: "Chart", icon: <BarChartOutlined /> },
-            ]}
-          /> */}
+          <Tag color="red">{data?.length || 0} vấn đề</Tag>
         </Flex>
       }
       loading={loading || chartLoading}
     >
       {loading === false && chartLoading === false && viewComponent === "Chart" && (
-        <>
+        <div style={{ background: "transparent", flex: 1 }}>
           <ReactApexChart
             options={state3.options as ApexOptions}
             series={state3.series}
             type="line"
-            height={180}
+            height="100%"
           />
           <ReactApexChart
             style={{ marginTop: "0px" }}
@@ -189,50 +238,54 @@ export const ProblemsDashBoard = ({
             type="area"
             height={80}
           />
-        </>
+        </div>
       )}
       {loading === false && chartLoading === false && viewComponent === "List" && (
-        <>
-          <Table
-            onRow={(record) => ({
-              onClick: () => {
-                setSelectId(record?.id as number);
-                setOpen(true);
-              },
-            })}
-            dataSource={data}
-            pagination={{
-              pageSize: 5,
-            }}
-            rowKey="id"
-            scroll={{ x: "max-content" }}
-          >
-            <Table.Column
-              dataIndex="id"
-              title={translate("ID")}
-              render={(value) => <TextField value={"#" + value} style={{ fontWeight: "bold" }} />}
-            />
-            <Table.Column
-              dataIndex="problem_name"
-              title={translate("problem_name", "Tên vấn đề")}
-            />
-            <Table.Column
-              dataIndex="farmer_name"
-              title={translate("farmer_name", "Tên nông dân")}
-            />
-            <Table.Column
-              dataIndex="created_date"
-              title={translate("problem.created_date", "Ngày phát sinh")}
-              render={(value) => <DateField format="hh:mm DD/MM/YYYY" value={value} />}
-            />
-
-            <Table.Column
-              dataIndex="status"
-              title={translate("problem.status", "Trạng thái")}
-              render={(value) => <ProblemStatusTag status={value} />}
-            />
-          </Table>
-        </>
+        <Table
+          onRow={(record) => ({
+            onClick: () => {
+              setSelectId(record?.id as number);
+              setOpen(true);
+            },
+            style: { cursor: "pointer" },
+          })}
+          dataSource={data}
+          pagination={{
+            pageSize: 5,
+            showSizeChanger: false,
+            showTotal: (total) => `Tổng ${total} vấn đề`,
+          }}
+          rowKey="id"
+          scroll={{ x: "max-content" }}
+          size="small"
+          style={{ flex: 1 }}
+        >
+          <Table.Column
+            dataIndex="id"
+            title={translate("ID")}
+            render={(value) => <Typography.Text strong>#{value}</Typography.Text>}
+          />
+          <Table.Column
+            dataIndex="problem_name"
+            title={translate("problem_name", "Tên vấn đề")}
+            render={(value) => <Typography.Text>{value}</Typography.Text>}
+          />
+          <Table.Column
+            dataIndex="farmer_name"
+            title={translate("farmer_name", "Tên nông dân")}
+            render={(value) => <Typography.Text>{value}</Typography.Text>}
+          />
+          <Table.Column
+            dataIndex="created_date"
+            title={translate("problem.created_date", "Ngày phát sinh")}
+            render={(value) => <DateField format="hh:mm DD/MM/YYYY" value={value} />}
+          />
+          <Table.Column
+            dataIndex="status"
+            title={translate("problem.status", "Trạng thái")}
+            render={(value) => <ProblemStatusTag status={value} />}
+          />
+        </Table>
       )}
       <ProblemShowInProblem
         onClose={() => setOpen(false)}

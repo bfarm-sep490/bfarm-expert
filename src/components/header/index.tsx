@@ -122,10 +122,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, st
       <Row
         align="middle"
         style={{
-          justifyContent: screens.sm ? "space-between" : "end",
+          justifyContent: "space-between",
+          flexWrap: "nowrap",
         }}
       >
-        <Col xs={0} sm={8} md={12}>
+        <Col xs={0} sm={8} md={12} style={{ flex: "1 1 auto" }}>
           <AutoComplete
             style={{
               width: "100%",
@@ -143,7 +144,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ isSticky, st
             />
           </AutoComplete>
         </Col>
-        <Col>
+        <Col style={{ flex: "0 0 auto" }}>
           <Space size={screens.md ? 28 : 12} align="center">
             <Dropdown
               menu={{

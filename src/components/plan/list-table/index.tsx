@@ -9,9 +9,9 @@ import {
 } from "@refinedev/core";
 import { FilterDropdown, getDefaultSortOrder, useTable } from "@refinedev/antd";
 import type { IIdentity, IPlan } from "../../../interfaces";
-import { Input, InputNumber, Select, Table, theme, Typography, Tag, Spin } from "antd";
+import { Input, InputNumber, Select, Table, theme, Typography, Tag, Spin, Badge } from "antd";
 import { PaginationTotal } from "../../paginationTotal";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router";
 import { NumberWithUnit } from "../number-with-unit";
 import { PlanActions } from "../plan-action";
@@ -99,6 +99,10 @@ export const PlanListTable = () => {
         ...tableProps.pagination,
         showTotal: (total) => <PaginationTotal total={total} entityName="plan" />,
       }}
+      onRow={(record) => ({
+        onClick: () => navigate(`${record.id}`),
+        style: { cursor: "pointer" },
+      })}
     >
       <Table.Column
         title={
@@ -116,9 +120,7 @@ export const PlanListTable = () => {
           <Typography.Text
             style={{
               whiteSpace: "nowrap",
-              cursor: "pointer",
             }}
-            onClick={() => navigate(`${value}`)}
           >
             #{value}
           </Typography.Text>
@@ -154,15 +156,20 @@ export const PlanListTable = () => {
           </FilterDropdown>
         )}
         render={(value: string, record: IPlan) => (
-          <Typography.Text
-            style={{
-              whiteSpace: "nowrap",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate(`${record.id}`)}
-          >
-            {value}
-          </Typography.Text>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Typography.Text
+              style={{
+                whiteSpace: "nowrap",
+              }}
+            >
+              {value}
+            </Typography.Text>
+            {record.order_ids && record.order_ids.length > 0 && (
+              <Badge count={record.order_ids.length} size="small">
+                <ShoppingCartOutlined style={{ color: token.colorPrimary }} />
+              </Badge>
+            )}
+          </div>
         )}
       />
       <Table.Column
@@ -327,17 +334,24 @@ export const PlanListTable = () => {
         dataIndex="actions"
         key="actions"
         align="center"
-        render={(_value, record) => (
-          <PlanActions
-            record={record}
-            onSuccess={() => {
-              invalidate({
-                resource: "plans",
-                invalidates: ["list"],
-              });
-            }}
-          />
-        )}
+        render={(_value, record) => {
+          const hasActions = record.status === "Draft" || record.status === "Pending";
+          if (!hasActions) return null;
+
+          return (
+            <div onClick={(e) => e.stopPropagation()}>
+              <PlanActions
+                record={record}
+                onSuccess={() => {
+                  invalidate({
+                    resource: "plans",
+                    invalidates: ["list"],
+                  });
+                }}
+              />
+            </div>
+          );
+        }}
       />
     </Table>
   );

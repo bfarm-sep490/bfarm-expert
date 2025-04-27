@@ -1,5 +1,5 @@
 import { useGo, useNavigation, useTranslate, useCustomMutation, useApiUrl } from "@refinedev/core";
-import { MoreOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
 import { Dropdown, MenuProps, Space, message, Button } from "antd";
 import { DeleteButton, EditButton } from "@refinedev/antd";
 import { IPlan } from "@/interfaces";
@@ -96,11 +96,11 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
   return (
     <>
       <Dropdown menu={{ items }} trigger={["click"]}>
-        <a onClick={(e) => e.preventDefault()}>
-          <Space>
-            <MoreOutlined />
-          </Space>
-        </a>
+        <Button
+          type="text"
+          icon={<SettingOutlined style={{ fontSize: "16px" }} />}
+          onClick={(e) => e.preventDefault()}
+        />
       </Dropdown>
     </>
   );

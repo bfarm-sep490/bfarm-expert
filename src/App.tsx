@@ -191,7 +191,7 @@ const App: React.FC = () => {
                       >
                         <div
                           style={{
-                            maxWidth: "1600px",
+                            maxWidth: "1200px",
                             marginLeft: "auto",
                             marginRight: "auto",
                           }}
