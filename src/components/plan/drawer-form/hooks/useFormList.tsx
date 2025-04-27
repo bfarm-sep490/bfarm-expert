@@ -102,16 +102,20 @@ export const useFormList = (props: UseFormListProps) => {
         <Form.Item
           label={
             <span>
-              <ShopOutlined /> {t("plans.fields.planName.label")}
+              <ShopOutlined /> {t("plans.fields.plan_name.label")}
             </span>
           }
           name="plan_name"
-          rules={[{ required: true, message: t("plans.fields.planName.required") }]}
+          rules={[
+            { required: true, message: t("plans.fields.plan_name.required") },
+            { min: 3, message: t("plans.validation.description_min_length") },
+            { max: 500, message: t("plans.validation.description_max_length") },
+          ]}
           initialValue={selectedTemplate ? `Kế hoạch ${selectedTemplate.name}` : undefined}
         >
           <Input
             size="large"
-            placeholder={t("plans.fields.planName.placeholder")}
+            placeholder={t("plans.fields.plan_name.placeholder")}
             prefix={<ShopOutlined style={{ color: token.colorTextTertiary }} />}
           />
         </Form.Item>
@@ -159,11 +163,24 @@ export const useFormList = (props: UseFormListProps) => {
         <Form.Item
           label={
             <span>
-              <CalendarOutlined /> {t("plans.fields.startDate.label")}
+              <CalendarOutlined /> {t("plans.fields.start_date.label")}
             </span>
           }
           name="start_date"
-          rules={[{ required: true, message: t("plans.fields.startDate.required") }]}
+          rules={[
+            { required: true, message: t("plans.fields.start_date.required") },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || !getFieldValue("end_date")) {
+                  return Promise.resolve();
+                }
+                if (dayjs(value).isAfter(dayjs(getFieldValue("end_date")))) {
+                  return Promise.reject(new Error(t("plans.validation.start_date_before_end")));
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
           initialValue={
             selectedTemplate?.start_date ? dayjs(selectedTemplate.start_date) : undefined
           }
@@ -173,17 +190,31 @@ export const useFormList = (props: UseFormListProps) => {
             style={{ width: "100%" }}
             showTime
             format="YYYY-MM-DD HH:mm:ss"
+            placeholder={t("plans.fields.start_date.placeholder")}
           />
         </Form.Item>
 
         <Form.Item
           label={
             <span>
-              <CalendarOutlined /> {t("plans.fields.endDate.label")}
+              <CalendarOutlined /> {t("plans.fields.end_date.label")}
             </span>
           }
           name="end_date"
-          rules={[{ required: true, message: t("plans.fields.endDate.required") }]}
+          rules={[
+            { required: true, message: t("plans.fields.end_date.required") },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || !getFieldValue("start_date")) {
+                  return Promise.resolve();
+                }
+                if (dayjs(value).isBefore(dayjs(getFieldValue("start_date")))) {
+                  return Promise.reject(new Error(t("plans.validation.end_date_after_start")));
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
           initialValue={selectedTemplate?.end_date ? dayjs(selectedTemplate.end_date) : undefined}
         >
           <DatePicker
@@ -191,6 +222,7 @@ export const useFormList = (props: UseFormListProps) => {
             style={{ width: "100%" }}
             showTime
             format="YYYY-MM-DD HH:mm:ss"
+            placeholder={t("plans.fields.end_date.placeholder")}
           />
         </Form.Item>
 
@@ -248,11 +280,14 @@ export const useFormList = (props: UseFormListProps) => {
               <Form.Item
                 label={
                   <span>
-                    <NumberOutlined /> {t("plans.fields.estimatedProduct.label")}
+                    <NumberOutlined /> {t("plans.fields.estimated_product.label")}
                   </span>
                 }
                 name="estimated_product"
-                rules={[{ required: true, message: t("plans.fields.estimatedProduct.required") }]}
+                rules={[
+                  { required: true, message: t("plans.fields.estimated_product.required") },
+                  { type: "number", min: 0, message: t("plans.validation.estimated_product_min") },
+                ]}
                 initialValue={selectedTemplate?.estimated_product}
                 style={{ width: "300px" }}
               >
@@ -260,7 +295,7 @@ export const useFormList = (props: UseFormListProps) => {
                   size="large"
                   min={0}
                   style={{ width: "100%" }}
-                  placeholder="0"
+                  placeholder={t("plans.fields.estimated_product.placeholder")}
                   addonAfter="kg"
                 />
               </Form.Item>
@@ -268,11 +303,14 @@ export const useFormList = (props: UseFormListProps) => {
               <Form.Item
                 label={
                   <span>
-                    <NumberOutlined /> {t("plans.fields.seedQuantity.label")}
+                    <NumberOutlined /> {t("plans.fields.seed_quantity.label")}
                   </span>
                 }
                 name="seed_quantity"
-                rules={[{ required: true, message: t("plans.fields.seedQuantity.required") }]}
+                rules={[
+                  { required: true, message: t("plans.fields.seed_quantity.required") },
+                  { type: "number", min: 0, message: t("plans.validation.seed_quantity_min") },
+                ]}
                 initialValue={selectedTemplate?.seed_quantity}
                 style={{ width: "300px" }}
               >
@@ -280,7 +318,7 @@ export const useFormList = (props: UseFormListProps) => {
                   size="large"
                   min={0}
                   style={{ width: "100%" }}
-                  placeholder="0"
+                  placeholder={t("plans.fields.seed_quantity.placeholder")}
                   addonAfter="kg"
                 />
               </Form.Item>

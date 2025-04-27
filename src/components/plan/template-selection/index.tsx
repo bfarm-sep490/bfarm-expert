@@ -240,12 +240,12 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
               <Form.Item
                 label={
                   <span>
-                    <CalendarOutlined /> {t("plans.fields.startDate.label")}
+                    <CalendarOutlined /> {t("plans.fields.start_date.label")}
                   </span>
                 }
                 name="start_date"
                 rules={[
-                  { required: true, message: t("plans.fields.startDate.required") },
+                  { required: true, message: t("plans.fields.start_date.required") },
                   {
                     validator: (_, value) => {
                       if (value) {
@@ -277,17 +277,17 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
               <Form.Item
                 label={
                   <span>
-                    <NumberOutlined /> {t("plans.fields.estimatedProduct.label")}
+                    <NumberOutlined /> {t("plans.fields.estimated_product.label")}
                   </span>
                 }
                 name="estimated_product"
-                rules={[{ required: true, message: t("plans.fields.estimatedProduct.required") }]}
+                rules={[{ required: true, message: t("plans.fields.estimated_product.required") }]}
               >
                 <InputNumber
                   size="large"
                   min={0}
                   style={{ width: "100%" }}
-                  placeholder="0"
+                  placeholder={t("plans.fields.estimated_product.placeholder")}
                   addonAfter="kg"
                   value={totalQuantity}
                 />

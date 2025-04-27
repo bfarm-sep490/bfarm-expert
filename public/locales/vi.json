@@ -36,7 +36,12 @@
     "add_harvesting_task": "Thêm công việc thu hoạch",
     "add_item": "Thêm vật tư",
     "add_fertilizer": "Thêm phân bón",
-    "add_pesticide": "Thêm thuốc trừ sâu"
+    "add_pesticide": "Thêm thuốc trừ sâu",
+    "add_task": "Thêm công việc",
+    "remove_task": "Xóa công việc",
+    "remove_item": "Xóa vật tư",
+    "remove_fertilizer": "Xóa phân bón",
+    "remove_pesticide": "Xóa thuốc trừ sâu"
   },
   "categories": {
     "categories": "Danh mục",
@@ -213,19 +218,76 @@
       "date": "Ngày Tháng",
       "description": "Mô Tả",
       "end_date": "Ngày Kết Thúc",
-      "estimated_product": "Sản Lượng Dự Kiến",
+      "estimated_product": {
+        "label": "Sản Lượng Dự Kiến",
+        "placeholder": "Nhập sản lượng dự kiến",
+        "required": "Vui lòng nhập sản lượng dự kiến"
+      },
       "expert_name": "Chuyên Gia",
       "is_approved": "Đã Duyệt",
-      "plan_name": "Tên Kế Hoạch",
+      "planName": {
+        "label": "Tên kế hoạch",
+        "placeholder": "Nhập tên kế hoạch",
+        "required": "Vui lòng nhập tên kế hoạch"
+      },
       "plant": {
         "label": "Cây trồng",
         "placeholder": "Chọn cây trồng",
         "required": "Vui lòng chọn cây trồng"
       },
       "plant_name": "Cây Trồng",
-      "start_date": "Ngày Bắt Đầu",
+      "startDate": {
+        "label": "Ngày bắt đầu",
+        "placeholder": "Chọn ngày bắt đầu",
+        "required": "Vui lòng chọn ngày bắt đầu"
+      },
+      "endDate": {
+        "label": "Ngày kết thúc",
+        "placeholder": "Chọn ngày kết thúc",
+        "required": "Vui lòng chọn ngày kết thúc"
+      },
       "status": "Trạng Thái",
-      "yield_name": "Mảnh Đất"
+      "yield_name": "Mảnh Đất",
+      "yield": {
+        "label": "Mảnh đất",
+        "placeholder": "Chọn mảnh đất",
+        "required": "Vui lòng chọn mảnh đất"
+      },
+      "season": {
+        "label": "Mùa vụ",
+        "placeholder": "Chọn mùa vụ",
+        "required": "Vui lòng chọn mùa vụ"
+      },
+      "seed_quantity": {
+        "label": "Số lượng hạt giống",
+        "placeholder": "Nhập số lượng hạt giống",
+        "required": "Vui lòng nhập số lượng hạt giống"
+      },
+      "itemId": {
+        "label": "Vật tư",
+        "placeholder": "Chọn vật tư",
+        "required": "Vui lòng chọn vật tư"
+      },
+      "quantity": {
+        "label": "Số lượng",
+        "placeholder": "Nhập số lượng",
+        "required": "Vui lòng nhập số lượng"
+      },
+      "land": {
+        "label": "Mảnh đất",
+        "placeholder": "Chọn mảnh đất",
+        "required": "Vui lòng chọn mảnh đất"
+      },
+      "estimatedProduct": {
+        "label": "Sản lượng dự kiến",
+        "placeholder": "Nhập sản lượng dự kiến",
+        "required": "Vui lòng nhập sản lượng dự kiến"
+      },
+      "seedQuantity": {
+        "label": "Lượng giống",
+        "placeholder": "Nhập lượng giống",
+        "required": "Vui lòng nhập lượng giống"
+      }
     },
     "filter": {
       "allStatus": {
@@ -240,7 +302,7 @@
       "is_approved": {
         "placeholder": "Lọc theo phê duyệt"
       },
-      "plan_name": {
+      "planName": {
         "placeholder": "Tìm kiếm tên kế hoạch"
       },
       "plant_name": {
@@ -260,6 +322,107 @@
       "draft": "Nháp",
       "ongoing": "Đang Tiến Hành",
       "pending": "Chờ Xử Lý"
+    },
+    "template": {
+      "title": "Chọn mẫu kế hoạch",
+      "info": "Nhập thông tin để tìm mẫu phù hợp",
+      "find": "Tìm mẫu",
+      "select": "Chọn mẫu",
+      "confirm": "Xác nhận",
+      "details": "Chi tiết mẫu",
+      "list": "Danh sách mẫu",
+      "caring": {
+        "title": "Công việc chăm sóc",
+        "add": "Thêm công việc chăm sóc"
+      },
+      "harvesting": {
+        "title": "Công việc thu hoạch",
+        "add": "Thêm công việc thu hoạch"
+      },
+      "packaging": {
+        "title": "Công việc đóng gói",
+        "add": "Thêm công việc đóng gói"
+      },
+      "inspecting": {
+        "title": "Công việc kiểm tra",
+        "add": "Thêm công việc kiểm tra"
+      }
+    },
+    "steps": {
+      "basic": "Thông tin cơ bản",
+      "tasks": "Công việc & Hoạt động",
+      "review": "Xem lại & Xác nhận"
+    },
+    "validation": {
+      "start_date_before_end": "Ngày bắt đầu phải trước ngày kết thúc",
+      "end_date_after_start": "Ngày kết thúc phải sau ngày bắt đầu",
+      "estimated_product_min": "Sản lượng dự kiến phải lớn hơn 0",
+      "estimated_product_max": "Sản lượng dự kiến không được vượt quá 1,000,000 kg",
+      "seed_quantity_min": "Lượng giống phải lớn hơn 0",
+      "seed_quantity_max": "Lượng giống không được vượt quá 10,000 kg",
+      "task_name_required": "Vui lòng nhập tên công việc",
+      "task_type_required": "Vui lòng chọn loại công việc",
+      "start_date_required": "Vui lòng chọn ngày bắt đầu",
+      "end_date_required": "Vui lòng chọn ngày kết thúc",
+      "description_required": "Vui lòng nhập mô tả",
+      "description_min_length": "Mô tả phải có ít nhất 10 ký tự",
+      "description_max_length": "Mô tả không được vượt quá 500 ký tự",
+      "plan_name_max_length": "Tên kế hoạch không được vượt quá 100 ký tự",
+      "plan_name_whitespace": "Tên kế hoạch không được chỉ chứa khoảng trắng",
+      "plant_type": "Vui lòng chọn cây trồng",
+      "season_type": "Vui lòng chọn mùa vụ",
+      "start_date_before_today": "Ngày bắt đầu không được trước ngày hôm nay",
+      "end_date_after_start": "Ngày kết thúc phải sau ngày bắt đầu"
+    },
+    "messages": {
+      "no_tasks": "Chưa có công việc nào",
+      "no_items": "Chưa có vật tư nào",
+      "no_fertilizers": "Chưa có phân bón nào",
+      "no_pesticides": "Chưa có thuốc trừ sâu nào",
+      "task_added": "Đã thêm công việc thành công",
+      "task_removed": "Đã xóa công việc thành công",
+      "item_added": "Đã thêm vật tư thành công",
+      "item_removed": "Đã xóa vật tư thành công",
+      "fertilizer_added": "Đã thêm phân bón thành công",
+      "fertilizer_removed": "Đã xóa phân bón thành công",
+      "pesticide_added": "Đã thêm thuốc trừ sâu thành công",
+      "pesticide_removed": "Đã xóa thuốc trừ sâu thành công",
+      "plant_from_order": "Cây trồng đã được chọn từ đơn hàng",
+      "no_plants_found": "Không tìm thấy cây trồng",
+      "no_seasons_found": "Không tìm thấy mùa vụ",
+      "no_yields_found": "Không tìm thấy mảnh đất",
+      "production_info": {
+        "title": "Thông tin sản lượng",
+        "description": "Nhập thông tin về sản lượng và khu đất canh tác"
+      }
+    },
+    "tooltips": {
+      "estimated_product": "Sản lượng thu hoạch dự kiến (kg)",
+      "seed_quantity": "Lượng giống cần sử dụng (kg)"
+    },
+    "seasons": {
+      "spring": "Mùa xuân",
+      "summer": "Mùa hè",
+      "autumn": "Mùa thu",
+      "winter": "Mùa đông"
+    },
+    "titles": {
+      "edit_template": "Chỉnh sửa mẫu",
+      "basic_info": "Thông tin cơ bản",
+      "plant_template": "Mẫu cây trồng",
+      "caring_tasks": "Công việc chăm sóc",
+      "inspecting_tasks": "Công việc kiểm tra",
+      "harvesting_tasks": "Công việc thu hoạch"
+    },
+    "task_types": {
+      "setup": "Chuẩn bị",
+      "planting": "Trồng",
+      "nurturing": "Chăm sóc",
+      "watering": "Tưới nước",
+      "fertilizing": "Bón phân",
+      "pesticide": "Phun thuốc",
+      "weeding": "Làm cỏ",
+      "pruning": "Tỉa cành"
     }
   },
   "plants": {

@@ -161,20 +161,20 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
 
   const validateEstimatedProduct = (_: any, value: number) => {
     if (value <= 0) {
-      return Promise.reject("Sản lượng dự kiến phải lớn hơn 0");
+      return Promise.reject(t("plans.validation.estimated_product_min"));
     }
     if (value > 1000000) {
-      return Promise.reject("Sản lượng dự kiến không được vượt quá 1,000,000 kg");
+      return Promise.reject(t("plans.validation.estimated_product_max"));
     }
     return Promise.resolve();
   };
 
   const validateSeedQuantity = (_: any, value: number) => {
     if (value <= 0) {
-      return Promise.reject("Lượng giống phải lớn hơn 0");
+      return Promise.reject(t("plans.validation.seed_quantity_min"));
     }
     if (value > 10000) {
-      return Promise.reject("Lượng giống không được vượt quá 10,000 kg");
+      return Promise.reject(t("plans.validation.seed_quantity_max"));
     }
     return Promise.resolve();
   };
@@ -192,11 +192,11 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
           <Space direction="vertical" size="small">
             <Text strong style={{ fontSize: "16px" }}>
               <EnvironmentOutlined style={{ marginRight: 8, color: token.colorPrimary }} />
-              Thông tin sản lượng
+              {t("plans.messages.production_info.title")}
             </Text>
             <Text type="secondary">
               <InfoCircleOutlined style={{ marginRight: 4 }} />
-              Nhập thông tin về sản lượng và khu đất canh tác
+              {t("plans.messages.production_info.description")}
             </Text>
           </Space>
         </Flex>
@@ -212,7 +212,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
               name="yield_id"
               rules={[
                 { required: true, message: t("plans.fields.land.required") },
-                { type: "number", message: "Vui lòng chọn khu đất" },
+                { type: "number", message: t("plans.validation.land_type") },
               ]}
               initialValue={selectedTemplate?.yield_id}
             >
@@ -222,7 +222,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
                 options={yieldsOptions}
                 showSearch
                 optionFilterProp="label"
-                notFoundContent="Không tìm thấy khu đất"
+                notFoundContent={t("plans.messages.no_yields_found")}
                 optionRender={(option) => {
                   const yield_ = yieldMap[option.value as number];
                   return yield_ ? <YieldOption data={yield_} /> : option.label;
@@ -248,7 +248,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
               ]}
               initialValue={selectedTemplate?.estimated_product}
               tooltip={{
-                title: "Sản lượng dự kiến thu hoạch (kg)",
+                title: t("plans.tooltips.estimated_product"),
                 icon: <InfoCircleOutlined />,
               }}
             >
@@ -284,7 +284,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
               ]}
               initialValue={selectedTemplate?.seed_quantity}
               tooltip={{
-                title: "Lượng giống cần sử dụng (kg)",
+                title: t("plans.tooltips.seed_quantity"),
                 icon: <InfoCircleOutlined />,
               }}
               extra={calculationInfo}

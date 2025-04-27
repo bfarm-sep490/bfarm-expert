@@ -207,19 +207,96 @@
       "date": "Dates",
       "description": "Description",
       "end_date": "End Date",
-      "estimated_product": "Estimated Product",
+      "estimated_product": {
+        "label": "Estimated Product",
+        "placeholder": "Enter estimated product",
+        "required": "Please enter estimated product"
+      },
       "expert_name": "Expert",
       "is_approved": "Approved",
-      "plan_name": "Plan Name",
+      "plan_name": {
+        "label": "Plan Name",
+        "placeholder": "Enter plan name",
+        "required": "Please enter plan name"
+      },
       "plant": {
         "label": "Crop",
         "placeholder": "Select a crop",
         "required": "Please select a crop"
       },
       "plant_name": "Plant",
-      "start_date": "Start Date",
+      "start_date": {
+        "label": "Start Date",
+        "placeholder": "Select start date",
+        "required": "Please select start date"
+      },
+      "end_date": {
+        "label": "End Date",
+        "placeholder": "Select end date",
+        "required": "Please select end date"
+      },
       "status": "Status",
-      "yield_name": "Land Plot"
+      "yield_name": "Land Plot",
+      "yield": {
+        "label": "Land Plot",
+        "placeholder": "Select a land plot",
+        "required": "Please select a land plot"
+      },
+      "season": {
+        "label": "Season",
+        "placeholder": "Select a season",
+        "required": "Please select a season"
+      },
+      "seed_quantity": {
+        "label": "Seed Quantity",
+        "placeholder": "Enter seed quantity",
+        "required": "Please enter seed quantity"
+      },
+      "itemId": {
+        "label": "Item",
+        "placeholder": "Select item",
+        "required": "Please select an item"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "placeholder": "Enter quantity",
+        "required": "Please enter quantity"
+      },
+      "planName": {
+        "label": "Plan Name",
+        "placeholder": "Enter plan name",
+        "required": "Please enter plan name"
+      },
+      "startDate": {
+        "label": "Start Date",
+        "placeholder": "Select start date",
+        "required": "Please select start date"
+      },
+      "endDate": {
+        "label": "End Date",
+        "placeholder": "Select end date",
+        "required": "Please select end date"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter plan description",
+        "required": "Please enter description"
+      },
+      "land": {
+        "label": "Land Plot",
+        "placeholder": "Select a land plot",
+        "required": "Please select a land plot"
+      },
+      "estimatedProduct": {
+        "label": "Estimated Product",
+        "placeholder": "Enter estimated product",
+        "required": "Please enter estimated product"
+      },
+      "seedQuantity": {
+        "label": "Seed Quantity",
+        "placeholder": "Enter seed quantity",
+        "required": "Please enter seed quantity"
+      }
     },
     "filter": {
       "allStatus": {
@@ -254,6 +331,93 @@
       "draft": "Draft",
       "ongoing": "Ongoing",
       "pending": "Pending"
+    },
+    "template": {
+      "title": "Template Selection",
+      "info": "Enter information to find suitable template",
+      "find": "Find Template",
+      "select": "Select Template",
+      "confirm": "Confirm",
+      "details": "Template Details",
+      "list": "Template List",
+      "caring": {
+        "title": "Caring Tasks",
+        "add": "Add Caring Task"
+      },
+      "harvesting": {
+        "title": "Harvesting Tasks",
+        "add": "Add Harvesting Task"
+      },
+      "packaging": {
+        "title": "Packaging Tasks",
+        "add": "Add Packaging Task"
+      },
+      "inspecting": {
+        "title": "Inspecting Tasks",
+        "add": "Add Inspecting Task"
+      }
+    },
+    "steps": {
+      "basic": "Basic Information",
+      "tasks": "Tasks & Activities",
+      "review": "Review & Confirm"
+    },
+    "validation": {
+      "start_date_before_end": "Start date must be before end date",
+      "end_date_after_start": "End date must be after start date",
+      "estimated_product_min": "Estimated product must be greater than 0",
+      "estimated_product_max": "Estimated product cannot exceed 1,000,000 kg",
+      "seed_quantity_min": "Seed quantity must be greater than 0",
+      "seed_quantity_max": "Seed quantity cannot exceed 10,000 kg",
+      "task_name_required": "Please enter task name",
+      "task_type_required": "Please select task type",
+      "start_date_required": "Please select start date",
+      "end_date_required": "Please select end date",
+      "description_required": "Please enter description",
+      "description_min_length": "Description must be at least 10 characters",
+      "description_max_length": "Description cannot exceed 500 characters",
+      "plan_name_max_length": "Plan name cannot exceed 100 characters",
+      "plan_name_whitespace": "Plan name cannot contain only whitespace",
+      "plant_type": "Please select a plant",
+      "season_type": "Please select a season",
+      "start_date_before_today": "Start date cannot be before today",
+      "end_date_after_start": "End date must be after start date"
+    },
+    "buttons": {
+      "add_task": "Add Task",
+      "remove_task": "Remove Task",
+      "add_item": "Add Item",
+      "remove_item": "Remove Item",
+      "add_fertilizer": "Add Fertilizer",
+      "remove_fertilizer": "Remove Fertilizer",
+      "add_pesticide": "Add Pesticide",
+      "remove_pesticide": "Remove Pesticide"
+    },
+    "messages": {
+      "no_tasks": "No tasks added yet",
+      "no_items": "No items added yet",
+      "no_fertilizers": "No fertilizers added yet",
+      "no_pesticides": "No pesticides added yet",
+      "task_added": "Task added successfully",
+      "task_removed": "Task removed successfully",
+      "item_added": "Item added successfully",
+      "item_removed": "Item removed successfully",
+      "fertilizer_added": "Fertilizer added successfully",
+      "fertilizer_removed": "Fertilizer removed successfully",
+      "pesticide_added": "Pesticide added successfully",
+      "pesticide_removed": "Pesticide removed successfully",
+      "plant_from_order": "Plant has been selected from order",
+      "no_plants_found": "No plants found",
+      "no_seasons_found": "No seasons found",
+      "no_yields_found": "No land plots found",
+      "production_info": {
+        "title": "Production Information",
+        "description": "Enter information about yield and cultivation area"
+      }
+    },
+    "tooltips": {
+      "estimated_product": "Estimated harvest yield (kg)",
+      "seed_quantity": "Required seed quantity (kg)"
     }
   },
   "plants": {
