@@ -253,7 +253,7 @@ export const ProblemsDashBoard = ({
           pagination={{
             pageSize: 5,
             showSizeChanger: false,
-            showTotal: (total) => `Tổng ${total} vấn đề`,
+            position: ["bottomCenter"],
           }}
           rowKey="id"
           scroll={{ x: "max-content" }}

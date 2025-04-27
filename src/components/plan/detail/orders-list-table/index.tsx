@@ -95,7 +95,7 @@ export const OrdersListTable = (props: OrderListTableProps) => {
         pagination={{
           pageSize: 5,
           showSizeChanger: false,
-          showTotal: (total) => `Tổng ${total} đơn hàng`,
+          position: ["bottomCenter"],
         }}
         columns={columns}
         scroll={{ x: "max-content" }}
