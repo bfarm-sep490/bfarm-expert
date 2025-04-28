@@ -204,7 +204,7 @@
   },
   "plans": {
     "actions": {
-      "add": "Thêm kế hoạch"
+      "add": "Add Plan"
     },
     "fields": {
       "date": "Ngày",
@@ -221,6 +221,9 @@
         "required": "Vui lòng nhập tên kế hoạch"
       },
       "plant": {
+        "actions": {
+          "add": "Add Crop"
+        },
         "label": "Cây trồng",
         "placeholder": "Chọn cây trồng",
         "required": "Vui lòng chọn cây trồng"
@@ -384,6 +387,7 @@
       "end_date_after_start": "Ngày kết thúc phải sau ngày bắt đầu"
     },
     "buttons": {
+      "add": "Add Plan",
       "add_task": "Thêm nhiệm vụ",
       "remove_task": "Xóa nhiệm vụ",
       "add_item": "Thêm mục",
@@ -422,7 +426,7 @@
   },
   "plants": {
     "actions": {
-      "add": "Thêm cây trồng"
+      "add": "Add Plant"
     },
     "available": "Có sẵn",
     "basePrice": "Giá cơ bản",
