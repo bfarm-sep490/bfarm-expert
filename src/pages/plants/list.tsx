@@ -79,7 +79,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
               });
             }}
           >
-            {t("plants.actions.add", "Add Plant")}
+            {t("plants.actions.add")}
           </CreateButton>,
         ]}
       >

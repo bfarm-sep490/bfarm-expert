@@ -102,6 +102,11 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];
       const updatedTask = {
         ...values,
+        created_by: user?.name as string,
+        items: values.items?.map((item: any) => ({
+          ...item,
+          unit: item.unit || "cái", // Set default unit if not provided
+        })),
       };
 
       if (editingTaskIndex !== null) {

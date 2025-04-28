@@ -65,7 +65,7 @@ export const PlanList = ({ children }: PropsWithChildren) => {
               });
             }}
           >
-            {t("plans.actions.add", "Add Plan")}
+            {t("plans.actions.add")}
           </CreateButton>,
         ]}
       >

@@ -60,6 +60,18 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
       const currentTasks = formProps.form?.getFieldValue("caring_tasks") || [];
       const updatedTask = {
         ...values,
+        items: values.items?.map((item: any) => ({
+          ...item,
+          unit: item.unit || "cái",
+        })),
+        fertilizers: values.fertilizers?.map((fertilizer: any) => ({
+          ...fertilizer,
+          unit: fertilizer.unit || "kg",
+        })),
+        pesticides: values.pesticides?.map((pesticide: any) => ({
+          ...pesticide,
+          unit: pesticide.unit || "kg",
+        })),
       };
 
       if (editingTaskIndex !== null) {

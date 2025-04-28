@@ -12,10 +12,19 @@ import {
   Col,
   theme,
   Tag,
+  Button,
+  Alert,
+  Descriptions,
 } from "antd";
-import { NumberOutlined, EnvironmentOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {
+  NumberOutlined,
+  EnvironmentOutlined,
+  InfoCircleOutlined,
+  BulbOutlined,
+} from "@ant-design/icons";
 import { IPlant, Template } from "@/interfaces";
 import React, { useEffect, useState } from "react";
+import { useSuggestYield } from "@/hooks/useTemplatePlan";
 
 const { Text } = Typography;
 
@@ -65,6 +74,11 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
   const { token } = theme.useToken();
   const [estimatedPerOne, setEstimatedPerOne] = useState<number | null>(null);
   const [calculationInfo, setCalculationInfo] = useState<string>("");
+  const [showSuggest, setShowSuggest] = useState(false);
+  const [selectedYield, setSelectedYield] = useState<any>(null);
+
+  const plantId = formProps.form?.getFieldValue("plant_id");
+  const { suggestYields, isLoading: isLoadingSuggest } = useSuggestYield(plantId);
 
   // Lấy thông tin cây trồng để lấy average_estimated_per_one
   const { data: plantData } = useOne({
@@ -179,6 +193,37 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
     return Promise.resolve();
   };
 
+  const handleYieldSelect = (value: number) => {
+    const yields = Array.isArray(suggestYields) ? suggestYields : suggestYields?.data || [];
+    const yield_ = yields.find((y: any) => y.id === value);
+    if (yield_) {
+      setSelectedYield(yield_);
+    } else {
+      setSelectedYield(null);
+      formProps.form?.setFieldsValue({ yield_id: undefined });
+    }
+  };
+
+  const handleSuggestYieldSelect = (yield_: any) => {
+    const selectedYieldData = yieldData?.data?.find((y) => y.id === yield_.id);
+    if (selectedYieldData) {
+      setSelectedYield(selectedYieldData);
+      formProps.form?.setFieldsValue({ yield_id: selectedYieldData.id });
+      setShowSuggest(false);
+    }
+  };
+
+  // Set selected yield from template when component mounts
+  useEffect(() => {
+    if (selectedTemplate?.yield_id) {
+      const templateYield = yieldData?.data?.find((y) => y.id === selectedTemplate.yield_id);
+      if (templateYield) {
+        setSelectedYield(templateYield);
+        formProps.form?.setFieldsValue({ yield_id: templateYield.id });
+      }
+    }
+  }, [selectedTemplate, yieldData]);
+
   return (
     <Card
       style={{
@@ -199,7 +244,115 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
               {t("plans.messages.production_info.description")}
             </Text>
           </Space>
+          {plantId && !selectedTemplate && (
+            <Button
+              type="primary"
+              icon={<BulbOutlined />}
+              onClick={() => setShowSuggest(!showSuggest)}
+              loading={isLoadingSuggest}
+            >
+              {showSuggest ? t("yields.clearSuggest") : t("yields.suggest")}
+            </Button>
+          )}
         </Flex>
+
+        {showSuggest && plantId && !selectedTemplate && (
+          <Alert
+            message={t("yields.selectPlantFirst")}
+            description={t("yields.selectPlantFirstDescription")}
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+          />
+        )}
+
+        {showSuggest &&
+          Array.isArray(suggestYields) &&
+          suggestYields.length > 0 &&
+          !selectedTemplate && (
+            <Alert
+              message="Gợi ý đất phù hợp"
+              description={
+                <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                  {suggestYields.map((yield_: any) => {
+                    const isAvailable = yield_.status === "Available";
+                    const startDate = formProps.form?.getFieldValue("start_date");
+                    const isAfterEndDate =
+                      startDate && yield_.estimated_end_date
+                        ? new Date(startDate) > new Date(yield_.estimated_end_date)
+                        : false;
+                    const canSelect = isAvailable || isAfterEndDate;
+
+                    return (
+                      <Card
+                        key={yield_.id}
+                        size="small"
+                        style={{
+                          cursor: canSelect ? "pointer" : "not-allowed",
+                          opacity: canSelect ? 1 : 0.7,
+                          borderColor: canSelect ? undefined : "#ff4d4f",
+                        }}
+                        onClick={() => {
+                          if (canSelect) {
+                            handleSuggestYieldSelect(yield_);
+                          }
+                        }}
+                      >
+                        <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                          <Space>
+                            <Text strong>{yield_.yield_name}</Text>
+                            <Text type="secondary">
+                              {yield_.area} {yield_.area_unit}
+                            </Text>
+                            <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
+                          </Space>
+                          <Text type="secondary">
+                            Số lượng hạt giống tối đa: {yield_.maximum_quantity} hạt
+                          </Text>
+                          {!isAvailable && (
+                            <>
+                              <Text type="secondary">
+                                Số kế hoạch đang sử dụng: {yield_.plan_id_in_use || 0}
+                              </Text>
+                              {yield_.estimated_end_date && (
+                                <>
+                                  <Text type="secondary">
+                                    Dự kiến kết thúc:{" "}
+                                    {new Date(yield_.estimated_end_date).toLocaleDateString()}
+                                  </Text>
+                                  {!startDate ? (
+                                    <Text type="warning">
+                                      Vui lòng chọn ngày bắt đầu sau{" "}
+                                      {new Date(yield_.estimated_end_date).toLocaleDateString()} để
+                                      sử dụng
+                                    </Text>
+                                  ) : isAfterEndDate ? (
+                                    <Text type="success">
+                                      Có thể sử dụng vì ngày bắt đầu (
+                                      {new Date(startDate).toLocaleDateString()}) sau ngày kết thúc
+                                    </Text>
+                                  ) : (
+                                    <Text type="danger">
+                                      Không thể sử dụng vì ngày bắt đầu (
+                                      {new Date(startDate).toLocaleDateString()}) trước ngày kết
+                                      thúc
+                                    </Text>
+                                  )}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </Space>
+                      </Card>
+                    );
+                  })}
+                </Space>
+              }
+              type="info"
+              showIcon
+              style={{ marginBottom: 16 }}
+            />
+          )}
 
         <Row gutter={24}>
           <Col span={12}>
@@ -216,22 +369,80 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
               ]}
               initialValue={selectedTemplate?.yield_id}
             >
-              <Select
-                size="large"
-                placeholder={t("plans.fields.land.placeholder")}
-                options={yieldsOptions}
-                showSearch
-                optionFilterProp="label"
-                notFoundContent={t("plans.messages.no_yields_found")}
-                optionRender={(option) => {
-                  const yield_ = yieldMap[option.value as number];
-                  return yield_ ? <YieldOption data={yield_} /> : option.label;
-                }}
-                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-              />
+              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <Select
+                  size="large"
+                  placeholder={t("plans.fields.land.placeholder")}
+                  options={yieldsOptions.map((option) => {
+                    const yields = Array.isArray(suggestYields)
+                      ? suggestYields
+                      : suggestYields?.data || [];
+                    const isSuggested = yields.some((y: any) => y.id === option.value);
+                    const suggestedYield = yields.find((y: any) => y.id === option.value);
+                    const isDisabled = Boolean(
+                      selectedTemplate ||
+                        !isSuggested ||
+                        (suggestedYield?.status !== "Available" &&
+                          (!suggestedYield?.estimated_end_date ||
+                            new Date(formProps.form?.getFieldValue("start_date")) <=
+                              new Date(suggestedYield.estimated_end_date))),
+                    );
+                    return {
+                      ...option,
+                      disabled: isDisabled,
+                      label: (
+                        <Space>
+                          {option.label}
+                          {!isSuggested && <Tag color="default">{t("yields.notSuggested")}</Tag>}
+                        </Space>
+                      ),
+                    };
+                  })}
+                  onChange={handleYieldSelect}
+                  value={selectedYield?.id}
+                  showSearch
+                  optionFilterProp="label"
+                  notFoundContent={t("plans.messages.no_yields_found")}
+                  optionRender={(option) => {
+                    const yield_ = yieldMap[option.value as number];
+                    return yield_ ? <YieldOption data={yield_} /> : option.label;
+                  }}
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  disabled={!!selectedTemplate}
+                />
+                {selectedYield && !selectedTemplate && (
+                  <Button type="link" onClick={() => setShowSuggest(true)} icon={<BulbOutlined />}>
+                    Xem lại gợi ý đất phù hợp
+                  </Button>
+                )}
+              </Space>
             </Form.Item>
           </Col>
         </Row>
+
+        {selectedYield && (
+          <Card size="small" style={{ width: "100%" }}>
+            <Descriptions bordered column={2} size="small">
+              <Descriptions.Item label="Tên đất" span={2}>
+                {selectedYield.yield_name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Loại" span={2}>
+                {selectedYield.type}
+              </Descriptions.Item>
+              <Descriptions.Item label="Mô tả" span={2}>
+                {selectedYield.description}
+              </Descriptions.Item>
+              <Descriptions.Item label="Diện tích">
+                {selectedYield.area} {selectedYield.area_unit}
+              </Descriptions.Item>
+              <Descriptions.Item label="Trạng thái">
+                <Tag color={selectedYield.status === "Available" ? "green" : "red"}>
+                  {selectedYield.status}
+                </Tag>
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        )}
 
         <Row gutter={24}>
           <Col span={12}>

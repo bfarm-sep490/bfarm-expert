@@ -203,6 +203,9 @@
     }
   },
   "plans": {
+    "actions": {
+      "add": "Add Plan"
+    },
     "fields": {
       "date": "Dates",
       "estimated_product": {
@@ -218,6 +221,9 @@
         "required": "Please enter plan name"
       },
       "plant": {
+        "actions": {
+          "add": "Add Crop"
+        },
         "label": "Crop",
         "placeholder": "Select a crop",
         "required": "Please select a crop"
@@ -381,6 +387,7 @@
       "end_date_after_start": "End date must be after start date"
     },
     "buttons": {
+      "add": "Add Plan",
       "add_task": "Add Task",
       "remove_task": "Remove Task",
       "add_item": "Add Item",
@@ -418,6 +425,9 @@
     }
   },
   "plants": {
+    "actions": {
+      "add": "Add Plant"
+    },
     "available": "Available",
     "basePrice": "Base price",
     "clearAllFilters": "Clear all filters",

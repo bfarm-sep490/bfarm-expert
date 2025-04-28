@@ -400,7 +400,13 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({
   );
 
   const renderTaskDetails = () => {
-    if (!selectedTemplate) return null;
+    const hasTasks =
+      formProps.form?.getFieldValue("caring_tasks")?.length > 0 ||
+      formProps.form?.getFieldValue("harvesting_tasks")?.length > 0 ||
+      formProps.form?.getFieldValue("inspecting_forms")?.length > 0 ||
+      formProps.form?.getFieldValue("packaging_tasks")?.length > 0;
+
+    if (!hasTasks) return null;
 
     return (
       <>
