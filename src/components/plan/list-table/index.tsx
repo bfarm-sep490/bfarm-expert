@@ -244,7 +244,7 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.description", "Description")}
+            {t("plans.fields.description.label", "Description")}
           </Typography.Text>
         }
         dataIndex="description"
@@ -300,7 +300,7 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.estimated_product", "Estimated Product")}
+            {t("plans.fields.estimated_product.label", "Estimated Product")}
           </Typography.Text>
         }
         dataIndex="estimated_product"
