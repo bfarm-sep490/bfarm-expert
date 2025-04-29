@@ -95,7 +95,7 @@
     },
     "timeline": {
       "orderStatuses": {
-        "cancelled": "Đơn hàng đã bị hủy",
+        "cancel": "Order is cancelled",
         "delivered": "Đơn hàng đã giao",
         "on the way": "Đơn hàng đang trên đường giao",
         "pending": "Đang chuẩn bị đơn hàng",
@@ -116,7 +116,7 @@
   },
   "enum": {
     "orderStatuses": {
-      "Cancelled": "Đã hủy",
+      "Cancel": "Cancelled",
       "Delivered": "Đã giao",
       "On The Way": "Đang trên đường",
       "Pending": "Đang chờ",
@@ -330,8 +330,7 @@
     },
     "status": {
       "cancel": "Hủy",
-      "cancelled": "Đã hủy",
-      "completed": "Hoàn thành",
+      "complete": "Complete",
       "draft": "Bản nháp",
       "ongoing": "Đang thực hiện",
       "pending": "Đang chờ"
