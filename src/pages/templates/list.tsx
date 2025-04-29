@@ -745,7 +745,9 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
           {...templateListProps}
           pagination={{
             ...templateListProps.pagination,
-            showTotal: (total: number) => <PaginationTotal total={total} entityName={"template"} />,
+            showTotal: (total: number) => (
+              <PaginationTotal total={total} entityName={"templates"} />
+            ),
           }}
           grid={{
             gutter: [16, 16],

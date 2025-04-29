@@ -97,7 +97,7 @@ export const PlanListTable = () => {
       scroll={{ x: true }}
       pagination={{
         ...tableProps.pagination,
-        showTotal: (total) => <PaginationTotal total={total} entityName="plan" />,
+        showTotal: (total) => <PaginationTotal total={total} entityName="plans" />,
       }}
       onRow={(record) => ({
         onClick: () => navigate(`${record.id}`),

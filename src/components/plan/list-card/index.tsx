@@ -155,7 +155,7 @@ export const PlanListCard = () => {
         {...planListProps}
         pagination={{
           ...planListProps.pagination,
-          showTotal: (total) => <PaginationTotal total={total} entityName={"plan"} />,
+          showTotal: (total) => <PaginationTotal total={total} entityName={"plans"} />,
         }}
         grid={{
           gutter: [16, 16],
