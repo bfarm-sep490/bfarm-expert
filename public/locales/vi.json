@@ -203,6 +203,7 @@
     }
   },
   "plans": {
+    "plans": "Plans",
     "actions": {
       "add": "Thêm kế hoạch"
     },
@@ -424,6 +425,7 @@
     }
   },
   "plants": {
+    "plants": "Plants",
     "actions": {
       "add": "Thêm cây trồng"
     },
@@ -560,6 +562,7 @@
     "unavailable": "Không có sẵn"
   },
   "templates": {
+    "templates": "Templates",
     "fields": {
       "plant": "Cây trồng",
       "description": "Mô tả",
