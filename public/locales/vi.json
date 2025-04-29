@@ -95,7 +95,7 @@
     },
     "timeline": {
       "orderStatuses": {
-        "cancel": "Order is cancelled",
+        "cancel": "Đơn hàng đã bị hủy",
         "delivered": "Đơn hàng đã giao",
         "on the way": "Đơn hàng đang trên đường giao",
         "pending": "Đang chuẩn bị đơn hàng",
@@ -116,7 +116,7 @@
   },
   "enum": {
     "orderStatuses": {
-      "Cancel": "Cancelled",
+      "Cancel": "Đã hủy",
       "Delivered": "Đã giao",
       "On The Way": "Đang trên đường",
       "Pending": "Đang chờ",
@@ -203,8 +203,9 @@
     }
   },
   "plans": {
+    "plans": "Kế hoạch",
     "actions": {
-      "add": "Add Plan"
+      "add": "Thêm kế hoạch"
     },
     "fields": {
       "date": "Ngày",
@@ -222,7 +223,7 @@
       },
       "plant": {
         "actions": {
-          "add": "Add Crop"
+          "add": "Thêm cây"
         },
         "label": "Cây trồng",
         "placeholder": "Chọn cây trồng",
@@ -330,7 +331,7 @@
     },
     "status": {
       "cancel": "Hủy",
-      "complete": "Complete",
+      "complete": "Hoàn thành",
       "draft": "Bản nháp",
       "ongoing": "Đang thực hiện",
       "pending": "Đang chờ"
@@ -386,7 +387,7 @@
       "end_date_after_start": "Ngày kết thúc phải sau ngày bắt đầu"
     },
     "buttons": {
-      "add": "Add Plan",
+      "add": "Thêm kế hoạch",
       "add_task": "Thêm nhiệm vụ",
       "remove_task": "Xóa nhiệm vụ",
       "add_item": "Thêm mục",
@@ -424,8 +425,9 @@
     }
   },
   "plants": {
+    "plants": "Cây trồng",
     "actions": {
-      "add": "Add Plant"
+      "add": "Thêm cây trồng"
     },
     "available": "Có sẵn",
     "basePrice": "Giá cơ bản",
@@ -560,6 +562,7 @@
     "unavailable": "Không có sẵn"
   },
   "templates": {
+    "templates": "Các Mẫu",
     "fields": {
       "plant": "Cây trồng",
       "description": "Mô tả",
