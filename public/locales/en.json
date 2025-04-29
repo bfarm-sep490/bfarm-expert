@@ -95,7 +95,7 @@
     },
     "timeline": {
       "orderStatuses": {
-        "cancelled": "Order is cancelled",
+        "cancel": "Order is cancelled",
         "delivered": "Order is delivered",
         "on the way": "Order is on the way",
         "pending": "Preparing order",
@@ -116,7 +116,7 @@
   },
   "enum": {
     "orderStatuses": {
-      "Cancelled": "Cancelled",
+      "Cancel": "Cancelled",
       "Delivered": "Delivered",
       "On The Way": "On the way",
       "Pending": "Pending",
@@ -330,8 +330,7 @@
     },
     "status": {
       "cancel": "Cancel",
-      "cancelled": "Cancelled",
-      "completed": "Completed",
+      "complete": "Complete",
       "draft": "Draft",
       "ongoing": "Ongoing",
       "pending": "Pending"

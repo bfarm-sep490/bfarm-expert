@@ -65,9 +65,9 @@ export const PlanListTable = () => {
         return "blue";
       case "ongoing":
         return "green";
-      case "completed":
+      case "complete":
         return "purple";
-      case "cancelled":
+      case "cancel":
         return "red";
       default:
         return "default";
@@ -287,8 +287,8 @@ export const PlanListTable = () => {
             >
               <Select.Option value="Pending">{t("plans.status.pending")}</Select.Option>
               <Select.Option value="Ongoing">{t("plans.status.ongoing")}</Select.Option>
-              <Select.Option value="Completed">{t("plans.status.completed")}</Select.Option>
-              <Select.Option value="Cancelled">{t("plans.status.cancelled")}</Select.Option>
+              <Select.Option value="Complete">{t("plans.status.complete")}</Select.Option>
+              <Select.Option value="Cancel">{t("plans.status.cancel")}</Select.Option>
             </Select>
           </FilterDropdown>
         )}

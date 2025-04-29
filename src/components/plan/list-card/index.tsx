@@ -79,7 +79,7 @@ export const PlanListCard = () => {
     ]);
   };
 
-  const statusOptions = ["Pending", "Ongoing", "Completed", "Cancelled"];
+  const statusOptions = ["Pending", "Ongoing", "Complete", "Cancel"];
 
   // Hàm lấy màu sắc cho trạng thái
   const getStatusColor = (status: string) => {
@@ -88,9 +88,9 @@ export const PlanListCard = () => {
         return "blue";
       case "ongoing":
         return "green";
-      case "completed":
+      case "complete":
         return "purple";
-      case "cancelled":
+      case "cancel":
         return "red";
       default:
         return "default";
