@@ -203,6 +203,7 @@
     }
   },
   "plans": {
+    "plans": "Plans",
     "actions": {
       "add": "Add Plan"
     },
@@ -424,6 +425,7 @@
     }
   },
   "plants": {
+    "plants": "Plants",
     "actions": {
       "add": "Add Plant"
     },
@@ -560,6 +562,7 @@
     "unavailable": "Unavailable"
   },
   "templates": {
+    "templates": "Templates",
     "fields": {
       "plant": "Plant",
       "description": "Description",
