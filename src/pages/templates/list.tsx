@@ -43,6 +43,7 @@ import { NumberWithUnit } from "../../components/number-with-unit";
 import { createStyles } from "antd-style";
 import { IPlant, ITemplate, IItem, IFertilizer, IPesticide } from "@/interfaces";
 import type { ColumnType } from "antd/es/table";
+import { TOKEN_KEY } from "@/authProvider";
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -523,6 +524,7 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
               }}
               headers={{
                 accept: "*/*",
+                Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
               }}
             >
               <p className="ant-upload-drag-icon">
