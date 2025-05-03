@@ -86,8 +86,10 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       formProps.form?.setFieldsValue({
         packaging_tasks: newTasks,
       });
+      // Increment count for each new task created
+      newTasks.forEach(() => incrementCount("packaging"));
     }
-  }, [orders, formProps.form, user?.name]);
+  }, [orders, formProps.form, user?.name, incrementCount]);
 
   const handleEditTask = (index: number) => {
     const currentTasks = formProps.form?.getFieldValue("packaging_tasks") || [];

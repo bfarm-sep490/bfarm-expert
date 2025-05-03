@@ -413,6 +413,26 @@ export const useFormList = (props: UseFormListProps) => {
                 ),
               },
               {
+                key: "inspecting",
+                label: (
+                  <Space>
+                    <FileSearchOutlined />
+                    <span>Công việc kiểm định</span>
+                    {formProps.form?.getFieldValue("inspecting_forms")?.length > 0 && (
+                      <Tag color="blue">
+                        {formProps.form?.getFieldValue("inspecting_forms")?.length}
+                      </Tag>
+                    )}
+                  </Space>
+                ),
+                children: (
+                  <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                    {/* Inspecting forms tab content */}
+                    {/* ... */}
+                  </Space>
+                ),
+              },
+              {
                 key: "harvesting",
                 label: (
                   <Space>
@@ -432,26 +452,7 @@ export const useFormList = (props: UseFormListProps) => {
                   </Space>
                 ),
               },
-              {
-                key: "inspecting",
-                label: (
-                  <Space>
-                    <FileSearchOutlined />
-                    <span>Công việc kiểm tra</span>
-                    {formProps.form?.getFieldValue("inspecting_forms")?.length > 0 && (
-                      <Tag color="blue">
-                        {formProps.form?.getFieldValue("inspecting_forms")?.length}
-                      </Tag>
-                    )}
-                  </Space>
-                ),
-                children: (
-                  <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                    {/* Inspecting forms tab content */}
-                    {/* ... */}
-                  </Space>
-                ),
-              },
+
               {
                 key: "packaging",
                 label: (

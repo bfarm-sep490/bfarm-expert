@@ -34,6 +34,9 @@ export const useNotificationSystem = () => {
     const handleNotification = (message: { data: NotificationMessage }) => {
       const notification = message.data;
 
+      const event = new CustomEvent(`new-notification-expert-${user.id}-received`);
+      window.dispatchEvent(event);
+
       api.info({
         key: `ably-${notification.id}`,
         message: notification?.data?.Title || "Thông báo",

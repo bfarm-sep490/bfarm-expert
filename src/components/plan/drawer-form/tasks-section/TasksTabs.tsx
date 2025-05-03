@@ -68,6 +68,17 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
             ),
           },
           {
+            key: "inspecting",
+            label: (
+              <Space>
+                <FileSearchOutlined />
+                <span>Công việc kiểm định</span>
+                {counts.inspecting > 0 && <Tag color="blue">{counts.inspecting}</Tag>}
+              </Space>
+            ),
+            children: <InspectionTasksPanel formProps={formProps} identity={identity} />,
+          },
+          {
             key: "harvesting",
             label: (
               <Space>
@@ -78,17 +89,7 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
             ),
             children: <HarvestTasksPanel formProps={formProps} itemsOptions={itemsOptions} />,
           },
-          {
-            key: "inspecting",
-            label: (
-              <Space>
-                <FileSearchOutlined />
-                <span>Công việc kiểm tra</span>
-                {counts.inspecting > 0 && <Tag color="blue">{counts.inspecting}</Tag>}
-              </Space>
-            ),
-            children: <InspectionTasksPanel formProps={formProps} identity={identity} />,
-          },
+
           {
             key: "packaging",
             label: (
