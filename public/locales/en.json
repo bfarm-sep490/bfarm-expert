@@ -50,7 +50,9 @@
   },
   "common": {
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "approved": "Approved",
+    "notApproved": "Not Approved"
   },
   "dashboard": {
     "dailyOrders": {

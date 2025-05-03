@@ -1,24 +1,10 @@
 import { DateField } from "@refinedev/antd";
-import {
-  Button,
-  Card,
-  Flex,
-  FormProps,
-  notification,
-  Select,
-  Table,
-  Tabs,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Button, Flex, FormProps, notification, Select, Table, Tabs, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CaringTypeTag } from "../../../components/caring-task/type-tag";
-import React, { use, useEffect } from "react";
-import ReactApexChart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
 import { useParams } from "react-router";
-import { useCustom, useCustomMutation, useOne, useUpdate } from "@refinedev/core";
-import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { useOne, useUpdate } from "@refinedev/core";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 interface Task {
   id: number;
@@ -114,7 +100,6 @@ export const AssignTasks = ({
       if (record?.farmer_id === farmer.id) return true;
       const farmerSchedule = chosenSchedule?.find((s) => s?.id === farmer?.id);
       if (farmerSchedule?.list_schedule?.length === 0) return true;
-      console.log("farmerSchedule", farmerSchedule);
       const availableSchedule = farmerSchedule?.list_schedule?.some(
         (schedule: any) =>
           new Date(schedule?.start_date) <= new Date(record?.start_date) &&

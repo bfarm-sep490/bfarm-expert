@@ -16,7 +16,6 @@ import {
   Card,
   Image,
   Descriptions,
-  Alert,
   Tabs,
   Collapse,
   Empty,
@@ -30,6 +29,7 @@ import {
   ToolOutlined,
   CheckOutlined,
   InboxOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
@@ -61,7 +61,10 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
   const [showSuggest, setShowSuggest] = useState(true);
   const { getTemplatePlan, isLoading, data, plantsOptions, yieldsOptions, plantsData, yieldsData } =
     useTemplatePlan();
-  const { suggestYields, isLoading: isSuggestLoading } = useSuggestYield(selectedPlant?.id);
+  const [forceUpdate, setForceUpdate] = useState(0);
+  const [tempPlantId, setTempPlantId] = useState<number | undefined>(selectedPlant?.id);
+  const [isSuggestButtonLoading, setIsSuggestButtonLoading] = useState(false);
+  const { suggestYields, isLoading: isSuggestLoading } = useSuggestYield(tempPlantId);
   const { selectedOrders, selectedPlantId, totalQuantity } = useOrderStore();
   const { data: identity } = useGetIdentity<{ id: number; name: string }>();
   const expert_id = identity?.id;
@@ -101,6 +104,18 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
       }
     }
   }, [form.getFieldValue("start_date")]);
+
+  useEffect(() => {
+    if (selectedPlant?.id) {
+      setTempPlantId(selectedPlant.id);
+    }
+  }, [selectedPlant]);
+
+  useEffect(() => {
+    if (selectedPlantId) {
+      setTempPlantId(selectedPlantId);
+    }
+  }, [selectedPlantId]);
 
   const onDrawerClose = () => {
     onClose();
@@ -166,6 +181,8 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
   const handlePlantSelect = (value: number) => {
     const plant = plantsData.find((p) => p.id === value);
     setSelectedPlant(plant || null);
+    setSelectedYield(null);
+    form.setFieldsValue({ yield_id: undefined });
     setShowSuggest(true);
   };
 
@@ -189,7 +206,6 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
     }
   };
 
-  // Thêm useEffect để theo dõi thay đổi của selectedYield
   useEffect(() => {
     if (selectedYield) {
       form.setFieldsValue({ yield_id: selectedYield.id });
@@ -391,107 +407,159 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                       value={selectedYield?.id}
                       disabled={!selectedPlant}
                     />
-                    {selectedYield && (
+                    <Space>
+                      {selectedYield && (
+                        <Button
+                          type="link"
+                          onClick={() => setShowSuggest(true)}
+                          icon={<BulbOutlined />}
+                          style={{ color: token.colorPrimary }}
+                        >
+                          Xem lại gợi ý vụ mùa phù hợp
+                        </Button>
+                      )}
                       <Button
-                        type="link"
-                        onClick={() => setShowSuggest(true)}
+                        type="primary"
+                        onClick={() => {
+                          setShowSuggest(true);
+                          setIsSuggestButtonLoading(true);
+                          setTempPlantId(undefined);
+                          setTimeout(() => {
+                            setTempPlantId(selectedPlant?.id);
+                            setIsSuggestButtonLoading(false);
+                          }, 0);
+                        }}
                         icon={<BulbOutlined />}
+                        disabled={!selectedPlant}
+                        loading={isSuggestButtonLoading}
                       >
-                        Xem lại gợi ý vụ mùa phù hợp
+                        Gợi ý lại
                       </Button>
-                    )}
+                    </Space>
                   </Space>
                 </Form.Item>
 
-                {selectedPlant &&
-                  showSuggest &&
-                  Array.isArray(suggestYields) &&
-                  suggestYields.length > 0 && (
-                    <Alert
-                      message="Gợi ý vụ mùa phù hợp"
-                      description={
-                        <Space direction="vertical" size="small" style={{ width: "100%" }}>
-                          {suggestYields.map((yield_: IYield) => {
-                            const isAvailable = yield_.status === "Available";
-                            const startDate = form.getFieldValue("start_date");
-                            const isAfterEndDate =
-                              startDate && yield_.estimated_end_date
-                                ? new Date(startDate) > new Date(yield_.estimated_end_date)
-                                : false;
-                            const canSelect = isAvailable || isAfterEndDate;
+                {selectedPlant && showSuggest && (
+                  <Card
+                    size="small"
+                    style={{
+                      background: token.colorBgContainer,
+                      border: `1px solid ${token.colorBorder}`,
+                    }}
+                    title={
+                      <Space>
+                        <BulbOutlined style={{ color: token.colorWarning }} />
+                        <Text strong>Gợi ý vụ mùa phù hợp</Text>
+                        {isSuggestLoading && <Spin size="small" />}
+                      </Space>
+                    }
+                    extra={
+                      <Button
+                        type="text"
+                        size="small"
+                        onClick={() => setShowSuggest(false)}
+                        icon={<CloseOutlined />}
+                      />
+                    }
+                  >
+                    {Array.isArray(suggestYields) && suggestYields.length > 0 ? (
+                      <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                        {suggestYields.map((yield_: IYield) => {
+                          const isAvailable = yield_.status === "Available";
+                          const startDate = form.getFieldValue("start_date");
+                          const isAfterEndDate =
+                            startDate && yield_.estimated_end_date
+                              ? new Date(startDate) > new Date(yield_.estimated_end_date)
+                              : false;
+                          const canSelect = isAvailable || isAfterEndDate;
 
-                            return (
-                              <Card
-                                key={yield_.id}
-                                size="small"
-                                style={{
-                                  cursor: canSelect ? "pointer" : "not-allowed",
-                                  opacity: canSelect ? 1 : 0.7,
-                                  borderColor: canSelect ? undefined : "#ff4d4f",
-                                }}
-                                onClick={() => {
-                                  if (canSelect) {
-                                    handleSuggestYieldSelect(yield_);
-                                  }
-                                }}
-                              >
-                                <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                          return (
+                            <Card
+                              key={yield_.id}
+                              size="small"
+                              style={{
+                                cursor: canSelect ? "pointer" : "not-allowed",
+                                opacity: canSelect ? 1 : 0.7,
+                                borderColor: canSelect ? token.colorBorder : token.colorError,
+                                background: canSelect
+                                  ? token.colorBgContainer
+                                  : token.colorBgLayout,
+                                transition: "all 0.3s",
+                              }}
+                              onClick={() => {
+                                if (canSelect) {
+                                  handleSuggestYieldSelect(yield_);
+                                }
+                              }}
+                              hoverable={canSelect}
+                            >
+                              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                                <Flex justify="space-between" align="center">
                                   <Space>
                                     <Text strong>{yield_.yield_name}</Text>
                                     <Text type="secondary">
                                       {yield_.area} {yield_.area_unit}
                                     </Text>
-                                    <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
                                   </Space>
-                                  <Text type="secondary">
-                                    Số lượng hạt giống tối đa: {yield_.maximum_quantity} hạt
-                                  </Text>
-                                  {!isAvailable && (
-                                    <>
-                                      <Text type="secondary">
-                                        Số kế hoạch đang sử dụng: {yield_.plan_id_in_use || 0}
-                                      </Text>
-                                      {yield_.estimated_end_date && (
-                                        <>
-                                          <Text type="secondary">
-                                            Dự kiến kết thúc:{" "}
+                                  <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
+                                </Flex>
+                                <Text type="secondary">
+                                  Số lượng hạt giống tối đa: {yield_.maximum_quantity} hạt
+                                </Text>
+                                {!isAvailable && (
+                                  <>
+                                    <Text type="secondary">
+                                      Số kế hoạch đang sử dụng: {yield_.plan_id_in_use || 0}
+                                    </Text>
+                                    {yield_.estimated_end_date && (
+                                      <>
+                                        <Text type="secondary">
+                                          Dự kiến kết thúc:{" "}
+                                          {new Date(yield_.estimated_end_date).toLocaleDateString()}
+                                        </Text>
+                                        {!startDate ? (
+                                          <Text type="warning">
+                                            Vui lòng chọn ngày bắt đầu sau{" "}
                                             {new Date(
                                               yield_.estimated_end_date,
-                                            ).toLocaleDateString()}
+                                            ).toLocaleDateString()}{" "}
+                                            để sử dụng
                                           </Text>
-                                          {!startDate ? (
-                                            <Text type="warning">
-                                              Vui lòng chọn ngày bắt đầu sau{" "}
-                                              {new Date(
-                                                yield_.estimated_end_date,
-                                              ).toLocaleDateString()}{" "}
-                                              để sử dụng
-                                            </Text>
-                                          ) : isAfterEndDate ? (
-                                            <Text type="success">
-                                              Có thể sử dụng vì ngày bắt đầu (
-                                              {new Date(startDate).toLocaleDateString()}) sau ngày
-                                              kết thúc
-                                            </Text>
-                                          ) : (
-                                            <Text type="danger">
-                                              Không thể sử dụng vì ngày bắt đầu (
-                                              {new Date(startDate).toLocaleDateString()}) trước ngày
-                                              kết thúc
-                                            </Text>
-                                          )}
-                                        </>
-                                      )}
-                                    </>
-                                  )}
-                                </Space>
-                              </Card>
-                            );
-                          })}
-                        </Space>
-                      }
-                    />
-                  )}
+                                        ) : isAfterEndDate ? (
+                                          <Text type="success">
+                                            Có thể sử dụng vì ngày bắt đầu (
+                                            {new Date(startDate).toLocaleDateString()}) sau ngày kết
+                                            thúc
+                                          </Text>
+                                        ) : (
+                                          <Text type="danger">
+                                            Không thể sử dụng vì ngày bắt đầu (
+                                            {new Date(startDate).toLocaleDateString()}) trước ngày
+                                            kết thúc
+                                          </Text>
+                                        )}
+                                      </>
+                                    )}
+                                  </>
+                                )}
+                              </Space>
+                            </Card>
+                          );
+                        })}
+                      </Space>
+                    ) : (
+                      <Empty
+                        description={
+                          <Text type="secondary">
+                            {isSuggestLoading
+                              ? "Đang tải gợi ý..."
+                              : "Không có gợi ý vụ mùa phù hợp"}
+                          </Text>
+                        }
+                      />
+                    )}
+                  </Card>
+                )}
 
                 {selectedYield && (
                   <Card size="small" style={{ width: "100%" }}>
