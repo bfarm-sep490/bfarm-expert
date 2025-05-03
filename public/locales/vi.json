@@ -50,7 +50,9 @@
   },
   "common": {
     "no": "Không",
-    "yes": "Có"
+    "yes": "Có",
+    "approved": "Approved",
+    "notApproved": "Not Approved"
   },
   "dashboard": {
     "dailyOrders": {
