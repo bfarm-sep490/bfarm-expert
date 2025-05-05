@@ -43,6 +43,7 @@ import { ablyClient } from "./utils/ablyClient";
 import { TemplateList } from "./pages/templates/list";
 import { TemplateEdit } from "./pages/templates";
 import { liveProvider } from "@refinedev/ably";
+import { notificationProvider } from "./providers/notification-provider";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -94,7 +95,7 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              notificationProvider={useNotificationProvider}
+              notificationProvider={notificationProvider}
               liveProvider={liveProvider(ablyClient)}
               resources={[
                 {

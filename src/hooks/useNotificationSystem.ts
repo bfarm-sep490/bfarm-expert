@@ -1,7 +1,7 @@
-import { notification } from "antd";
 import { useEffect } from "react";
 import { ablyClient } from "@/utils/ablyClient";
 import { useGetIdentity } from "@refinedev/core";
+import { toast } from "react-toastify";
 
 interface NotificationMessage {
   id: number;
@@ -21,9 +21,6 @@ interface IIdentity {
 }
 
 export const useNotificationSystem = () => {
-  const [api, contextHolder] = notification.useNotification({
-    stack: true,
-  });
   const { data: user } = useGetIdentity<IIdentity>();
 
   useEffect(() => {
@@ -37,13 +34,15 @@ export const useNotificationSystem = () => {
       const event = new CustomEvent(`new-notification-expert-${user.id}-received`);
       window.dispatchEvent(event);
 
-      api.info({
-        key: `ably-${notification.id}`,
-        message: notification?.data?.Title || "Thông báo",
-        description: notification?.data?.Body || "Bạn có thông báo mới",
-        showProgress: true,
+      toast(notification?.data?.Body || "Bạn có thông báo mới", {
+        toastId: `ably-${notification.id}`,
+        type: "success",
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
         pauseOnHover: true,
-        placement: "bottomRight",
+        draggable: true,
       });
     };
 
@@ -52,7 +51,7 @@ export const useNotificationSystem = () => {
     return () => {
       channel.unsubscribe("Notification", handleNotification);
     };
-  }, [user?.id, api]);
+  }, [user?.id]);
 
-  return contextHolder;
+  return null;
 };
