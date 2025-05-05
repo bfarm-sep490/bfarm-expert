@@ -376,11 +376,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                   <Input.TextArea placeholder="Mô tả" rows={2} />
                 </Form.Item>
 
-                <Form.Item
-                  name="total_package_weight"
-                  label="Tổng khối lượng"
-                  rules={[{ required: true, message: "Vui lòng nhập tổng khối lượng" }]}
-                >
+                <Form.Item name="total_package_weight" label="Tổng khối lượng">
                   <InputNumber
                     min={0}
                     style={{ width: "100%" }}
