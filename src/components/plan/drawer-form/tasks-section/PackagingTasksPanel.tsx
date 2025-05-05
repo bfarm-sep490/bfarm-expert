@@ -109,6 +109,10 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
           ...item,
           unit: item.unit || "cái", // Set default unit if not provided
         })),
+        // Nếu có order_id thì lấy quantity từ order
+        total_package_weight: values.order_id
+          ? orders.find((order) => order.id === values.order_id)?.quantity
+          : values.total_package_weight,
       };
 
       if (editingTaskIndex !== null) {
@@ -123,6 +127,17 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       form.resetFields();
     });
   };
+
+  // Thêm useEffect để tự động cập nhật total_package_weight khi chọn order
+  useEffect(() => {
+    const orderId = form.getFieldValue("order_id");
+    if (orderId) {
+      const selectedOrder = orders.find((order) => order.id === orderId);
+      if (selectedOrder) {
+        form.setFieldValue("total_package_weight", selectedOrder.quantity);
+      }
+    }
+  }, [form.getFieldValue("order_id")]);
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
@@ -156,6 +171,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       title: "Tên công việc",
       dataIndex: "task_name",
       key: "task_name",
+      width: 200,
       sorter: (a: any, b: any) => a.task_name.localeCompare(b.task_name),
       filterSearch: true,
     },
@@ -165,6 +181,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
             title: "Order ID",
             dataIndex: "order_id",
             key: "order_id",
+            width: 100,
             render: (orderId: string) => <Tag color="green">Order {orderId}</Tag>,
           },
         ]
@@ -173,12 +190,14 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       title: "Người tạo",
       dataIndex: "created_by",
       key: "created_by",
+      width: 120,
       render: (createdBy: string) => <Tag color="blue">{createdBy}</Tag>,
     },
     {
       title: "Loại đóng gói",
       dataIndex: "packaging_type_id",
       key: "packaging_type_id",
+      width: 120,
       render: (typeId: number) => {
         const type = packagingTypesOptions.find((opt) => opt.value === typeId);
         return <Tag color="blue">{type?.label}</Tag>;
@@ -188,6 +207,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       title: "Tổng khối lượng",
       dataIndex: "total_package_weight",
       key: "total_package_weight",
+      width: 120,
       render: (weight: number) => `${weight} kg`,
       sorter: (a: any, b: any) => a.total_package_weight - b.total_package_weight,
     },
@@ -195,6 +215,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       title: "Ngày bắt đầu",
       dataIndex: "start_date",
       key: "start_date",
+      width: 150,
       render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.start_date).unix() - dayjs(b.start_date).unix(),
     },
@@ -202,12 +223,15 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
       title: "Ngày kết thúc",
       dataIndex: "end_date",
       key: "end_date",
+      width: 150,
       render: (date: any) => dayjs(date).format("DD/MM/YYYY HH:mm"),
       sorter: (a: any, b: any) => dayjs(a.end_date).unix() - dayjs(b.end_date).unix(),
     },
     {
       title: "Hành động",
       key: "action",
+      width: 100,
+      fixed: "right" as const,
       render: (_: any, record: any) => (
         <Space>
           <Tooltip title="Chỉnh sửa">
@@ -376,12 +400,27 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                   <Input.TextArea placeholder="Mô tả" rows={2} />
                 </Form.Item>
 
-                <Form.Item name="total_package_weight" label="Tổng khối lượng">
+                <Form.Item
+                  name="total_package_weight"
+                  label="Tổng khối lượng"
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const orderId = getFieldValue("order_id");
+                        if (orderId && (!value || value <= 0)) {
+                          return Promise.reject("Vui lòng nhập tổng khối lượng cho order");
+                        }
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
                   <InputNumber
                     min={0}
                     style={{ width: "100%" }}
                     placeholder="Tổng khối lượng"
                     addonAfter="kg"
+                    disabled={!!form.getFieldValue("order_id")}
                   />
                 </Form.Item>
 

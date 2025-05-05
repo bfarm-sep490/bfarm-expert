@@ -5,7 +5,12 @@
     "delete": "Delete",
     "edit": "Edit",
     "list": "List",
-    "show": "Show"
+    "show": "Show",
+    "submit": "Submit",
+    "approval": "Approval",
+    "draft": "Draft",
+    "ongoing": "Ongoing",
+    "pending": "Pending"
   },
   "buttons": {
     "accept": "Accept",

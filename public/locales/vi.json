@@ -5,7 +5,11 @@
     "delete": "Xóa",
     "edit": "Chỉnh sửa",
     "list": "Danh sách",
-    "show": "Hiển thị"
+    "show": "Hiển thị",
+    "approval": "Duyệt",
+    "draft": "Bản nháp",
+    "ongoing": "Đang thực hiện",
+    "pending": "Chờ duyệt"
   },
   "buttons": {
     "accept": "Chấp nhận",

@@ -152,6 +152,10 @@ export const PlanDrawer = (props: Props) => {
         packaging_tasks: [],
         order_ids: selectedOrders.map((order) => order.id),
       },
+      successNotification: {
+        message: "Kế hoạch đã được tạo thành công",
+        type: "success",
+      },
     });
 
   // Cập nhật order_ids khi selectedOrders thay đổi

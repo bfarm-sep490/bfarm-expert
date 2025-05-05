@@ -84,9 +84,7 @@ export const PlanActions: React.FC<PlanActionProps> = ({ record, onSuccess }) =>
             style={{ width: "100%", textAlign: "left", padding: "4px 8px" }}
             onClick={() => handleStatusChange(record.status === "Draft" ? "Pending" : "Draft")}
           >
-            {record.status === "Draft"
-              ? t("plans.actions.submitForApproval", "Approval")
-              : t("plans.actions.moveToDraft", "Draft")}
+            {record.status === "Draft" ? t("actions.approval") : t("actions.draft")}
           </Button>
         ),
       },

@@ -160,17 +160,19 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
       const formattedTemplates = data.map(
         (template: ITemplatePlanResponse["data"][0], index: number) => {
           const plantName = plantsData.find((p) => p.id === template.plant_id)?.plant_name || "";
+          const startDate = form.getFieldValue("start_date");
+          const year = startDate ? dayjs(startDate).format("YYYY") : "";
           return {
             ...template,
-            name: `Kế hoạch ${plantName} - ${template.season_name}`,
-            description: `Template cho ${plantName} mùa ${template.season_name}`,
+            name: `Kế hoạch ${plantName} - ${template.season_name} ${year}`,
+            description: `Template cho ${plantName} mùa ${template.season_name} năm ${year}`,
           };
         },
       );
       setTemplates(formattedTemplates);
       setIsTemplateListVisible(true);
     }
-  }, [data, plantsData]);
+  }, [data, plantsData, form]);
 
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
@@ -253,62 +255,6 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
         <Spin spinning={isLoading}>
           <Form form={form} layout="vertical">
             <Space direction="vertical" size="large" style={{ width: "100%", padding: "24px" }}>
-              <Form.Item
-                label={
-                  <span>
-                    <CalendarOutlined /> {t("plans.fields.start_date.label")}
-                  </span>
-                }
-                name="start_date"
-                rules={[
-                  { required: true, message: t("plans.fields.start_date.required") },
-                  {
-                    validator: (_, value) => {
-                      if (value) {
-                        const startDate = dayjs(value);
-                        const today = dayjs().startOf("day");
-
-                        if (startDate.isBefore(today)) {
-                          return Promise.reject(new Error("Không thể chọn ngày trong quá khứ"));
-                        }
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <DatePicker
-                  size="large"
-                  style={{ width: "100%" }}
-                  format="DD/MM/YYYY"
-                  disabledDate={(current) => {
-                    if (current && current < dayjs().startOf("day")) {
-                      return true;
-                    }
-                    return false;
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label={
-                  <span>
-                    <NumberOutlined /> {t("plans.fields.estimated_product.label")}
-                  </span>
-                }
-                name="estimated_product"
-                rules={[{ required: true, message: t("plans.fields.estimated_product.required") }]}
-              >
-                <InputNumber
-                  size="large"
-                  min={0}
-                  style={{ width: "100%" }}
-                  placeholder={t("plans.fields.estimated_product.placeholder")}
-                  addonAfter="kg"
-                  value={totalQuantity}
-                />
-              </Form.Item>
-
               <Space direction="vertical" size="small" style={{ width: "100%" }}>
                 <Form.Item
                   label={
@@ -365,6 +311,72 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                   </Card>
                 )}
               </Space>
+              <Form.Item
+                label={
+                  <span>
+                    <CalendarOutlined /> {t("plans.fields.start_date.label")}
+                  </span>
+                }
+                name="start_date"
+                rules={[
+                  { required: true, message: t("plans.fields.start_date.required") },
+                  {
+                    validator: (_, value) => {
+                      if (value) {
+                        const startDate = dayjs(value);
+                        const today = dayjs().startOf("day");
+
+                        if (startDate.isBefore(today)) {
+                          return Promise.reject(new Error("Không thể chọn ngày trong quá khứ"));
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <DatePicker
+                  size="large"
+                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
+                  disabledDate={(current) => {
+                    if (current && current < dayjs().startOf("day")) {
+                      return true;
+                    }
+                    return false;
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <span>
+                    <NumberOutlined /> {t("plans.fields.estimated_product.label")}
+                  </span>
+                }
+                name="estimated_product"
+                rules={[
+                  { required: true, message: t("plans.fields.estimated_product.required") },
+                  {
+                    validator: (_, value) => {
+                      if (value < 10) {
+                        return Promise.reject("Sản phẩm ước tính phải lớn hơn hoặc bằng 10kg");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber
+                  size="large"
+                  min={10}
+                  defaultValue={10}
+                  style={{ width: "100%" }}
+                  placeholder={t("plans.fields.estimated_product.placeholder")}
+                  addonAfter="kg"
+                  value={totalQuantity}
+                />
+              </Form.Item>
 
               <Space direction="vertical" size="small" style={{ width: "100%" }}>
                 <Form.Item
@@ -504,7 +516,7 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                                   <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
                                 </Flex>
                                 <Text type="secondary">
-                                  Số lượng hạt giống tối đa: {yield_.maximum_quantity} hạt
+                                  Số lượng tối đa: {yield_.maximum_quantity} đơn vị
                                 </Text>
                                 {!isAvailable && (
                                   <>

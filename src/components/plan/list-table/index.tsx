@@ -314,6 +314,25 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
+            {t("plans.fields.evaluated_result", "Evaluated Result")}
+          </Typography.Text>
+        }
+        dataIndex="evaluated_result"
+        sorter
+        defaultSortOrder={getDefaultSortOrder("evaluated_result", sorters)}
+        render={(value: string) => (
+          <Typography.Paragraph
+            ellipsis={{ rows: 1, tooltip: true }}
+            style={{ maxWidth: "280px", marginBottom: 0 }}
+          >
+            {value}
+          </Typography.Paragraph>
+        )}
+      />
+
+      <Table.Column
+        title={
+          <Typography.Text style={{ whiteSpace: "nowrap" }}>
             {t("plans.fields.date", "Dates")}
           </Typography.Text>
         }
