@@ -23,18 +23,16 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { useGetIdentity } from "@refinedev/core";
 import { useTaskStore } from "@/store/task-store";
+import { useItems } from "../hooks/useItems";
 
 const { Text } = Typography;
 
 interface HarvestTasksPanelProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
-  itemsOptions: { label: string; value: number }[];
 }
 
-export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
-  formProps,
-  itemsOptions,
-}) => {
+export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({ formProps }) => {
+  const { itemsOptions } = useItems("Harvesting");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [form] = Form.useForm();
@@ -312,7 +310,7 @@ export const HarvestTasksPanel: React.FC<HarvestTasksPanelProps> = ({
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined spin />}
+                                  icon={<DeleteOutlined />}
                                   onClick={() => removeItem(name)}
                                 />
                               </Col>

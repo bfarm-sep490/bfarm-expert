@@ -13,7 +13,6 @@ interface TasksTabsProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
   fertilizersOptions: { label: string; value: number }[];
   pesticidesOptions: { label: string; value: number }[];
-  itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
   identity: { name: string } | undefined;
   orders: {
@@ -29,7 +28,6 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
   formProps,
   fertilizersOptions,
   pesticidesOptions,
-  itemsOptions,
   packagingTypesOptions,
   identity,
   orders,
@@ -63,7 +61,6 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
                 formProps={formProps}
                 fertilizersOptions={fertilizersOptions}
                 pesticidesOptions={pesticidesOptions}
-                itemsOptions={itemsOptions}
               />
             ),
           },
@@ -87,9 +84,8 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
                 {counts.harvesting > 0 && <Tag color="blue">{counts.harvesting}</Tag>}
               </Space>
             ),
-            children: <HarvestTasksPanel formProps={formProps} itemsOptions={itemsOptions} />,
+            children: <HarvestTasksPanel formProps={formProps} />,
           },
-
           {
             key: "packaging",
             label: (
@@ -102,7 +98,6 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
             children: (
               <PackagingTasksPanel
                 formProps={formProps}
-                itemsOptions={itemsOptions}
                 packagingTypesOptions={packagingTypesOptions}
                 orders={orders}
               />

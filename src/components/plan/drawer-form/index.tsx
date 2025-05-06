@@ -85,12 +85,6 @@ export const PlanDrawer = (props: Props) => {
     optionValue: "id",
   });
 
-  const { options: itemsOptions } = useSelect<IItem>({
-    resource: "items",
-    optionLabel: "name",
-    optionValue: "id",
-  });
-
   const { options: packagingTypesOptions } = useSelect<IPackagingType>({
     resource: "packaging-types",
     optionLabel: "name",
@@ -275,7 +269,6 @@ export const PlanDrawer = (props: Props) => {
             yieldsOptions={yieldsOptions}
             fertilizersOptions={fertilizersOptions}
             pesticidesOptions={pesticidesOptions}
-            itemsOptions={itemsOptions}
             packagingTypesOptions={packagingTypesOptions}
             identity={identity}
             orders={selectedOrders}

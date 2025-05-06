@@ -23,12 +23,12 @@ import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import { useGetIdentity } from "@refinedev/core";
 import { useTaskStore } from "@/store/task-store";
+import { useItems } from "../hooks/useItems";
 
 const { Text } = Typography;
 
 interface PackagingTasksPanelProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
-  itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
   orders: {
     id: string;
@@ -41,10 +41,10 @@ interface PackagingTasksPanelProps {
 
 export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
   formProps,
-  itemsOptions,
   packagingTypesOptions,
   orders,
 }) => {
+  const { itemsOptions } = useItems("Packaging");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [form] = Form.useForm();
@@ -128,7 +128,6 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
     });
   };
 
-  // Thêm useEffect để tự động cập nhật total_package_weight khi chọn order
   useEffect(() => {
     const orderId = form.getFieldValue("order_id");
     if (orderId) {
@@ -488,7 +487,7 @@ export const PackagingTasksPanel: React.FC<PackagingTasksPanelProps> = ({
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined spin />}
+                                  icon={<DeleteOutlined />}
                                   onClick={() => removeItem(name)}
                                 />
                               </Col>

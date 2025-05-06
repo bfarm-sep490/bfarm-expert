@@ -10,7 +10,6 @@ interface TasksSectionProps {
   yieldsOptions: { label: string; value: number }[];
   fertilizersOptions: { label: string; value: number }[];
   pesticidesOptions: { label: string; value: number }[];
-  itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
   identity: { name: string } | undefined;
   orders: {
@@ -28,7 +27,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   yieldsOptions,
   fertilizersOptions,
   pesticidesOptions,
-  itemsOptions,
   packagingTypesOptions,
   identity,
   orders,
@@ -52,7 +50,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
           formProps={formProps}
           fertilizersOptions={fertilizersOptions}
           pesticidesOptions={pesticidesOptions}
-          itemsOptions={itemsOptions}
           packagingTypesOptions={packagingTypesOptions}
           identity={identity}
           orders={orders}
