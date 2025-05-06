@@ -30,6 +30,7 @@ import {
   CheckOutlined,
   InboxOutlined,
   CloseOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
@@ -37,6 +38,7 @@ import { useSearchParams } from "react-router";
 import { useTemplatePlan, useSuggestYield } from "@/hooks/useTemplatePlan";
 import { useOrderStore } from "@/store/order-store";
 import { ITemplatePlanResponse, IPlant, IYield, Template } from "@/interfaces";
+import { YieldHistoryModal } from "@/components/yield/history-modal";
 
 const { Text } = Typography;
 
@@ -69,6 +71,7 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
   const { data: identity } = useGetIdentity<{ id: number; name: string }>();
   const expert_id = identity?.id;
   const expert_name = identity?.name;
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -420,16 +423,6 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                       disabled={!selectedPlant}
                     />
                     <Space>
-                      {selectedYield && (
-                        <Button
-                          type="link"
-                          onClick={() => setShowSuggest(true)}
-                          icon={<BulbOutlined />}
-                          style={{ color: token.colorPrimary }}
-                        >
-                          Xem lại gợi ý vụ mùa phù hợp
-                        </Button>
-                      )}
                       <Button
                         type="primary"
                         onClick={() => {
@@ -576,8 +569,18 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                 {selectedYield && (
                   <Card size="small" style={{ width: "100%" }}>
                     <Descriptions bordered column={2} size="small">
-                      <Descriptions.Item label="Tên vụ mùa" span={2}>
-                        {selectedYield.yield_name}
+                      <Descriptions.Item label="Tên đất" span={2}>
+                        <Space>
+                          {selectedYield.yield_name}
+                          <Button
+                            type="link"
+                            onClick={() => setIsHistoryModalVisible(true)}
+                            icon={<HistoryOutlined />}
+                            style={{ color: token.colorPrimary, padding: 0 }}
+                          >
+                            Xem lịch sử
+                          </Button>
+                        </Space>
                       </Descriptions.Item>
                       <Descriptions.Item label="Loại" span={2}>
                         {selectedYield.type}
@@ -973,6 +976,14 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
           </Space>
         </Spin>
       </Drawer>
+
+      {selectedYield && (
+        <YieldHistoryModal
+          open={isHistoryModalVisible}
+          onClose={() => setIsHistoryModalVisible(false)}
+          yieldId={selectedYield.id}
+        />
+      )}
     </>
   );
 };

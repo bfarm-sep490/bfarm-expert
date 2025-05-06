@@ -21,11 +21,13 @@ import {
   EnvironmentOutlined,
   InfoCircleOutlined,
   BulbOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { IPlant, Template } from "@/interfaces";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSuggestYield } from "@/hooks/useTemplatePlan";
 import debounce from "lodash/debounce";
+import { YieldHistoryModal } from "@/components/yield/history-modal";
 
 const { Text } = Typography;
 
@@ -76,6 +78,7 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
   const [calculationInfo, setCalculationInfo] = useState<string>("");
   const [showSuggest, setShowSuggest] = useState(false);
   const [selectedYield, setSelectedYield] = useState<any>(null);
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
 
   const plantId = formProps.form?.getFieldValue("plant_id");
   const { suggestYields, isLoading: isLoadingSuggest } = useSuggestYield(plantId);
@@ -446,7 +449,17 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
           <Card size="small" style={{ width: "100%" }}>
             <Descriptions bordered column={2} size="small">
               <Descriptions.Item label="Tên đất" span={2}>
-                {selectedYield.yield_name}
+                <Space>
+                  {selectedYield.yield_name}
+                  <Button
+                    type="link"
+                    onClick={() => setIsHistoryModalVisible(true)}
+                    icon={<HistoryOutlined />}
+                    style={{ color: token.colorPrimary, padding: 0 }}
+                  >
+                    Xem lịch sử
+                  </Button>
+                </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Loại" span={2}>
                 {selectedYield.type}
@@ -542,6 +555,14 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
           </Col>
         </Row>
       </Space>
+
+      {selectedYield && (
+        <YieldHistoryModal
+          open={isHistoryModalVisible}
+          onClose={() => setIsHistoryModalVisible(false)}
+          yieldId={selectedYield.id}
+        />
+      )}
     </Card>
   );
 };
