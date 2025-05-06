@@ -309,14 +309,17 @@ const App: React.FC = () => {
                             password: "1@",
                           },
                         }}
+                        registerLink={false}
+                        forgotPasswordLink={false}
                       />
                     }
                   />
-                  <Route
+                  {/* <Route
                     path="/register"
                     element={
                       <AuthPage
                         type="register"
+                        hideForm={true}
                         formProps={{
                           initialValues: {
                             email: "expert@gmail.com",
@@ -327,7 +330,7 @@ const App: React.FC = () => {
                     }
                   />
                   <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
-                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
+                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} /> */}
                 </Route>
 
                 <Route
