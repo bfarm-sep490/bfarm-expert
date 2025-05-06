@@ -6,11 +6,11 @@
     "edit": "Chỉnh sửa",
     "list": "Danh sách",
     "show": "Hiển thị",
-    "submit": "Submit",
-    "approval": "Approval",
-    "draft": "Draft",
-    "ongoing": "Ongoing",
-    "pending": "Pending"
+    "submit": "Gửi",
+    "approval": "Duyệt",
+    "draft": "Bản nháp",
+    "ongoing": "Đang thực hiện",
+    "pending": "Chờ duyệt"
   },
   "buttons": {
     "accept": "Chấp nhận",
@@ -56,8 +56,8 @@
   "common": {
     "no": "Không",
     "yes": "Có",
-    "approved": "Approved",
-    "notApproved": "Not Approved"
+    "approved": "Đã duyệt",
+    "notApproved": "Chưa duyệt"
   },
   "dashboard": {
     "dailyOrders": {
@@ -726,7 +726,7 @@
     "statusPlaceholder": "Select status",
     "statusRequired": "Please select status",
     "imageAlt": "Plant image",
-    "upload": "Upload Image",
+    "upload": "Tải ảnh lên",
     "uploading": "Uploading...",
     "deltaOne": "Delta One",
     "deltaOnePlaceholder": "Enter delta one",
