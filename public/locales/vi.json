@@ -6,7 +6,7 @@
     "edit": "Chỉnh sửa",
     "list": "Danh sách",
     "show": "Hiển thị",
-    "submit": "Submit",
+    "submit": "Gửi",
     "approval": "Duyệt",
     "draft": "Bản nháp",
     "ongoing": "Đang thực hiện",
@@ -456,60 +456,60 @@
     "fields": {
       "id": {
         "label": "ID",
-        "placeholder": "Plant ID"
+        "placeholder": "ID Cây trồng"
       },
       "image": {
-        "label": "Image"
+        "label": "Hình ảnh"
       },
       "name": {
-        "label": "Plant Name"
+        "label": "Tên cây trồng"
       },
       "type": {
-        "label": "Type"
+        "label": "Loại"
       },
       "quantity": {
-        "label": "Quantity"
+        "label": "Số lượng"
       },
       "description": {
-        "label": "Description"
+        "label": "Mô tả"
       },
       "status": {
-        "label": "Status"
+        "label": "Trạng thái"
       },
       "basePrice": {
-        "label": "Base Price"
+        "label": "Giá cơ bản"
       },
       "preservationDays": {
-        "label": "Preservation Days"
+        "label": "Bảo quản"
       }
     },
     "filter": {
       "id": {
-        "placeholder": "Plant ID"
+        "placeholder": "ID cây trồng"
       },
       "plant_name": {
-        "placeholder": "Search plant name"
+        "placeholder": "Tìm kiếm tên cây trồng"
       },
       "type": {
-        "placeholder": "Filter by type"
+        "placeholder": "Lọc theo loại"
       },
       "description": {
-        "placeholder": "Search description"
+        "placeholder": "Tìm kiếm mô tả"
       },
       "status": {
-        "placeholder": "Filter by status"
+        "placeholder": "Lọc theo trạng thái"
       }
     },
     "types": {
-      "vegetable": "Vegetable",
-      "root": "Root",
-      "fruit": "Fruit",
-      "spice": "Spice"
+      "vegetable": "Rau củ",
+      "root": "Gốc",
+      "fruit": "Trái cây",
+      "spice": "Gia vị"
     },
     "status": {
-      "available": "Available",
-      "inUse": "In-Use",
-      "maintenance": "Maintenance"
+      "available": "Có sẵn",
+      "inUse": "Đang sử dụng",
+      "maintenance": "Bảo Trì"
     }
   },
   "search": {
@@ -704,19 +704,19 @@
     }
   },
   "plant": {
-    "title": "Plant Information",
-    "name": "Plant Name",
-    "namePlaceholder": "Enter plant name",
-    "nameRequired": "Please enter plant name",
-    "type": "Plant Type",
-    "typePlaceholder": "Select plant type",
-    "typeRequired": "Please select plant type",
-    "quantity": "Quantity",
-    "quantityPlaceholder": "Enter quantity",
-    "quantityRequired": "Please enter quantity",
-    "basePrice": "Base Price",
-    "basePricePlaceholder": "Enter base price",
-    "basePriceRequired": "Please enter base price",
+    "title": "Thông tin cơ bản",
+    "name": "Tên cây trồng",
+    "namePlaceholder": "Nhập tên kế hoạch",
+    "nameRequired": "Vui lòng nhập tên kế hoạch",
+    "type": "Loại cây",
+    "typePlaceholder": "Chọn loại cây",
+    "typeRequired": "Vui lòng chọn loại cây trồng",
+    "quantity": "Số lượng",
+    "quantityPlaceholder": "Nhập số lượng",
+    "quantityRequired": "Vui lòng nhập số lượng",
+    "basePrice": "Giá cơ bản",
+    "basePricePlaceholder": "Nhập giá cơ bản",
+    "basePriceRequired": "Vui lập nhập giá cơ bản",
     "preservationDay": "Preservation Days",
     "preservationDayPlaceholder": "Enter preservation days",
     "description": "Description",
