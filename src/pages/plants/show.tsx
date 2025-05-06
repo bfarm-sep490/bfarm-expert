@@ -1,5 +1,5 @@
-import { AntdInferencer } from "@refinedev/inferencer/antd";
+import { PlantDrawerShow } from "@/components/plant";
 
 export const PlantShow = () => {
-  return <AntdInferencer />;
+  return <PlantDrawerShow />;
 };

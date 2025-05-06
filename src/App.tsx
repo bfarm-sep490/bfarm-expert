@@ -32,7 +32,7 @@ import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanList, PlanShow } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
-import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
+import { PlantCreate, PlantEdit, PlantList, PlantShow } from "./pages/plants";
 import { ProblemListInProblems } from "./pages/problems/list";
 import { ProblemShowV2 } from "./pages/problems/show";
 import { HarvestingProductShow } from "./components/production/harvesting/drawer-show";
@@ -283,11 +283,11 @@ const App: React.FC = () => {
                           <Outlet />
                         </PlantList>
                       }
-                    >
-                      <Route path="new" element={<PlantCreate />} />
-                    </Route>
+                    ></Route>
+                    <Route path="new" element={<PlantCreate />} />
+                    <Route path=":id" element={<PlantShow />} />
 
-                    <Route path=":id/edit" element={<PlantEdit />} />
+                    <Route path=":id/edit" element={<PlantShow />} />
                   </Route>
                 </Route>
 

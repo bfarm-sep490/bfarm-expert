@@ -8,7 +8,7 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { EyeOutlined, SearchOutlined, FilterOutlined } from "@ant-design/icons";
-import { Table, Typography, theme, InputNumber, Input, Tag, Select, Space } from "antd";
+import { Table, Typography, theme, InputNumber, Input, Tag, Select } from "antd";
 import type { IPlant } from "../../interfaces";
 import { PaginationTotal } from "../../components";
 import { useLocation } from "react-router";
@@ -99,7 +99,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
                   whiteSpace: "nowrap",
                 }}
               >
-                ID #
+                {t("plants.fields.id.label")}
               </Typography.Text>
             }
             dataIndex="id"
@@ -127,7 +127,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
                 <InputNumber
                   addonBefore="#"
                   style={{ width: "100%" }}
-                  placeholder={t("plants.filter.id.placeholder", "Plant ID")}
+                  placeholder={t("plants.filter.id.placeholder")}
                 />
               </FilterDropdown>
             )}
@@ -136,7 +136,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column<IPlant>
             key="image"
             dataIndex="image_url"
-            title={t("plants.fields.image.label", "Image")}
+            title={t("plants.fields.image.label")}
             render={(value) => (
               <ImageField
                 style={{
@@ -152,7 +152,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column<IPlant>
             key="plant_name"
             dataIndex="plant_name"
-            title={t("plants.fields.name.label", "Plant Name")}
+            title={t("plants.fields.name.label")}
             filterIcon={(filtered) => (
               <SearchOutlined
                 style={{
@@ -163,9 +163,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
             defaultFilteredValue={getDefaultFilter("plant_name", filters, "contains")}
             filterDropdown={(props) => (
               <FilterDropdown {...props}>
-                <Input
-                  placeholder={t("plants.filter.plant_name.placeholder", "Search plant name")}
-                />
+                <Input placeholder={t("plants.filter.plant_name.placeholder")} />
               </FilterDropdown>
             )}
           />
@@ -173,7 +171,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column<IPlant>
             key="type"
             dataIndex="type"
-            title={t("plants.fields.type.label", "Type")}
+            title={t("plants.fields.type.label")}
             filterIcon={(filtered) => (
               <FilterOutlined
                 style={{
@@ -186,12 +184,12 @@ export const PlantList = ({ children }: PropsWithChildren) => {
               <FilterDropdown {...props}>
                 <Select
                   style={{ width: "100%" }}
-                  placeholder={t("plants.filter.type.placeholder", "Filter by type")}
+                  placeholder={t("plants.filter.type.placeholder")}
                   options={[
-                    { value: "Rau lá", label: "Rau lá" },
-                    { value: "Củ", label: "Củ" },
-                    { value: "Quả", label: "Quả" },
-                    { value: "Gia vị", label: "Gia vị" },
+                    { value: "Rau lá", label: t("plants.types.vegetable") },
+                    { value: "Củ", label: t("plants.types.root") },
+                    { value: "Quả", label: t("plants.types.fruit") },
+                    { value: "Gia vị", label: t("plants.types.spice") },
                   ]}
                 />
               </FilterDropdown>
@@ -208,7 +206,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {t("plants.fields.quantity.label", "Quantity")}
+                  {t("plants.fields.quantity.label")}
                 </Typography.Text>
               );
             }}
@@ -226,7 +224,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column
             dataIndex="description"
             key="description"
-            title={t("plants.fields.description.label", "Description")}
+            title={t("plants.fields.description.label")}
             ellipsis={true}
             filterIcon={(filtered) => (
               <SearchOutlined
@@ -238,9 +236,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
             defaultFilteredValue={getDefaultFilter("description", filters, "contains")}
             filterDropdown={(props) => (
               <FilterDropdown {...props}>
-                <Input
-                  placeholder={t("plants.filter.description.placeholder", "Search description")}
-                />
+                <Input placeholder={t("plants.filter.description.placeholder")} />
               </FilterDropdown>
             )}
           />
@@ -248,7 +244,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column<IPlant>
             dataIndex="status"
             key="status"
-            title={t("plants.fields.status.label", "Status")}
+            title={t("plants.fields.status.label")}
             render={(value) => (
               <Tag color={getStatusColor(value)}>{value || t("plants.noStatus")}</Tag>
             )}
@@ -264,11 +260,11 @@ export const PlantList = ({ children }: PropsWithChildren) => {
               <FilterDropdown {...props}>
                 <Select
                   style={{ width: "100%" }}
-                  placeholder={t("plants.filter.status.placeholder", "Filter by status")}
+                  placeholder={t("plants.filter.status.placeholder")}
                   options={[
-                    { value: "Available", label: "Available" },
-                    { value: "In-Use", label: "In-Use" },
-                    { value: "Maintenance", label: "Maintenance" },
+                    { value: "Available", label: t("plants.status.available") },
+                    { value: "In-Use", label: t("plants.status.inUse") },
+                    { value: "Maintenance", label: t("plants.status.maintenance") },
                   ]}
                 />
               </FilterDropdown>
@@ -278,14 +274,14 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           <Table.Column<IPlant>
             key="base_price"
             dataIndex="base_price"
-            title={t("plants.fields.basePrice.label", "Base Price")}
+            title={t("plants.fields.basePrice.label")}
             render={(value) => <Typography.Text>{formatCurrency(value)}</Typography.Text>}
           />
 
           <Table.Column<IPlant>
             key="preservation"
             dataIndex="preservation_day"
-            title={t("plants.fields.preservationDays.label", "Preservation")}
+            title={t("plants.fields.preservationDays.label")}
             render={(value) => (
               <Typography.Text>
                 {value} {t("plants.days")}
@@ -294,7 +290,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
           />
 
           <Table.Column
-            title={t("table.actions", "Actions")}
+            title={t("table.actions")}
             key="actions"
             fixed="right"
             align="center"

@@ -1,5 +1,5 @@
 import { DateField, TextField } from "@refinedev/antd";
-import { useBack, useList, useOne, useDelete } from "@refinedev/core";
+import { useBack, useList, useOne, useDelete, useGo } from "@refinedev/core";
 import {
   Drawer,
   Flex,
@@ -60,6 +60,7 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
   const [open, setOpen] = useState(false);
   const back = useBack();
   const [api, contextHolder] = notification.useNotification();
+  const go = useGo();
   const {
     data: queryResult,
     refetch: problemRefetch,
@@ -141,6 +142,16 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
       },
     );
   };
+
+  const handlePlanClick = () => {
+    if (task?.plan_id) {
+      go({
+        to: `/plans/${task.plan_id}`,
+        type: "push",
+      });
+    }
+  };
+
   const columns = [
     {
       title: "Tên hoạt động",
@@ -275,7 +286,12 @@ export const ProblemShowInProblem = (props: ProblemShowInProblemProps) => {
                 </Tag>
               </Tooltip>
               <Tooltip title={task?.plan_name}>
-                <Tag icon={<FileTextOutlined />} color="green" style={{ maxWidth: 200 }}>
+                <Tag
+                  icon={<FileTextOutlined />}
+                  color="green"
+                  style={{ maxWidth: 200, cursor: "pointer" }}
+                  onClick={handlePlanClick}
+                >
                   <Typography.Text ellipsis style={{ maxWidth: 150 }}>
                     {task?.plan_name}
                   </Typography.Text>
