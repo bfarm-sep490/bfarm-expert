@@ -516,7 +516,7 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                                   <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
                                 </Flex>
                                 <Text type="secondary">
-                                  Số lượng tối đa: {yield_.maximum_quantity} đơn vị
+                                  Số lượng tối đa: {yield_.maximum_quantity} kg
                                 </Text>
                                 {!isAvailable && (
                                   <>

@@ -156,17 +156,17 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
     if (templateData?.data?.[0]?.estimated_per_one) {
       setEstimatedPerOne(templateData.data[0].estimated_per_one);
       setCalculationInfo(
-        `Tỷ lệ sản xuất: 1 đơn vị hạt giống = ${templateData.data[0].estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+        `Tỷ lệ sản xuất: 1 đơn vị gieo trồng = ${templateData.data[0].estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
       );
     } else if (plantData?.data?.average_estimated_per_one) {
       setEstimatedPerOne(plantData.data.average_estimated_per_one);
       setCalculationInfo(
-        `Tỷ lệ sản xuất: 1 đơn vị hạt giống = ${plantData.data.average_estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+        `Tỷ lệ sản xuất: 1 đơn vị gieo trồng = ${plantData.data.average_estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
       );
     } else {
       setEstimatedPerOne(1);
       setCalculationInfo(
-        `Tỷ lệ sản xuất: 1 đơn vị hạt giống = 1 kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+        `Tỷ lệ sản xuất: 1 đơn vị gieo trồng = 1 kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
       );
     }
   }, [templateData, plantData, formProps.form]);
