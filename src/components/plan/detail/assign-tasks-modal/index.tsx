@@ -184,9 +184,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
       onSuccess(data: any) {
         if (props?.problemId)
           setProductiveTasks(
-            data?.data.filter(
-              (task: any) => task?.problem_id === props?.problemId
-            ) || []
+            data?.data.filter((task: any) => task?.problem_id === props?.problemId) || [],
           );
         else setProductiveTasks(data?.data || []);
       },
