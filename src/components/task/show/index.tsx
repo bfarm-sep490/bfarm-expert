@@ -169,6 +169,7 @@ export const GenericTaskDrawer = (props: TaskDrawerProps) => {
   };
 
   const handleRefreshAll = () => {
+    props?.refetch?.();
     taskRefetch();
     historyAssignedRefetch();
     chosenFarmerRefetch();

@@ -31,7 +31,7 @@ type TaskModalProps = {
   planId?: number;
   problemId?: number;
   status?: string;
-  taskType?: "caring" | "harvesting" | "packaging";
+  taskType?: "caring" | "harvesting" | "packaging" | "inspecting";
   action: "edit" | "create";
   visible: boolean;
   onClose: () => void;
@@ -41,7 +41,6 @@ type TaskModalProps = {
 
 export const TaskModal = (props: TaskModalProps) => {
   const [taskType, setTaskType] = useState<keyof typeof resourceMap>("caring");
-  const back = useBack();
   const t = useTranslate();
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
@@ -111,12 +110,14 @@ export const TaskModal = (props: TaskModalProps) => {
     caring: "caring-tasks",
     harvesting: "harvesting-tasks",
     packaging: "packaging-tasks",
+    inspecting: "inspecting-forms",
   };
 
   const successMessageMap = {
     caring: "Cập nhật công việc chăm sóc thành công",
     harvesting: "Cập nhật công việc thu hoạch thành công",
     packaging: "Cập nhật công việc đóng gói thành công",
+    inspecting: "Cập nhật công việc kiểm định thành công",
   };
   const { formProps, formLoading, onFinish, saveButtonProps } = useForm({
     id: props?.taskId,
@@ -211,7 +212,7 @@ export const TaskModal = (props: TaskModalProps) => {
           message: successMessageMap[taskType],
         });
         props?.refetch?.();
-        props?.refetch ? props?.onClose?.() : back();
+        props?.onClose?.();
       },
     },
     createMutationOptions: {
@@ -220,7 +221,7 @@ export const TaskModal = (props: TaskModalProps) => {
           message: successMessageMap[taskType],
         });
         props?.refetch?.();
-        props?.refetch ? props?.onClose?.() : back();
+        props?.onClose?.();
       },
     },
   });
@@ -279,7 +280,7 @@ export const TaskModal = (props: TaskModalProps) => {
       })),
     );
 
-    if (props?.problemId) {
+    if (props?.problemId !== -1) {
       formProps.form?.setFieldValue("problem_id", props?.problemId);
     }
 
@@ -298,7 +299,7 @@ export const TaskModal = (props: TaskModalProps) => {
   const taskTypeOptions = [
     { label: t("status.watering", "Tưới nước"), value: "Watering" },
     { label: t("status.fertilizering", "Bón phân"), value: "Fertilizing" },
-    { label: t("status.pesticiding", "Phun thuốc"), value: "Pesticide" },
+    { label: t("status.pesticiding", "Phun thuốc"), value: "Pesticiding" },
     { label: t("status.setup", "Cài đặt"), value: "Setup" },
     { label: t("status.weeding", "Làm cỏ"), value: "Weeding" },
     { label: t("status.pruning", "Cắt tỉa"), value: "Pruning" },
@@ -323,6 +324,7 @@ export const TaskModal = (props: TaskModalProps) => {
       formProps.form?.resetFields();
     }
   }, [props?.visible]);
+  console.log(props?.taskType as keyof typeof resourceMap);
   return (
     <Modal
       title={
@@ -336,15 +338,16 @@ export const TaskModal = (props: TaskModalProps) => {
       footer={null}
       destroyOnClose
     >
-      {props?.action === "create" && props?.problemId === null && (
-        <Flex>
+      {props?.action === "create" && (
+        <Flex gap={8}>
           <Typography.Title level={5} style={{ marginBottom: 0 }}>
-            Chọn loại công việc
+            Công việc
           </Typography.Title>
           <Select onChange={(value) => handleChange(value)} defaultValue={taskType}>
             <Select.Option value="caring">Chăm sóc</Select.Option>
             <Select.Option value="harvesting">Thu hoạch</Select.Option>
             <Select.Option value="packaging">Đóng gói</Select.Option>
+            <Select.Option value="inspecting">Kiểm định</Select.Option>
           </Select>
         </Flex>
       )}
@@ -463,267 +466,281 @@ export const TaskModal = (props: TaskModalProps) => {
           >
             <Input.TextArea rows={5} />
           </Form.Item>
-
-          {taskType === "caring" && (
-            <div className="form-section">
-              <Divider orientation="left">Phân bón</Divider>
-              <div
-                className="section-header"
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: 16,
-                }}
-              >
-                <Button
-                  type="dashed"
-                  onClick={() => addField(fertilizerFields, setFertilizerFields)}
-                >
-                  + Thêm phân bón
-                </Button>
-              </div>
-
-              {fertilizerFields.map((field) => (
-                <div
-                  key={field.id_block}
-                  style={{
-                    marginBottom: 16,
-                    border: "1px dashed #d9d9d9",
-                    padding: 16,
-                    borderRadius: 4,
-                  }}
-                >
-                  <Row gutter={16} align="middle">
-                    <Col span={10}>
-                      <Form.Item label="Phân bón" rules={[{ required: true }]}>
-                        <Select
-                          value={field.id}
-                          placeholder="Chọn phân bón"
-                          onChange={(value) => {
-                            setFertilizerFields((prev) =>
-                              prev.map((f) =>
-                                f.id_block === field.id_block ? { ...f, id: value } : f,
-                              ),
-                            );
-                          }}
-                        >
-                          {fertilizerData?.data.map((fertilizer) => (
-                            <Select.Option
-                              key={`fertilizer_${fertilizer.id}`}
-                              value={fertilizer.id}
-                            >
-                              {fertilizer.name}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                      <Form.Item label="Số lượng" rules={[{ required: true }]}>
-                        <InputNumber
-                          value={field.quantity}
-                          disabled={field.id === null}
-                          min={0.1}
-                          step={0.1}
-                          style={{ width: "100%" }}
-                          onChange={(value) =>
-                            setFertilizerFields((prev) =>
-                              prev.map((f) =>
-                                f.id_block === field.id_block ? { ...f, quantity: value || 0 } : f,
-                              ),
-                            )
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                      <TextField value={"/kg"} />
-                    </Col>
-                    <Col>
-                      <Button
-                        shape="circle"
-                        danger
-                        onClick={() =>
-                          removeField(field.id_block, fertilizerFields, setFertilizerFields)
-                        }
-                      >
-                        <DeleteOutlined />
-                      </Button>
-                    </Col>
-                  </Row>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {taskType === "caring" && (
-            <div className="form-section">
-              <Divider orientation="left">Thuốc bảo vệ thực vật</Divider>
-              <div
-                className="section-header"
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: 16,
-                }}
-              >
-                <Button type="dashed" onClick={() => addField(pesticideFields, setPesticideFields)}>
-                  + Thêm thuốc
-                </Button>
-              </div>
-
-              {pesticideFields.map((field) => (
-                <div
-                  key={field.id_block}
-                  style={{
-                    marginBottom: 16,
-                    border: "1px dashed #d9d9d9",
-                    padding: 16,
-                    borderRadius: 4,
-                  }}
-                >
-                  <Row gutter={16} align="middle">
-                    <Col span={10}>
-                      <Form.Item label="Thuốc BVTV" rules={[{ required: true }]}>
-                        <Select
-                          value={field.id}
-                          placeholder="Chọn thuốc BVTV"
-                          onChange={(value) => {
-                            setPesticideFields((prev) =>
-                              prev.map((f) =>
-                                f.id_block === field.id_block ? { ...f, id: value } : f,
-                              ),
-                            );
-                          }}
-                        >
-                          {pesticideData?.data.map((pesticide) => (
-                            <Select.Option key={`pesticide_${pesticide.id}`} value={pesticide.id}>
-                              {pesticide.name}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                      <Form.Item label="Số lượng" rules={[{ required: true }]}>
-                        <InputNumber
-                          value={field.quantity}
-                          disabled={field.id === null}
-                          min={0.1}
-                          step={0.1}
-                          style={{ width: "100%" }}
-                          onChange={(value) =>
-                            setPesticideFields((prev) =>
-                              prev.map((f) =>
-                                f.id_block === field.id_block ? { ...f, quantity: value || 0 } : f,
-                              ),
-                            )
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                      <TextField value={"lit"} />
-                    </Col>
-                    <Col>
-                      <Button
-                        shape="circle"
-                        danger
-                        onClick={() =>
-                          removeField(field.id_block, pesticideFields, setPesticideFields)
-                        }
-                      >
-                        <DeleteOutlined />
-                      </Button>
-                    </Col>
-                  </Row>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="form-section">
-            <Divider orientation="left">Vật tư</Divider>
-            <div
-              className="section-header"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 16,
-              }}
-            >
-              <Button type="dashed" onClick={() => addField(itemFields, setItemFields)}>
-                + Thêm vật tư
-              </Button>
-            </div>
-
-            {itemFields.map((field) => (
-              <div
-                key={field.id_block}
-                style={{
-                  marginBottom: 16,
-                  border: "1px dashed #d9d9d9",
-                  padding: 16,
-                  borderRadius: 4,
-                }}
-              >
-                <Row gutter={16} align="middle">
-                  <Col span={10}>
-                    <Form.Item label="Vật tư" rules={[{ required: true }]}>
-                      <Select
-                        value={field.id}
-                        placeholder="Chọn vật tư"
-                        onChange={(value) => {
-                          setItemFields((prev) =>
-                            prev.map((f) =>
-                              f.id_block === field.id_block ? { ...f, id: value } : f,
-                            ),
-                          );
-                        }}
-                      >
-                        {itemData?.data.map((item) => (
-                          <Select.Option key={`item_${item.id}`} value={item.id}>
-                            {item.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item label="Số lượng" rules={[{ required: true }]}>
-                      <InputNumber
-                        disabled={field.id === null}
-                        value={field.quantity}
-                        min={0.1}
-                        step={0.1}
-                        style={{ width: "100%" }}
-                        onChange={(value) =>
-                          setItemFields((prev) =>
-                            prev.map((f) =>
-                              f.id_block === field.id_block ? { ...f, quantity: value || 0 } : f,
-                            ),
-                          )
-                        }
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <TextField value={"unit"} />
-                  </Col>
-                  <Col>
+          {taskType !== "inspecting" && (
+            <>
+              {taskType === "caring" && (
+                <div className="form-section">
+                  <Divider orientation="left">Phân bón</Divider>
+                  <div
+                    className="section-header"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: 16,
+                    }}
+                  >
                     <Button
-                      shape="circle"
-                      danger
-                      onClick={() => removeField(field.id_block, itemFields, setItemFields)}
+                      type="dashed"
+                      onClick={() => addField(fertilizerFields, setFertilizerFields)}
                     >
-                      <DeleteOutlined />
+                      + Thêm phân bón
                     </Button>
-                  </Col>
-                </Row>
-              </div>
-            ))}
-          </div>
+                  </div>
 
+                  {fertilizerFields.map((field) => (
+                    <div
+                      key={field.id_block}
+                      style={{
+                        marginBottom: 16,
+                        border: "1px dashed #d9d9d9",
+                        padding: 16,
+                        borderRadius: 4,
+                      }}
+                    >
+                      <Row gutter={16} align="middle">
+                        <Col span={10}>
+                          <Form.Item label="Phân bón" rules={[{ required: true }]}>
+                            <Select
+                              value={field.id}
+                              placeholder="Chọn phân bón"
+                              onChange={(value) => {
+                                setFertilizerFields((prev) =>
+                                  prev.map((f) =>
+                                    f.id_block === field.id_block ? { ...f, id: value } : f,
+                                  ),
+                                );
+                              }}
+                            >
+                              {fertilizerData?.data.map((fertilizer) => (
+                                <Select.Option
+                                  key={`fertilizer_${fertilizer.id}`}
+                                  value={fertilizer.id}
+                                >
+                                  {fertilizer.name}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                          <Form.Item label="Số lượng" rules={[{ required: true }]}>
+                            <InputNumber
+                              value={field.quantity}
+                              disabled={field.id === null}
+                              min={0.1}
+                              step={0.1}
+                              style={{ width: "100%" }}
+                              onChange={(value) =>
+                                setFertilizerFields((prev) =>
+                                  prev.map((f) =>
+                                    f.id_block === field.id_block
+                                      ? { ...f, quantity: value || 0 }
+                                      : f,
+                                  ),
+                                )
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                          <TextField value={"/kg"} />
+                        </Col>
+                        <Col>
+                          <Button
+                            shape="circle"
+                            danger
+                            onClick={() =>
+                              removeField(field.id_block, fertilizerFields, setFertilizerFields)
+                            }
+                          >
+                            <DeleteOutlined />
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {taskType === "caring" && (
+                <div className="form-section">
+                  <Divider orientation="left">Thuốc bảo vệ thực vật</Divider>
+                  <div
+                    className="section-header"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Button
+                      type="dashed"
+                      onClick={() => addField(pesticideFields, setPesticideFields)}
+                    >
+                      + Thêm thuốc
+                    </Button>
+                  </div>
+
+                  {pesticideFields.map((field) => (
+                    <div
+                      key={field.id_block}
+                      style={{
+                        marginBottom: 16,
+                        border: "1px dashed #d9d9d9",
+                        padding: 16,
+                        borderRadius: 4,
+                      }}
+                    >
+                      <Row gutter={16} align="middle">
+                        <Col span={10}>
+                          <Form.Item label="Thuốc BVTV" rules={[{ required: true }]}>
+                            <Select
+                              value={field.id}
+                              placeholder="Chọn thuốc BVTV"
+                              onChange={(value) => {
+                                setPesticideFields((prev) =>
+                                  prev.map((f) =>
+                                    f.id_block === field.id_block ? { ...f, id: value } : f,
+                                  ),
+                                );
+                              }}
+                            >
+                              {pesticideData?.data.map((pesticide) => (
+                                <Select.Option
+                                  key={`pesticide_${pesticide.id}`}
+                                  value={pesticide.id}
+                                >
+                                  {pesticide.name}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                          <Form.Item label="Số lượng" rules={[{ required: true }]}>
+                            <InputNumber
+                              value={field.quantity}
+                              disabled={field.id === null}
+                              min={0.1}
+                              step={0.1}
+                              style={{ width: "100%" }}
+                              onChange={(value) =>
+                                setPesticideFields((prev) =>
+                                  prev.map((f) =>
+                                    f.id_block === field.id_block
+                                      ? { ...f, quantity: value || 0 }
+                                      : f,
+                                  ),
+                                )
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                          <TextField value={"lit"} />
+                        </Col>
+                        <Col>
+                          <Button
+                            shape="circle"
+                            danger
+                            onClick={() =>
+                              removeField(field.id_block, pesticideFields, setPesticideFields)
+                            }
+                          >
+                            <DeleteOutlined />
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="form-section">
+                <Divider orientation="left">Vật tư</Divider>
+                <div
+                  className="section-header"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: 16,
+                  }}
+                >
+                  <Button type="dashed" onClick={() => addField(itemFields, setItemFields)}>
+                    + Thêm vật tư
+                  </Button>
+                </div>
+
+                {itemFields.map((field) => (
+                  <div
+                    key={field.id_block}
+                    style={{
+                      marginBottom: 16,
+                      border: "1px dashed #d9d9d9",
+                      padding: 16,
+                      borderRadius: 4,
+                    }}
+                  >
+                    <Row gutter={16} align="middle">
+                      <Col span={10}>
+                        <Form.Item label="Vật tư" rules={[{ required: true }]}>
+                          <Select
+                            value={field.id}
+                            placeholder="Chọn vật tư"
+                            onChange={(value) => {
+                              setItemFields((prev) =>
+                                prev.map((f) =>
+                                  f.id_block === field.id_block ? { ...f, id: value } : f,
+                                ),
+                              );
+                            }}
+                          >
+                            {itemData?.data.map((item) => (
+                              <Select.Option key={`item_${item.id}`} value={item.id}>
+                                {item.name}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={6}>
+                        <Form.Item label="Số lượng" rules={[{ required: true }]}>
+                          <InputNumber
+                            disabled={field.id === null}
+                            value={field.quantity}
+                            min={0.1}
+                            step={0.1}
+                            style={{ width: "100%" }}
+                            onChange={(value) =>
+                              setItemFields((prev) =>
+                                prev.map((f) =>
+                                  f.id_block === field.id_block
+                                    ? { ...f, quantity: value || 0 }
+                                    : f,
+                                ),
+                              )
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={6}>
+                        <TextField value={"unit"} />
+                      </Col>
+                      <Col>
+                        <Button
+                          shape="circle"
+                          danger
+                          onClick={() => removeField(field.id_block, itemFields, setItemFields)}
+                        >
+                          <DeleteOutlined />
+                        </Button>
+                      </Col>
+                    </Row>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           <Form.Item style={{ marginTop: 24 }}>
             <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
               {props?.action === "create" ? "Tạo công việc" : "Cập nhật công việc"}

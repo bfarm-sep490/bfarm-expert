@@ -176,7 +176,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [taskId, setTaskId] = useState<number | null>(null);
   const [taskType, setTaskType] = useState<
-    "caring" | "harvesting" | "packaging" | "Inspecting" | null
+    "caring" | "harvesting" | "packaging" | "inspecting" | null
   >();
 
   const [api, contextHolder] = notification.useNotification();
@@ -518,7 +518,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
                 onDoubleClickEvent={(event) => {
                   if (event.type === "Kiểm định") {
                     setTaskId(event.id);
-                    setTaskType("Inspecting");
+                    setTaskType("inspecting");
                     setShowTask(true);
                   } else if (event.type === "Đóng gói") {
                     setTaskId(event.id);
@@ -678,7 +678,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
               onRow={(record: any) => ({
                 onClick: () => {
                   setTaskId(record?.id);
-                  setTaskType("Inspecting");
+                  setTaskType("inspecting");
                   setShowTask(true);
                 },
               })}
@@ -924,7 +924,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
           setTaskId(null);
           setTaskType(null);
         }}
-        visible={showTask && taskId !== null && taskType !== "Inspecting"}
+        visible={showTask && taskId !== null && taskType !== "inspecting"}
         taskId={taskId as number}
       />
       <InspectionsShow
@@ -933,7 +933,7 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
           setTaskId(null);
           setTaskType(null);
         }}
-        visible={showTask && taskId !== null && taskType === "Inspecting"}
+        visible={showTask && taskId !== null && taskType === "inspecting"}
         taskId={taskId as number}
       />
       <AssignTaskModal
@@ -948,9 +948,18 @@ export const ScheduleComponent = (props: ScheduleComponentProps) => {
         planId={Number(id)}
         status="Draft"
         action={"create"}
-        visible={createTaskOpen && taskType !== "Inspecting"}
+        refetch={
+          taskType === "caring"
+            ? caringRefetch
+            : taskType === "harvesting"
+              ? harvestingRefetch
+              : taskType === "packaging"
+                ? packagingRefetch
+                : inspectingRefetch
+        }
+        visible={createTaskOpen}
         onClose={() => setCreateTaskOpen(false)}
-        taskType={taskType as "caring" | "packaging" | "harvesting"}
+        taskType={taskType as "caring" | "packaging" | "harvesting" | "inspecting"}
       />
     </Card>
   );
