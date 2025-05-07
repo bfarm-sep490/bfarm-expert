@@ -512,6 +512,27 @@
       "maintenance": "Maintenance"
     }
   },
+  "products": {
+    "products": "Products",
+    "actions": {
+      "add": "Add Product"
+    }
+  },
+  "packaging-products": {
+    "packaging-products": "Packaging Products",
+    "actions": {
+      "add": "Add Packaging Product"
+    }
+  },
+  "harvesting-products": {
+    "harvesting-products": "Harvesting Products",
+    "actions": {
+      "add": "Add Harvesting Product"
+    }
+  },
+  "problems": {
+    "problems": "Problems"
+  },
   "search": {
     "more": "thêm",
     "placeholder": "Tìm kiếm..."
