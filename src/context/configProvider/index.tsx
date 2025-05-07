@@ -5,6 +5,7 @@ import "./config.css";
 import { ConfigProvider as AntdConfigProvider, theme, type ThemeConfig } from "antd";
 import { createStyles, ThemeProvider } from "antd-style";
 import { createContext, type PropsWithChildren, useContext, useEffect, useState } from "react";
+import { Bounce, ToastContainer } from "react-toastify";
 
 type Mode = "light" | "dark";
 
@@ -85,7 +86,22 @@ export const ConfigProvider = ({
           ...themeFromProps,
         }}
       >
-        <ThemeProvider appearance={mode}>{children}</ThemeProvider>
+        <ThemeProvider appearance={mode}>
+          {children}{" "}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={mode == "dark" ? "dark" : "light"}
+            transition={Bounce}
+          />
+        </ThemeProvider>
       </AntdConfigProvider>
     </ConfigProviderContext.Provider>
   );

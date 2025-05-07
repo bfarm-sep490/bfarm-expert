@@ -62,6 +62,7 @@ export const InspectionsShow = (props: InspectionShowProps) => {
     resource: "inspecting-results",
     id,
     queryOptions: { enabled: props?.visible === true },
+    errorNotification: false,
   });
 
   const inspection = formQueryResult?.data?.[0];

@@ -154,6 +154,7 @@ export const ChangeAssignedTasksModal: React.FC<ChangeAssignedTasksModalProps> =
     name: string;
   }>({
     resource: `plans/${id}/busy-farmers`,
+    errorNotification: false,
     filters: [
       {
         field: "start",

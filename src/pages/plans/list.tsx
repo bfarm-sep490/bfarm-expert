@@ -28,6 +28,7 @@ export const PlanList = ({ children }: PropsWithChildren) => {
     <>
       <List
         breadcrumb={false}
+        title={t("plans.plans")}
         headerButtons={(props) => [
           <Segmented<View>
             key="view"

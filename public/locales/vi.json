@@ -5,7 +5,12 @@
     "delete": "Xóa",
     "edit": "Chỉnh sửa",
     "list": "Danh sách",
-    "show": "Hiển thị"
+    "show": "Hiển thị",
+    "submit": "Gửi",
+    "approval": "Duyệt",
+    "draft": "Bản nháp",
+    "ongoing": "Đang thực hiện",
+    "pending": "Chờ duyệt"
   },
   "buttons": {
     "accept": "Chấp nhận",
@@ -50,7 +55,9 @@
   },
   "common": {
     "no": "Không",
-    "yes": "Có"
+    "yes": "Có",
+    "approved": "Đã duyệt",
+    "notApproved": "Chưa duyệt"
   },
   "dashboard": {
     "dailyOrders": {
@@ -172,7 +179,7 @@
       },
       "signin": "Đăng nhập",
       "signup": "Đăng ký",
-      "title": "Đăng nhập vào tài khoản của bạn"
+      "title": "Chào mừng bạn đến với BFarmX Chuyên Gia"
     },
     "register": {
       "buttons": {
@@ -445,7 +452,86 @@
     "search": "Tìm kiếm cây trồng...",
     "select": "Chọn",
     "selected": "Đã chọn",
-    "type": "Loại"
+    "type": "Loại",
+    "fields": {
+      "id": {
+        "label": "ID",
+        "placeholder": "ID Cây trồng"
+      },
+      "image": {
+        "label": "Hình ảnh"
+      },
+      "name": {
+        "label": "Tên cây trồng"
+      },
+      "type": {
+        "label": "Loại"
+      },
+      "quantity": {
+        "label": "Số lượng"
+      },
+      "description": {
+        "label": "Mô tả"
+      },
+      "status": {
+        "label": "Trạng thái"
+      },
+      "basePrice": {
+        "label": "Giá cơ bản"
+      },
+      "preservationDays": {
+        "label": "Bảo quản"
+      }
+    },
+    "filter": {
+      "id": {
+        "placeholder": "ID cây trồng"
+      },
+      "plant_name": {
+        "placeholder": "Tìm kiếm tên cây trồng"
+      },
+      "type": {
+        "placeholder": "Lọc theo loại"
+      },
+      "description": {
+        "placeholder": "Tìm kiếm mô tả"
+      },
+      "status": {
+        "placeholder": "Lọc theo trạng thái"
+      }
+    },
+    "types": {
+      "vegetable": "Rau củ",
+      "root": "Gốc",
+      "fruit": "Trái cây",
+      "spice": "Gia vị"
+    },
+    "status": {
+      "available": "Có sẵn",
+      "inUse": "Đang sử dụng",
+      "maintenance": "Bảo Trì"
+    }
+  },
+  "products": {
+    "products": "Sản phẩm",
+    "actions": {
+      "add": "Thêm sản phẩm"
+    }
+  },
+  "packaging-products": {
+    "packaging-products": "Sản phẩm đóng gói",
+    "actions": {
+      "add": "Thêm sản phẩm đóng gói"
+    }
+  },
+  "harvesting-products": {
+    "harvesting-products": "Sản phẩm thu hoạch",
+    "actions": {
+      "add": "Thêm sản phẩm thu hoạch"
+    }
+  },
+  "problems": {
+    "problems": "Vấn đề"
   },
   "search": {
     "more": "thêm",
@@ -636,6 +722,62 @@
       "pesticide": "Phun thuốc trừ sâu",
       "weeding": "Làm cỏ",
       "pruning": "Tỉa cành"
+    }
+  },
+  "plant": {
+    "title": "Thông tin cơ bản",
+    "name": "Tên cây trồng",
+    "namePlaceholder": "Nhập tên kế hoạch",
+    "nameRequired": "Vui lòng nhập tên kế hoạch",
+    "type": "Loại cây",
+    "typePlaceholder": "Chọn loại cây",
+    "typeRequired": "Vui lòng chọn loại cây trồng",
+    "quantity": "Số lượng",
+    "quantityPlaceholder": "Nhập số lượng",
+    "quantityRequired": "Vui lòng nhập số lượng",
+    "basePrice": "Giá cơ bản",
+    "basePricePlaceholder": "Nhập giá cơ bản",
+    "basePriceRequired": "Vui lập nhập giá cơ bản",
+    "preservationDay": "Preservation Days",
+    "preservationDayPlaceholder": "Enter preservation days",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter plant description",
+    "descriptionRequired": "Please enter description",
+    "status": "Status",
+    "statusPlaceholder": "Select status",
+    "statusRequired": "Please select status",
+    "imageAlt": "Plant image",
+    "upload": "Upload Image",
+    "uploading": "Uploading...",
+    "deltaOne": "Delta One",
+    "deltaOnePlaceholder": "Enter delta one",
+    "deltaTwo": "Delta Two",
+    "deltaTwoPlaceholder": "Enter delta two",
+    "deltaThree": "Delta Three",
+    "deltaThreePlaceholder": "Enter delta three",
+    "plantRatioTitle": "Price Ratios",
+    "day": "days",
+    "suitableYields": {
+      "title": "Suitable Land Information",
+      "add": "Add",
+      "area": "Area",
+      "soilType": "Soil Type",
+      "estimatedHarvest": "Estimated Harvest",
+      "totalEstimatedHarvest": "Total estimated harvest",
+      "description": "Description",
+      "viewMore": "View more",
+      "deleteConfirm": {
+        "title": "Delete Land",
+        "description": "Are you sure you want to delete this land?",
+        "okText": "Delete",
+        "cancelText": "Cancel"
+      },
+      "deleteSuccess": "Successfully deleted suitable land",
+      "deleteError": "Error. Please try again later",
+      "noData": "No data available"
+    },
+    "basicInfo": {
+      "title": "Basic Information"
     }
   }
 }

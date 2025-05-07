@@ -18,7 +18,7 @@ import {
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { IPlant } from "@/interfaces";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTaskStore } from "@/store/task-store";
 
 const { Text } = Typography;
@@ -36,6 +36,26 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [form] = Form.useForm();
   const { incrementCount, decrementCount } = useTaskStore();
+
+  useEffect(() => {
+    const currentTasks = formProps.form?.getFieldValue("inspecting_forms") || [];
+
+    // Only create tasks if there are no existing tasks
+    if (currentTasks.length === 0) {
+      const newTask = {
+        task_name: "Kiểm định chất lượng",
+        created_by: identity?.name || "",
+        start_date: dayjs(),
+        end_date: dayjs(),
+        description: "Kiểm định chất lượng trước thu hoạch để đảm bảo an toàn thực phẩm.",
+      };
+
+      formProps.form?.setFieldsValue({
+        inspecting_forms: [newTask],
+      });
+      incrementCount("inspecting");
+    }
+  }, [formProps.form, identity?.name, incrementCount]);
 
   const handleEditTask = (index: number) => {
     const currentTasks = formProps.form?.getFieldValue("inspecting_forms") || [];
@@ -137,7 +157,7 @@ export const InspectionTasksPanel: React.FC<InspectionTasksPanelProps> = ({
       <Flex justify="space-between" align="center">
         <Space direction="vertical" size="small">
           <Text strong style={{ fontSize: "16px" }}>
-            Danh sách công việc kiểm tra
+            Danh sách công việc kiểm định
           </Text>
           <Text type="secondary">Quản lý các công việc kiểm tra sâu bệnh</Text>
         </Space>

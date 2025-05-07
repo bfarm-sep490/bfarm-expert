@@ -271,6 +271,7 @@ export const AssignTaskModal = (props: AssignTaskModalProps) => {
     refetch: scheduleRefetch,
   } = useList({
     resource: `plans/${id}/busy-farmers`,
+    errorNotification: false,
     filters: [
       {
         field: "start",

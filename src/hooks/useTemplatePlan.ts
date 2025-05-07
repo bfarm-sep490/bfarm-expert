@@ -5,20 +5,24 @@ export const useTemplatePlan = () => {
   const { mutate, isLoading, isError, data } = useCreate<ITemplatePlanResponse>();
 
   const getTemplatePlan = (values: ITemplatePlanRequest) => {
-    mutate(
-      {
-        resource: "plans/template-plan",
-        values,
+    mutate({
+      resource: "plans/template-plan",
+      values,
+      successNotification: () => {
+        return {
+          message: `Thông tin mẫu kế hoạch đã được tìm kiếm`,
+          description: "Tìm kiếm thành công",
+          type: "success",
+        };
       },
-      {
-        onSuccess: (data) => {
-          console.log("Template plan fetched successfully:", data);
-        },
-        onError: (error) => {
-          console.error("Error fetching template plan:", error);
-        },
+      errorNotification: () => {
+        return {
+          message: `Tìm kiếm thất bại`,
+          description: "Thông tin mẫu kế hoạch không được tìm kiếm",
+          type: "error",
+        };
       },
-    );
+    });
   };
 
   const { data: plantsData } = useList<IPlant>({

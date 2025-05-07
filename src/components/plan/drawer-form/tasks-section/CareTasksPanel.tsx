@@ -25,6 +25,7 @@ import { useState } from "react";
 import { useGetIdentity } from "@refinedev/core";
 import { useTaskStore } from "@/store/task-store";
 import { TypeTag } from "./TypeTag";
+import { useItems } from "../hooks/useItems";
 
 const { Text } = Typography;
 
@@ -32,15 +33,14 @@ interface CareTasksPanelProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
   fertilizersOptions: { label: string; value: number }[];
   pesticidesOptions: { label: string; value: number }[];
-  itemsOptions: { label: string; value: number }[];
 }
 
 export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
   formProps,
   fertilizersOptions,
   pesticidesOptions,
-  itemsOptions,
 }) => {
+  const { itemsOptions } = useItems("Caring");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
   const [form] = Form.useForm();
@@ -391,7 +391,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined spin />}
+                                  icon={<DeleteOutlined />}
                                   onClick={() => removeFertilizer(name)}
                                 />
                               </Col>
@@ -473,7 +473,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined spin />}
+                                  icon={<DeleteOutlined />}
                                   onClick={() => removePesticide(name)}
                                 />
                               </Col>
@@ -555,7 +555,7 @@ export const CareTasksPanel: React.FC<CareTasksPanelProps> = ({
                                 <Button
                                   danger
                                   shape="circle"
-                                  icon={<DeleteOutlined spin />}
+                                  icon={<DeleteOutlined />}
                                   onClick={() => removeItem(name)}
                                 />
                               </Col>

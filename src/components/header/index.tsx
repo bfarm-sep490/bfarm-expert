@@ -33,8 +33,8 @@ import { useConfigProvider } from "../../context";
 import { useStyles } from "./styled";
 
 import type { IIdentity } from "../../interfaces";
-import { useNotificationSystem } from "@/hooks/useNotificationSystem";
 import { NotificationDropdown } from "./notification-dropdown";
+import { useNotificationSystem } from "@/hooks/useNotificationSystem";
 
 const { Header: AntdHeader } = AntdLayout;
 const { useToken } = theme;

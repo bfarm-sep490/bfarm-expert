@@ -16,7 +16,6 @@ import {
   Card,
   Image,
   Descriptions,
-  Alert,
   Tabs,
   Collapse,
   Empty,
@@ -30,6 +29,8 @@ import {
   ToolOutlined,
   CheckOutlined,
   InboxOutlined,
+  CloseOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
@@ -37,6 +38,7 @@ import { useSearchParams } from "react-router";
 import { useTemplatePlan, useSuggestYield } from "@/hooks/useTemplatePlan";
 import { useOrderStore } from "@/store/order-store";
 import { ITemplatePlanResponse, IPlant, IYield, Template } from "@/interfaces";
+import { YieldHistoryModal } from "@/components/yield/history-modal";
 
 const { Text } = Typography;
 
@@ -61,11 +63,15 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
   const [showSuggest, setShowSuggest] = useState(true);
   const { getTemplatePlan, isLoading, data, plantsOptions, yieldsOptions, plantsData, yieldsData } =
     useTemplatePlan();
-  const { suggestYields, isLoading: isSuggestLoading } = useSuggestYield(selectedPlant?.id);
+  const [forceUpdate, setForceUpdate] = useState(0);
+  const [tempPlantId, setTempPlantId] = useState<number | undefined>(selectedPlant?.id);
+  const [isSuggestButtonLoading, setIsSuggestButtonLoading] = useState(false);
+  const { suggestYields, isLoading: isSuggestLoading } = useSuggestYield(tempPlantId);
   const { selectedOrders, selectedPlantId, totalQuantity } = useOrderStore();
   const { data: identity } = useGetIdentity<{ id: number; name: string }>();
   const expert_id = identity?.id;
   const expert_name = identity?.name;
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -101,6 +107,18 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
       }
     }
   }, [form.getFieldValue("start_date")]);
+
+  useEffect(() => {
+    if (selectedPlant?.id) {
+      setTempPlantId(selectedPlant.id);
+    }
+  }, [selectedPlant]);
+
+  useEffect(() => {
+    if (selectedPlantId) {
+      setTempPlantId(selectedPlantId);
+    }
+  }, [selectedPlantId]);
 
   const onDrawerClose = () => {
     onClose();
@@ -145,17 +163,19 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
       const formattedTemplates = data.map(
         (template: ITemplatePlanResponse["data"][0], index: number) => {
           const plantName = plantsData.find((p) => p.id === template.plant_id)?.plant_name || "";
+          const startDate = form.getFieldValue("start_date");
+          const year = startDate ? dayjs(startDate).format("YYYY") : "";
           return {
             ...template,
-            name: `Kế hoạch ${plantName} - ${template.season_name}`,
-            description: `Template cho ${plantName} mùa ${template.season_name}`,
+            name: `Kế hoạch ${plantName} - ${template.season_name} ${year}`,
+            description: `Template cho ${plantName} mùa ${template.season_name} năm ${year}`,
           };
         },
       );
       setTemplates(formattedTemplates);
       setIsTemplateListVisible(true);
     }
-  }, [data, plantsData]);
+  }, [data, plantsData, form]);
 
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
@@ -166,6 +186,8 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
   const handlePlantSelect = (value: number) => {
     const plant = plantsData.find((p) => p.id === value);
     setSelectedPlant(plant || null);
+    setSelectedYield(null);
+    form.setFieldsValue({ yield_id: undefined });
     setShowSuggest(true);
   };
 
@@ -189,7 +211,6 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
     }
   };
 
-  // Thêm useEffect để theo dõi thay đổi của selectedYield
   useEffect(() => {
     if (selectedYield) {
       form.setFieldsValue({ yield_id: selectedYield.id });
@@ -237,62 +258,6 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
         <Spin spinning={isLoading}>
           <Form form={form} layout="vertical">
             <Space direction="vertical" size="large" style={{ width: "100%", padding: "24px" }}>
-              <Form.Item
-                label={
-                  <span>
-                    <CalendarOutlined /> {t("plans.fields.start_date.label")}
-                  </span>
-                }
-                name="start_date"
-                rules={[
-                  { required: true, message: t("plans.fields.start_date.required") },
-                  {
-                    validator: (_, value) => {
-                      if (value) {
-                        const startDate = dayjs(value);
-                        const today = dayjs().startOf("day");
-
-                        if (startDate.isBefore(today)) {
-                          return Promise.reject(new Error("Không thể chọn ngày trong quá khứ"));
-                        }
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <DatePicker
-                  size="large"
-                  style={{ width: "100%" }}
-                  format="DD/MM/YYYY"
-                  disabledDate={(current) => {
-                    if (current && current < dayjs().startOf("day")) {
-                      return true;
-                    }
-                    return false;
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label={
-                  <span>
-                    <NumberOutlined /> {t("plans.fields.estimated_product.label")}
-                  </span>
-                }
-                name="estimated_product"
-                rules={[{ required: true, message: t("plans.fields.estimated_product.required") }]}
-              >
-                <InputNumber
-                  size="large"
-                  min={0}
-                  style={{ width: "100%" }}
-                  placeholder={t("plans.fields.estimated_product.placeholder")}
-                  addonAfter="kg"
-                  value={totalQuantity}
-                />
-              </Form.Item>
-
               <Space direction="vertical" size="small" style={{ width: "100%" }}>
                 <Form.Item
                   label={
@@ -349,6 +314,72 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                   </Card>
                 )}
               </Space>
+              <Form.Item
+                label={
+                  <span>
+                    <CalendarOutlined /> {t("plans.fields.start_date.label")}
+                  </span>
+                }
+                name="start_date"
+                rules={[
+                  { required: true, message: t("plans.fields.start_date.required") },
+                  {
+                    validator: (_, value) => {
+                      if (value) {
+                        const startDate = dayjs(value);
+                        const today = dayjs().startOf("day");
+
+                        if (startDate.isBefore(today)) {
+                          return Promise.reject(new Error("Không thể chọn ngày trong quá khứ"));
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <DatePicker
+                  size="large"
+                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
+                  disabledDate={(current) => {
+                    if (current && current < dayjs().startOf("day")) {
+                      return true;
+                    }
+                    return false;
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <span>
+                    <NumberOutlined /> {t("plans.fields.estimated_product.label")}
+                  </span>
+                }
+                name="estimated_product"
+                rules={[
+                  { required: true, message: t("plans.fields.estimated_product.required") },
+                  {
+                    validator: (_, value) => {
+                      if (value < 10) {
+                        return Promise.reject("Sản phẩm ước tính phải lớn hơn hoặc bằng 10kg");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber
+                  size="large"
+                  min={10}
+                  defaultValue={10}
+                  style={{ width: "100%" }}
+                  placeholder={t("plans.fields.estimated_product.placeholder")}
+                  addonAfter="kg"
+                  value={totalQuantity}
+                />
+              </Form.Item>
 
               <Space direction="vertical" size="small" style={{ width: "100%" }}>
                 <Form.Item
@@ -391,113 +422,165 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
                       value={selectedYield?.id}
                       disabled={!selectedPlant}
                     />
-                    {selectedYield && (
+                    <Space>
                       <Button
-                        type="link"
-                        onClick={() => setShowSuggest(true)}
+                        type="primary"
+                        onClick={() => {
+                          setShowSuggest(true);
+                          setIsSuggestButtonLoading(true);
+                          setTempPlantId(undefined);
+                          setTimeout(() => {
+                            setTempPlantId(selectedPlant?.id);
+                            setIsSuggestButtonLoading(false);
+                          }, 0);
+                        }}
                         icon={<BulbOutlined />}
+                        disabled={!selectedPlant}
+                        loading={isSuggestButtonLoading}
                       >
-                        Xem lại gợi ý vụ mùa phù hợp
+                        Gợi ý lại
                       </Button>
-                    )}
+                    </Space>
                   </Space>
                 </Form.Item>
 
-                {selectedPlant &&
-                  showSuggest &&
-                  Array.isArray(suggestYields) &&
-                  suggestYields.length > 0 && (
-                    <Alert
-                      message="Gợi ý vụ mùa phù hợp"
-                      description={
-                        <Space direction="vertical" size="small" style={{ width: "100%" }}>
-                          {suggestYields.map((yield_: IYield) => {
-                            const isAvailable = yield_.status === "Available";
-                            const startDate = form.getFieldValue("start_date");
-                            const isAfterEndDate =
-                              startDate && yield_.estimated_end_date
-                                ? new Date(startDate) > new Date(yield_.estimated_end_date)
-                                : false;
-                            const canSelect = isAvailable || isAfterEndDate;
+                {selectedPlant && showSuggest && (
+                  <Card
+                    size="small"
+                    style={{
+                      background: token.colorBgContainer,
+                      border: `1px solid ${token.colorBorder}`,
+                    }}
+                    title={
+                      <Space>
+                        <BulbOutlined style={{ color: token.colorWarning }} />
+                        <Text strong>Gợi ý vụ mùa phù hợp</Text>
+                        {isSuggestLoading && <Spin size="small" />}
+                      </Space>
+                    }
+                    extra={
+                      <Button
+                        type="text"
+                        size="small"
+                        onClick={() => setShowSuggest(false)}
+                        icon={<CloseOutlined />}
+                      />
+                    }
+                  >
+                    {Array.isArray(suggestYields) && suggestYields.length > 0 ? (
+                      <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                        {suggestYields.map((yield_: IYield) => {
+                          const isAvailable = yield_.status === "Available";
+                          const startDate = form.getFieldValue("start_date");
+                          const isAfterEndDate =
+                            startDate && yield_.estimated_end_date
+                              ? new Date(startDate) > new Date(yield_.estimated_end_date)
+                              : false;
+                          const canSelect = isAvailable || isAfterEndDate;
 
-                            return (
-                              <Card
-                                key={yield_.id}
-                                size="small"
-                                style={{
-                                  cursor: canSelect ? "pointer" : "not-allowed",
-                                  opacity: canSelect ? 1 : 0.7,
-                                  borderColor: canSelect ? undefined : "#ff4d4f",
-                                }}
-                                onClick={() => {
-                                  if (canSelect) {
-                                    handleSuggestYieldSelect(yield_);
-                                  }
-                                }}
-                              >
-                                <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                          return (
+                            <Card
+                              key={yield_.id}
+                              size="small"
+                              style={{
+                                cursor: canSelect ? "pointer" : "not-allowed",
+                                opacity: canSelect ? 1 : 0.7,
+                                borderColor: canSelect ? token.colorBorder : token.colorError,
+                                background: canSelect
+                                  ? token.colorBgContainer
+                                  : token.colorBgLayout,
+                                transition: "all 0.3s",
+                              }}
+                              onClick={() => {
+                                if (canSelect) {
+                                  handleSuggestYieldSelect(yield_);
+                                }
+                              }}
+                              hoverable={canSelect}
+                            >
+                              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                                <Flex justify="space-between" align="center">
                                   <Space>
                                     <Text strong>{yield_.yield_name}</Text>
                                     <Text type="secondary">
                                       {yield_.area} {yield_.area_unit}
                                     </Text>
-                                    <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
                                   </Space>
-                                  <Text type="secondary">
-                                    Số lượng hạt giống tối đa: {yield_.maximum_quantity} hạt
-                                  </Text>
-                                  {!isAvailable && (
-                                    <>
-                                      <Text type="secondary">
-                                        Số kế hoạch đang sử dụng: {yield_.plan_id_in_use || 0}
-                                      </Text>
-                                      {yield_.estimated_end_date && (
-                                        <>
-                                          <Text type="secondary">
-                                            Dự kiến kết thúc:{" "}
+                                  <Tag color={canSelect ? "green" : "red"}>{yield_.status}</Tag>
+                                </Flex>
+                                <Text type="secondary">
+                                  Số lượng tối đa: {yield_.maximum_quantity} kg
+                                </Text>
+                                {!isAvailable && (
+                                  <>
+                                    <Text type="secondary">
+                                      Số kế hoạch đang sử dụng: {yield_.plan_id_in_use || 0}
+                                    </Text>
+                                    {yield_.estimated_end_date && (
+                                      <>
+                                        <Text type="secondary">
+                                          Dự kiến kết thúc:{" "}
+                                          {new Date(yield_.estimated_end_date).toLocaleDateString()}
+                                        </Text>
+                                        {!startDate ? (
+                                          <Text type="warning">
+                                            Vui lòng chọn ngày bắt đầu sau{" "}
                                             {new Date(
                                               yield_.estimated_end_date,
-                                            ).toLocaleDateString()}
+                                            ).toLocaleDateString()}{" "}
+                                            để sử dụng
                                           </Text>
-                                          {!startDate ? (
-                                            <Text type="warning">
-                                              Vui lòng chọn ngày bắt đầu sau{" "}
-                                              {new Date(
-                                                yield_.estimated_end_date,
-                                              ).toLocaleDateString()}{" "}
-                                              để sử dụng
-                                            </Text>
-                                          ) : isAfterEndDate ? (
-                                            <Text type="success">
-                                              Có thể sử dụng vì ngày bắt đầu (
-                                              {new Date(startDate).toLocaleDateString()}) sau ngày
-                                              kết thúc
-                                            </Text>
-                                          ) : (
-                                            <Text type="danger">
-                                              Không thể sử dụng vì ngày bắt đầu (
-                                              {new Date(startDate).toLocaleDateString()}) trước ngày
-                                              kết thúc
-                                            </Text>
-                                          )}
-                                        </>
-                                      )}
-                                    </>
-                                  )}
-                                </Space>
-                              </Card>
-                            );
-                          })}
-                        </Space>
-                      }
-                    />
-                  )}
+                                        ) : isAfterEndDate ? (
+                                          <Text type="success">
+                                            Có thể sử dụng vì ngày bắt đầu (
+                                            {new Date(startDate).toLocaleDateString()}) sau ngày kết
+                                            thúc
+                                          </Text>
+                                        ) : (
+                                          <Text type="danger">
+                                            Không thể sử dụng vì ngày bắt đầu (
+                                            {new Date(startDate).toLocaleDateString()}) trước ngày
+                                            kết thúc
+                                          </Text>
+                                        )}
+                                      </>
+                                    )}
+                                  </>
+                                )}
+                              </Space>
+                            </Card>
+                          );
+                        })}
+                      </Space>
+                    ) : (
+                      <Empty
+                        description={
+                          <Text type="secondary">
+                            {isSuggestLoading
+                              ? "Đang tải gợi ý..."
+                              : "Không có gợi ý vụ mùa phù hợp"}
+                          </Text>
+                        }
+                      />
+                    )}
+                  </Card>
+                )}
 
                 {selectedYield && (
                   <Card size="small" style={{ width: "100%" }}>
                     <Descriptions bordered column={2} size="small">
-                      <Descriptions.Item label="Tên vụ mùa" span={2}>
-                        {selectedYield.yield_name}
+                      <Descriptions.Item label="Tên đất" span={2}>
+                        <Space>
+                          {selectedYield.yield_name}
+                          <Button
+                            type="link"
+                            onClick={() => setIsHistoryModalVisible(true)}
+                            icon={<HistoryOutlined />}
+                            style={{ color: token.colorPrimary, padding: 0 }}
+                          >
+                            Xem lịch sử
+                          </Button>
+                        </Space>
                       </Descriptions.Item>
                       <Descriptions.Item label="Loại" span={2}>
                         {selectedYield.type}
@@ -893,6 +976,14 @@ export const TemplateSelection = ({ open, onClose, onTemplateSelect }: TemplateS
           </Space>
         </Spin>
       </Drawer>
+
+      {selectedYield && (
+        <YieldHistoryModal
+          open={isHistoryModalVisible}
+          onClose={() => setIsHistoryModalVisible(false)}
+          yieldId={selectedYield.id}
+        />
+      )}
     </>
   );
 };

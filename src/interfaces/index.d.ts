@@ -36,6 +36,7 @@ export interface IPlan {
   plan_name: string;
   description: string;
   start_date: string;
+  evaluated_result: string;
   end_date: string;
   complete_date?: string;
   status: "Draft" | "Pending" | "Ongoing" | "Completed" | "Cancelled";

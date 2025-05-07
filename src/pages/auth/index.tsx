@@ -3,8 +3,6 @@ import { Flex } from "antd";
 import React from "react";
 import { Link } from "react-router";
 
-import { BFarmLogoIcon, BFarmLogoText } from "../../components";
-
 const authWrapperProps = {
   style: {
     background:
@@ -25,23 +23,16 @@ const renderAuthContent = (content: React.ReactNode) => {
         <Flex
           align="center"
           justify="center"
-          gap={12}
           style={{
             marginBottom: 16,
           }}
         >
-          <BFarmLogoIcon
+          <img
+            src="/logo.png"
+            alt="Logo"
             style={{
-              width: 64,
-              height: 64,
-              color: "#fff",
-            }}
-          />
-          <BFarmLogoText
-            style={{
-              color: "#fff",
-              width: "300px",
-              height: "auto",
+              width: "auto",
+              height: 101,
             }}
           />
         </Flex>
@@ -51,13 +42,17 @@ const renderAuthContent = (content: React.ReactNode) => {
   );
 };
 
-export const AuthPage: React.FC<AuthProps> = ({ type, formProps }) => {
+export const AuthPage: React.FC<AuthProps> = ({ type, formProps, ...rest }) => {
   return (
     <AntdAuthPage
       type={type}
       wrapperProps={authWrapperProps}
       renderContent={renderAuthContent}
-      formProps={formProps}
+      formProps={{
+        ...formProps,
+        layout: "vertical",
+      }}
+      {...rest}
     />
   );
 };

@@ -61,7 +61,7 @@ const PlantOption = ({ data }: { data: IPlant }) => {
           </Text>
           <Space size="small">
             <Text type="secondary" style={{ fontSize: "12px" }}>
-              Tỷ lệ sản xuất: {data.average_estimated_per_one} kg/hạt
+              Tỷ lệ sản xuất: {data.average_estimated_per_one} đơn vị/hạt
             </Text>
             <Text type="secondary" style={{ fontSize: "12px" }}>
               Giá cơ bản: {data.base_price.toLocaleString()} đ/kg

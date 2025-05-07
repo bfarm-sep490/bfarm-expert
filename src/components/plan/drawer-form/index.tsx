@@ -85,12 +85,6 @@ export const PlanDrawer = (props: Props) => {
     optionValue: "id",
   });
 
-  const { options: itemsOptions } = useSelect<IItem>({
-    resource: "items",
-    optionLabel: "name",
-    optionValue: "id",
-  });
-
   const { options: packagingTypesOptions } = useSelect<IPackagingType>({
     resource: "packaging-types",
     optionLabel: "name",
@@ -151,6 +145,10 @@ export const PlanDrawer = (props: Props) => {
         inspecting_forms: [],
         packaging_tasks: [],
         order_ids: selectedOrders.map((order) => order.id),
+      },
+      successNotification: {
+        message: "Kế hoạch đã được tạo thành công",
+        type: "success",
       },
     });
 
@@ -271,7 +269,6 @@ export const PlanDrawer = (props: Props) => {
             yieldsOptions={yieldsOptions}
             fertilizersOptions={fertilizersOptions}
             pesticidesOptions={pesticidesOptions}
-            itemsOptions={itemsOptions}
             packagingTypesOptions={packagingTypesOptions}
             identity={identity}
             orders={selectedOrders}

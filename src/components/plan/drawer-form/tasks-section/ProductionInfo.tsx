@@ -21,10 +21,13 @@ import {
   EnvironmentOutlined,
   InfoCircleOutlined,
   BulbOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { IPlant, Template } from "@/interfaces";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSuggestYield } from "@/hooks/useTemplatePlan";
+import debounce from "lodash/debounce";
+import { YieldHistoryModal } from "@/components/yield/history-modal";
 
 const { Text } = Typography;
 
@@ -34,7 +37,6 @@ interface ProductionInfoProps {
   yieldsOptions: { label: string; value: number }[];
 }
 
-// Custom option renderer cho yield selection
 const YieldOption = ({ data }: { data: any }) => {
   const { token } = theme.useToken();
 
@@ -76,11 +78,11 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
   const [calculationInfo, setCalculationInfo] = useState<string>("");
   const [showSuggest, setShowSuggest] = useState(false);
   const [selectedYield, setSelectedYield] = useState<any>(null);
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
 
   const plantId = formProps.form?.getFieldValue("plant_id");
   const { suggestYields, isLoading: isLoadingSuggest } = useSuggestYield(plantId);
 
-  // Lấy thông tin cây trồng để lấy average_estimated_per_one
   const { data: plantData } = useOne({
     resource: "plants",
     id: formProps.form?.getFieldValue("plant_id"),
@@ -89,7 +91,6 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
     },
   });
 
-  // Lấy template data để lấy estimated_per_one
   const { data: templateData } = useList({
     resource: "templates",
     filters: [
@@ -117,7 +118,6 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
     },
   });
 
-  // Lấy thông tin chi tiết của yield
   const { data: yieldData } = useList({
     resource: "yields",
     filters: [
@@ -129,7 +129,6 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
     ],
   });
 
-  // Tạo map để truy cập nhanh thông tin yield
   const yieldMap = React.useMemo(() => {
     if (!yieldData?.data) return {};
     return yieldData.data.reduce(
@@ -143,38 +142,64 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
     );
   }, [yieldData]);
 
-  // Cập nhật estimated_per_one khi có template data hoặc plant data
+  // Tạo hàm debounce để tính toán seed_quantity
+  const calculateSeedQuantity = useCallback(
+    debounce((estimatedProduct: number, estimatedPerOne: number) => {
+      if (formProps.form) {
+        const seedQuantity = Math.ceil(estimatedProduct / estimatedPerOne);
+        formProps.form.setFieldsValue({
+          seed_quantity: seedQuantity,
+        });
+      }
+    }, 300),
+    [formProps.form],
+  );
+
   useEffect(() => {
     if (templateData?.data?.[0]?.estimated_per_one) {
       setEstimatedPerOne(templateData.data[0].estimated_per_one);
       setCalculationInfo(
-        `Tỷ lệ sản xuất: 1 hạt giống = ${templateData.data[0].estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+        `Tỷ lệ sản xuất: 1 đơn vị gieo trồng = ${templateData.data[0].estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
       );
     } else if (plantData?.data?.average_estimated_per_one) {
       setEstimatedPerOne(plantData.data.average_estimated_per_one);
       setCalculationInfo(
-        `Tỷ lệ sản xuất: 1 hạt giống = ${plantData.data.average_estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+        `Tỷ lệ sản xuất: 1 đơn vị gieo trồng = ${plantData.data.average_estimated_per_one} kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
       );
     } else {
       setEstimatedPerOne(1);
       setCalculationInfo(
-        `Tỷ lệ sản xuất: 1 hạt giống = 1 kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
+        `Tỷ lệ sản xuất: 1 đơn vị gieo trồng = 1 kg sản phẩm (${formProps.form?.getFieldValue("season_name")})`,
       );
     }
   }, [templateData, plantData, formProps.form]);
 
+  // Tính toán seed_quantity khi estimated_per_one hoặc estimated_product thay đổi
+  useEffect(() => {
+    if (formProps.form && estimatedPerOne) {
+      const estimatedProduct = formProps.form.getFieldValue("estimated_product");
+      if (estimatedProduct) {
+        calculateSeedQuantity(estimatedProduct, estimatedPerOne);
+      }
+    }
+  }, [estimatedPerOne, formProps.form, calculateSeedQuantity]);
+
   // Tính toán seed_quantity khi estimated_product thay đổi
   const handleEstimatedProductChange = (value: number | null) => {
-    if (formProps.form && value) {
-      const seedQuantity = Math.ceil(value / (estimatedPerOne || 1));
-      formProps.form.setFieldsValue({
-        seed_quantity: seedQuantity,
-      });
+    if (formProps.form && value && estimatedPerOne) {
+      calculateSeedQuantity(value, estimatedPerOne);
     }
   };
 
+  // Cleanup debounce function when component unmounts
+  useEffect(() => {
+    return () => {
+      calculateSeedQuantity.cancel();
+    };
+  }, [calculateSeedQuantity]);
+
   const validateEstimatedProduct = (_: any, value: number) => {
-    if (value <= 0) {
+    if (value < 10) {
       return Promise.reject(t("plans.validation.estimated_product_min"));
     }
     if (value > 1000000) {
@@ -424,7 +449,17 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
           <Card size="small" style={{ width: "100%" }}>
             <Descriptions bordered column={2} size="small">
               <Descriptions.Item label="Tên đất" span={2}>
-                {selectedYield.yield_name}
+                <Space>
+                  {selectedYield.yield_name}
+                  <Button
+                    type="link"
+                    onClick={() => setIsHistoryModalVisible(true)}
+                    icon={<HistoryOutlined />}
+                    style={{ color: token.colorPrimary, padding: 0 }}
+                  >
+                    Xem lịch sử
+                  </Button>
+                </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Loại" span={2}>
                 {selectedYield.type}
@@ -465,16 +500,16 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
             >
               <InputNumber
                 size="large"
-                min={0}
+                min={10}
                 max={1000000}
                 style={{ width: "100%" }}
                 placeholder="0"
                 addonAfter="kg"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 parser={(value) => {
-                  if (!value) return 0;
+                  if (!value) return 10;
                   const parsed = Number(value.replace(/\$\s?|(,*)/g, ""));
-                  return Math.min(Math.max(parsed, 0), 1000000) as 0 | 1000000;
+                  return Math.min(Math.max(parsed, 10), 1000000) as 10 | 1000000;
                 }}
                 step={100}
                 onChange={handleEstimatedProductChange}
@@ -520,6 +555,14 @@ export const ProductionInfo: React.FC<ProductionInfoProps> = ({
           </Col>
         </Row>
       </Space>
+
+      {selectedYield && (
+        <YieldHistoryModal
+          open={isHistoryModalVisible}
+          onClose={() => setIsHistoryModalVisible(false)}
+          yieldId={selectedYield.id}
+        />
+      )}
     </Card>
   );
 };

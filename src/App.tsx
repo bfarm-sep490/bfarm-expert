@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import "dayjs/locale/vi";
 
-import { useNotificationProvider, ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
+import { ThemedLayoutV2, ErrorComponent } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 import { Authenticated, IResourceItem, Refine } from "@refinedev/core";
 import { RefineKbarProvider, RefineKbar } from "@refinedev/kbar";
@@ -32,7 +32,7 @@ import { AuthPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
 import { PlanCreate, PlanList, PlanShow } from "./pages/plans";
 import { dataProvider } from "./rest-data-provider";
-import { PlantCreate, PlantEdit, PlantList } from "./pages/plants";
+import { PlantCreate, PlantEdit, PlantList, PlantShow } from "./pages/plants";
 import { ProblemListInProblems } from "./pages/problems/list";
 import { ProblemShowV2 } from "./pages/problems/show";
 import { HarvestingProductShow } from "./components/production/harvesting/drawer-show";
@@ -43,6 +43,7 @@ import { ablyClient } from "./utils/ablyClient";
 import { TemplateList } from "./pages/templates/list";
 import { TemplateEdit } from "./pages/templates";
 import { liveProvider } from "@refinedev/ably";
+import { notificationProvider } from "./providers/notification-provider";
 
 interface TitleHandlerOptions {
   resource?: IResourceItem;
@@ -94,7 +95,7 @@ const App: React.FC = () => {
                 warnWhenUnsavedChanges: true,
                 liveMode: "auto",
               }}
-              notificationProvider={useNotificationProvider}
+              notificationProvider={notificationProvider}
               liveProvider={liveProvider(ablyClient)}
               resources={[
                 {
@@ -108,7 +109,6 @@ const App: React.FC = () => {
                 {
                   name: "products",
                   meta: {
-                    label: "Sản phẩm",
                     icon: <ProductOutlined />,
                   },
                 },
@@ -117,7 +117,6 @@ const App: React.FC = () => {
                   list: "/harvesting-products",
                   show: "/harvesting-products/:id",
                   meta: {
-                    label: "Thu hoạch",
                     parent: "products",
                     canDelete: true,
                   },
@@ -127,7 +126,6 @@ const App: React.FC = () => {
                   list: "/packaging-products",
                   show: "/packaging-products/:id",
                   meta: {
-                    label: "Đóng gói",
                     parent: "products",
                     canDelete: true,
                   },
@@ -150,7 +148,6 @@ const App: React.FC = () => {
                   list: "/problems",
                   show: "/problems/:id",
                   meta: {
-                    label: "Vấn đề",
                     icon: <WarningOutlined />,
                     route: "/problems",
                   },
@@ -171,7 +168,6 @@ const App: React.FC = () => {
                   edit: "/templates/:id/edit",
                   show: "/templates/:id",
                   meta: {
-                    label: "Mẫu",
                     canDelete: true,
                     icon: <FileOutlined />,
                   },
@@ -282,11 +278,11 @@ const App: React.FC = () => {
                           <Outlet />
                         </PlantList>
                       }
-                    >
-                      <Route path="new" element={<PlantCreate />} />
-                    </Route>
+                    ></Route>
+                    <Route path="new" element={<PlantCreate />} />
+                    <Route path=":id" element={<PlantShow />} />
 
-                    <Route path=":id/edit" element={<PlantEdit />} />
+                    <Route path=":id/edit" element={<PlantShow />} />
                   </Route>
                 </Route>
 
@@ -308,14 +304,17 @@ const App: React.FC = () => {
                             password: "1@",
                           },
                         }}
+                        registerLink={false}
+                        forgotPasswordLink={false}
                       />
                     }
                   />
-                  <Route
+                  {/* <Route
                     path="/register"
                     element={
                       <AuthPage
                         type="register"
+                        hideForm={true}
                         formProps={{
                           initialValues: {
                             email: "expert@gmail.com",
@@ -326,7 +325,7 @@ const App: React.FC = () => {
                     }
                   />
                   <Route path="/forgot-password" element={<AuthPage type="forgotPassword" />} />
-                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} />
+                  <Route path="/update-password" element={<AuthPage type="updatePassword" />} /> */}
                 </Route>
 
                 <Route

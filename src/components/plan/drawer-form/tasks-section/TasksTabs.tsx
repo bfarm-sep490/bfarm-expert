@@ -13,7 +13,6 @@ interface TasksTabsProps {
   formProps: UseFormReturnType<IPlant>["formProps"];
   fertilizersOptions: { label: string; value: number }[];
   pesticidesOptions: { label: string; value: number }[];
-  itemsOptions: { label: string; value: number }[];
   packagingTypesOptions: { label: string; value: number }[];
   identity: { name: string } | undefined;
   orders: {
@@ -29,7 +28,6 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
   formProps,
   fertilizersOptions,
   pesticidesOptions,
-  itemsOptions,
   packagingTypesOptions,
   identity,
   orders,
@@ -63,9 +61,19 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
                 formProps={formProps}
                 fertilizersOptions={fertilizersOptions}
                 pesticidesOptions={pesticidesOptions}
-                itemsOptions={itemsOptions}
               />
             ),
+          },
+          {
+            key: "inspecting",
+            label: (
+              <Space>
+                <FileSearchOutlined />
+                <span>Công việc kiểm định</span>
+                {counts.inspecting > 0 && <Tag color="blue">{counts.inspecting}</Tag>}
+              </Space>
+            ),
+            children: <InspectionTasksPanel formProps={formProps} identity={identity} />,
           },
           {
             key: "harvesting",
@@ -76,18 +84,7 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
                 {counts.harvesting > 0 && <Tag color="blue">{counts.harvesting}</Tag>}
               </Space>
             ),
-            children: <HarvestTasksPanel formProps={formProps} itemsOptions={itemsOptions} />,
-          },
-          {
-            key: "inspecting",
-            label: (
-              <Space>
-                <FileSearchOutlined />
-                <span>Công việc kiểm tra</span>
-                {counts.inspecting > 0 && <Tag color="blue">{counts.inspecting}</Tag>}
-              </Space>
-            ),
-            children: <InspectionTasksPanel formProps={formProps} identity={identity} />,
+            children: <HarvestTasksPanel formProps={formProps} />,
           },
           {
             key: "packaging",
@@ -101,7 +98,6 @@ export const TasksTabs: React.FC<TasksTabsProps> = ({
             children: (
               <PackagingTasksPanel
                 formProps={formProps}
-                itemsOptions={itemsOptions}
                 packagingTypesOptions={packagingTypesOptions}
                 orders={orders}
               />

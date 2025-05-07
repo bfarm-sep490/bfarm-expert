@@ -25,7 +25,6 @@ import {
   Spin,
   Tabs,
   Table,
-  Space,
 } from "antd";
 import { PaginationTotal } from "../../components/paginationTotal";
 import {
@@ -477,6 +476,7 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
   return (
     <>
       <RefineList
+        title={t("templates.templates")}
         headerButtons={() => [
           <Button
             key="create"
@@ -485,12 +485,12 @@ export const TemplateList = ({ children }: PropsWithChildren) => {
             icon={<UploadOutlined />}
             onClick={showModal}
           >
-            {t("templates.actions.upload", "Upload Template")}
+            {t("templates.actions.upload", "Thêm mẫu")}
           </Button>,
         ]}
       >
         <Modal
-          title={t("templates.actions.upload", "Upload Template")}
+          title={t("templates.actions.upload", "Thêm mẫu")}
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
