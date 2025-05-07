@@ -109,7 +109,6 @@ const App: React.FC = () => {
                 {
                   name: "products",
                   meta: {
-                    label: "Sản phẩm",
                     icon: <ProductOutlined />,
                   },
                 },
@@ -118,7 +117,6 @@ const App: React.FC = () => {
                   list: "/harvesting-products",
                   show: "/harvesting-products/:id",
                   meta: {
-                    label: "Thu hoạch",
                     parent: "products",
                     canDelete: true,
                   },
@@ -128,7 +126,6 @@ const App: React.FC = () => {
                   list: "/packaging-products",
                   show: "/packaging-products/:id",
                   meta: {
-                    label: "Đóng gói",
                     parent: "products",
                     canDelete: true,
                   },
@@ -151,7 +148,6 @@ const App: React.FC = () => {
                   list: "/problems",
                   show: "/problems/:id",
                   meta: {
-                    label: "Vấn đề",
                     icon: <WarningOutlined />,
                     route: "/problems",
                   },
@@ -172,7 +168,6 @@ const App: React.FC = () => {
                   edit: "/templates/:id/edit",
                   show: "/templates/:id",
                   meta: {
-                    label: "Mẫu",
                     canDelete: true,
                     icon: <FileOutlined />,
                   },

@@ -512,6 +512,27 @@
       "maintenance": "Bảo Trì"
     }
   },
+  "products": {
+    "products": "Sản phẩm",
+    "actions": {
+      "add": "Thêm sản phẩm"
+    }
+  },
+  "packaging-products": {
+    "packaging-products": "Sản phẩm đóng gói",
+    "actions": {
+      "add": "Thêm sản phẩm đóng gói"
+    }
+  },
+  "harvesting-products": {
+    "harvesting-products": "Sản phẩm thu hoạch",
+    "actions": {
+      "add": "Thêm sản phẩm thu hoạch"
+    }
+  },
+  "problems": {
+    "problems": "Vấn đề"
+  },
   "search": {
     "more": "thêm",
     "placeholder": "Tìm kiếm..."

@@ -298,7 +298,7 @@ export const TaskModal = (props: TaskModalProps) => {
   const taskTypeOptions = [
     { label: t("status.watering", "Tưới nước"), value: "Watering" },
     { label: t("status.fertilizering", "Bón phân"), value: "Fertilizing" },
-    { label: t("status.pesticiding", "Phun thuốc"), value: "Pesticiding" },
+    { label: t("status.pesticiding", "Phun thuốc"), value: "Pesticide" },
     { label: t("status.setup", "Cài đặt"), value: "Setup" },
     { label: t("status.weeding", "Làm cỏ"), value: "Weeding" },
     { label: t("status.pruning", "Cắt tỉa"), value: "Pruning" },

@@ -61,6 +61,7 @@ export const PlantList = ({ children }: PropsWithChildren) => {
     <>
       <List
         breadcrumb={false}
+        title={t("plants.plants")}
         headerButtons={(props) => [
           <CreateButton
             {...props.createButtonProps}
