@@ -308,7 +308,8 @@
         "label": "Số lượng hạt giống",
         "placeholder": "Nhập số lượng hạt giống",
         "required": "Vui lòng nhập số lượng hạt giống"
-      }
+      },
+      "evaluated_result": "Kiểm định"
     },
     "filter": {
       "allStatus": {

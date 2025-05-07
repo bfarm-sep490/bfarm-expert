@@ -28,6 +28,9 @@ export const PlanListTable = () => {
   const { tableProps, sorters, filters } = useTable<IPlan, HttpError>({
     resource: `plans`,
     syncWithLocation: true,
+    pagination: {
+      mode: "client",
+    },
     queryOptions: {
       enabled: !isLoadingUser && !!user?.id,
     },
@@ -114,6 +117,7 @@ export const PlanListTable = () => {
             ID #
           </Typography.Text>
         }
+        fixed="left"
         dataIndex="id"
         width={80}
         render={(value) => (
@@ -125,19 +129,6 @@ export const PlanListTable = () => {
             #{value}
           </Typography.Text>
         )}
-        filterIcon={(filtered) => (
-          <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
-        )}
-        defaultFilteredValue={getDefaultFilter("id", filters, "eq")}
-        filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <InputNumber
-              addonBefore="#"
-              style={{ width: "100%" }}
-              placeholder={t("plans.filter.id.placeholder")}
-            />
-          </FilterDropdown>
-        )}
       />
       <Table.Column
         title={
@@ -146,15 +137,6 @@ export const PlanListTable = () => {
           </Typography.Text>
         }
         dataIndex="plan_name"
-        filterIcon={(filtered) => (
-          <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
-        )}
-        defaultFilteredValue={getDefaultFilter("plan_name", filters, "contains")}
-        filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder={t("plans.filter.plan_name.placeholder")} />
-          </FilterDropdown>
-        )}
         render={(value: string, record: IPlan) => (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Typography.Text
@@ -188,20 +170,11 @@ export const PlanListTable = () => {
             {value}
           </Typography.Text>
         )}
-        filterIcon={(filtered) => (
-          <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
-        )}
-        defaultFilteredValue={getDefaultFilter("plant_name", filters, "contains")}
-        filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder={t("plans.filter.plant_name.placeholder")} />
-          </FilterDropdown>
-        )}
       />
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.yield_name", "Land")}
+            {t("plans.fields.yield_name")}
           </Typography.Text>
         }
         dataIndex="yield_name"
@@ -213,15 +186,6 @@ export const PlanListTable = () => {
           >
             {value}
           </Typography.Text>
-        )}
-        filterIcon={(filtered) => (
-          <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
-        )}
-        defaultFilteredValue={getDefaultFilter("yield_name", filters, "contains")}
-        filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder={t("plans.filter.yield_name.placeholder")} />
-          </FilterDropdown>
         )}
       />
       <Table.Column
@@ -244,7 +208,7 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.description.label", "Description")}
+            {t("plans.fields.description.label")}
           </Typography.Text>
         }
         dataIndex="description"
@@ -270,11 +234,11 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.status", "Status")}
+            {t("plans.fields.status")}
           </Typography.Text>
         }
         dataIndex="status"
-        sorter
+        fixed="right"
         defaultSortOrder={getDefaultSortOrder("status", sorters)}
         defaultFilteredValue={getDefaultFilter("status", filters, "in")}
         filterDropdown={(props) => (
@@ -304,7 +268,6 @@ export const PlanListTable = () => {
           </Typography.Text>
         }
         dataIndex="estimated_product"
-        sorter
         defaultSortOrder={getDefaultSortOrder("estimated_product", sorters)}
         render={(value: number, record: IPlan) => (
           <NumberWithUnit value={value} unit={record.estimated_unit} />
@@ -314,11 +277,10 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.evaluated_result", "Evaluated Result")}
+            {t("plans.fields.evaluated_result")}
           </Typography.Text>
         }
         dataIndex="evaluated_result"
-        sorter
         defaultSortOrder={getDefaultSortOrder("evaluated_result", sorters)}
         render={(value: string) => (
           <Typography.Paragraph
@@ -333,7 +295,7 @@ export const PlanListTable = () => {
       <Table.Column
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>
-            {t("plans.fields.date", "Dates")}
+            {t("plans.fields.date")}
           </Typography.Text>
         }
         key="dates"
@@ -346,7 +308,6 @@ export const PlanListTable = () => {
       />
 
       <Table.Column<IPlan>
-        fixed="right"
         title={
           <Typography.Text style={{ whiteSpace: "nowrap" }}>{t("table.actions")}</Typography.Text>
         }

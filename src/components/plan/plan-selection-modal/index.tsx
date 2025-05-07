@@ -273,8 +273,6 @@ export const PlanSelectionModal = ({
                   </Space>
                   <Space>
                     <Text type="secondary">Số lượng: {item.preorder_quantity} kg</Text>
-                    <Text type="secondary">•</Text>
-                    <Text type="secondary">Địa chỉ: {item.address}</Text>
                   </Space>
                   <Text type="secondary" style={{ fontSize: "12px" }}>
                     Ngày dự kiến: {new Date(item.estimate_pick_up_date).toLocaleDateString("vi-VN")}
