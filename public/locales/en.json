@@ -308,8 +308,7 @@
         "label": "Seed Quantity",
         "placeholder": "Enter seed quantity",
         "required": "Please enter seed quantity"
-      },
-      "evaluated_result": "Evaluated"
+      }
     },
     "filter": {
       "allStatus": {
