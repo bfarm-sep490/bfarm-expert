@@ -49,21 +49,6 @@ export const GenericTaskDrawer = (props: TaskDrawerProps) => {
     packaging: "packaging-tasks",
   };
 
-  const itemKeyMap = {
-    caring: {
-      items: "care_items",
-      images: "care_images",
-    },
-    harvesting: {
-      items: "harvesting_items",
-      images: "harvest_images",
-    },
-    packaging: {
-      items: "packaging_items",
-      images: "packaging_images",
-    },
-  };
-
   const {
     data: queryResult,
     isLoading: taskLoading,
@@ -129,6 +114,7 @@ export const GenericTaskDrawer = (props: TaskDrawerProps) => {
     setModeVattu(mode);
     setDataVattu(task ? task[`care_${mode}s`] : []);
   };
+  console.log("🚀 ~ GenericTaskDrawer ~ task:", task);
 
   const handleChangeStatus = (type: string) => {
     const baseValues = {
@@ -369,9 +355,9 @@ export const GenericTaskDrawer = (props: TaskDrawerProps) => {
     if (props?.taskType === "caring") {
       return task?.care_images?.map((x: any) => x.url) || [];
     } else if (props?.taskType === "harvesting") {
-      return task?.harvest_images || [];
+      return task?.harvest_images?.map((x: any) => x.url) || [];
     } else {
-      return task?.packaging_images || [];
+      return task?.packaging_images?.map((x: any) => x.url) || [];
     }
   };
 
@@ -379,9 +365,9 @@ export const GenericTaskDrawer = (props: TaskDrawerProps) => {
     if (props?.taskType === "caring") {
       return task?.care_images?.[0]?.url;
     } else if (props?.taskType === "harvesting") {
-      return task?.harvest_images?.[0];
+      return task?.harvest_images?.[0]?.url;
     } else {
-      return task?.packaging_images?.[0];
+      return task?.packaging_images?.[0]?.url;
     }
   };
 
@@ -453,10 +439,9 @@ export const GenericTaskDrawer = (props: TaskDrawerProps) => {
         <Typography.Title level={4}>Kết quả</Typography.Title>
         {task?.status === "Complete" ? (
           <Flex vertical gap={16}>
-            {task.images?.length > 0 ||
-            task.care_images?.length > 0 ||
-            task.harvest_images?.length > 0 ||
-            task.packaging_images?.length > 0 ? (
+            {(props?.taskType === "caring" && task?.care_images?.length > 0) ||
+            (props?.taskType === "harvesting" && task?.harvest_images?.length > 0) ||
+            (props?.taskType === "packaging" && task?.packaging_images?.length > 0) ? (
               <Image.PreviewGroup items={getTaskImages()}>
                 <Image loading="lazy" style={{ borderRadius: "10px" }} src={getFirstImage()} />
               </Image.PreviewGroup>
