@@ -21,7 +21,6 @@ const additionalStyles = {
   } as CSSProperties,
 };
 
-// Hàm lấy màu trạng thái của Task
 const getStatusColor = (status?: string) => {
   const colorMap: Record<string, string> = {
     completed: "green",
@@ -32,7 +31,6 @@ const getStatusColor = (status?: string) => {
   return colorMap[status || ""] || "gray";
 };
 
-// Interface kết hợp Inspector và Task
 export interface IInspectorWithTask extends IInspectingForm {
   task?: IInspectingForm;
 }
@@ -44,17 +42,14 @@ export const InspectionListCard = () => {
   const { pathname } = useLocation();
   const { showUrl } = useNavigation();
 
-  // Fetch danh sách inspectors
   const { data: inspectorData } = useList<IInspectingForm>({
     resource: "inspector",
   });
 
-  // Fetch danh sách inspectingTasks
   const { data: taskData } = useList<IInspectingForm>({
     resource: "inspectingTask",
   });
 
-  // Kết hợp dữ liệu inspectors với tasks
   const combinedData: IInspectorWithTask[] =
     inspectorData?.data.map((inspector) => {
       const task = taskData?.data.find((t) => t.inspector_id === 1);

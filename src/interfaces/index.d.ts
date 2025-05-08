@@ -240,7 +240,7 @@ export interface IInspectingForm {
   can_harvest: boolean;
   completed_date?: string;
   inspector_id: number;
-  status: "Draft" | "Pending" | "Ongoing" | "Completed" | "Cancelled";
+  status: "Draft" | "Pending" | "Ongoing" | "Complete" | "Cancel";
   created_at: string;
   updated_at: string;
 }
@@ -477,4 +477,26 @@ export interface IPackagingProduct {
   retailer_id: number;
   retailer_name: string | null;
   received_pack_quantity: number;
+}
+export interface IInspectingResult {
+  id: number;
+  arsen: number;
+  plumbum: number;
+  cadmi: number;
+  hydrargyrum: number;
+  salmonella: number;
+  coliforms: number;
+  ecoli: number;
+  glyphosate_glufosinate: number;
+  sulfur_dioxide: number;
+  methyl_bromide: number;
+  hydrogen_phosphide: number;
+  dithiocarbamate: number;
+  nitrat: number;
+  nano3_kno3: number;
+  chlorate: number;
+  perchlorate: number;
+  evaluated_result: "Grade 1" | "Grade 2" | "Grade 3";
+  result_content: string;
+  inspect_images: string[];
 }

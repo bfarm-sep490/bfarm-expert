@@ -1,5 +1,8 @@
-/* eslint-disable prettier/prettier */
+import { IInspectingResult } from "@/interfaces";
 import { Typography, Tag } from "antd";
+
+export const mustBeZeroKeys = ["hydrogen_phosphide", "salmonella", "sulfur_dioxide"];
+export const getMustBeZeroKeys = (): string[] => mustBeZeroKeys;
 
 export const LIMITS: Record<string, number> = {
   arsen: 0.5,
@@ -57,117 +60,122 @@ export const columns = [
     },
   },
 ];
-
 export type ChemicalCategory = {
   title: string;
   keys: string[];
+  color: string;
 };
-
 export const chemicalGroups: ChemicalCategory[] = [
-  { title: "Kim loại nặng", keys: ["arsen", "plumbum", "cadmi", "hydragyrum"] },
-  { title: "Vi sinh vật gây bệnh", keys: ["salmonella", "coliforms", "ecoli"] },
   {
-    title: "Thuốc trừ sâu & tồn dư BVTV",
-    keys: [
-      "glyphosate_glufosinate",
-      "dithiocarbamate",
-      "chlorate",
-      "perchlorate",
-    ],
+    title: "chemicalGroups.heavyMetals",
+    keys: ["arsen", "plumbum", "cadmi", "hydrargyrum"],
+    color: "#722ed1",
   },
   {
-    title: "Chất xông hơi & bảo quản",
+    title: "chemicalGroups.pathogens",
+    keys: ["salmonella", "coliforms", "ecoli"],
+    color: "#1890ff",
+  },
+  {
+    title: "chemicalGroups.pesticides",
+    keys: ["glyphosate_glufosinate", "dithiocarbamate", "chlorate", "perchlorate"],
+    color: "#52c41a",
+  },
+  {
+    title: "chemicalGroups.fumigants",
     keys: ["sulfur_dioxide", "methyl_bromide", "hydrogen_phosphide"],
+    color: "#fa8c16",
   },
   {
-    title: "Hóa chất nông nghiệp",
+    title: "chemicalGroups.agrochemicals",
     keys: ["nitrat", "nano3_kno3"],
+    color: "#722ed1",
   },
 ];
 
-export const getChemicalData = (inspectionResult?: any) =>
+export const getChemicalData = (inspectionResult?: IInspectingResult) =>
   !inspectionResult
     ? []
     : [
         {
           key: "arsen",
           label: `Arsen (${UNITS["arsen"]})`,
-          value: inspectionResult?.arsen,
+          value: inspectionResult.arsen,
         },
 
         {
           key: "plumbum",
           label: `Plumbum (${UNITS["plumbum"]})`,
-          value: inspectionResult?.plumbum,
+          value: inspectionResult.plumbum,
         },
         {
           key: "cadmi",
           label: `Cadmium (${UNITS["cadmi"]})`,
-          value: inspectionResult?.cadmi,
+          value: inspectionResult.cadmi,
         },
         {
           key: "hydragyrum",
           label: `Mercury (${UNITS["hydragyrum"]})`,
-          value: inspectionResult?.hydrargyrum,
+          value: inspectionResult.hydrargyrum,
         },
         {
           key: "salmonella",
           label: `Salmonella (${UNITS["salmonella"]})`,
-          value: inspectionResult?.salmonella,
+          value: inspectionResult.salmonella,
         },
         {
           key: "coliforms",
           label: `Coliforms (${UNITS["coliforms"]})`,
-          value: inspectionResult?.coliforms,
+          value: inspectionResult.coliforms,
         },
         {
           key: "ecoli",
           label: `E. Coli (${UNITS["ecoli"]})`,
-          value: inspectionResult?.ecoli,
+          value: inspectionResult.ecoli,
         },
         {
           key: "glyphosate_glufosinate",
           label: `Glyphosate/Glufosinate (${UNITS["glyphosate_glufosinate"]})`,
-          value: inspectionResult?.glyphosate_glufosinate,
+          value: inspectionResult.glyphosate_glufosinate,
         },
         {
           key: "sulfur_dioxide",
           label: `Sulfur Dioxide (${UNITS["sulfur_dioxide"]})`,
-          value: inspectionResult?.sulfur_dioxide,
+          value: inspectionResult.sulfur_dioxide,
         },
         {
           key: "methyl_bromide",
           label: `Methyl Bromide (${UNITS["methyl_bromide"]})`,
-          value: inspectionResult?.methyl_bromide,
+          value: inspectionResult.methyl_bromide,
         },
         {
           key: "hydrogen_phosphide",
           label: `Hydrogen Phosphide (${UNITS["hydrogen_phosphide"]})`,
-          value: inspectionResult?.hydrogen_phosphide,
+          value: inspectionResult.hydrogen_phosphide,
         },
         {
           key: "dithiocarbamate",
           label: `Dithiocarbamate (${UNITS["dithiocarbamate"]})`,
-          value: inspectionResult?.dithiocarbamate,
+          value: inspectionResult.dithiocarbamate,
         },
         {
           key: "nitrat",
           label: `Nitrat (${UNITS["nitrat"]})`,
-          value: inspectionResult?.nitrat,
+          value: inspectionResult.nitrat,
         },
         {
           key: "nano3_kno3",
           label: `Nano3/KNO3 (${UNITS["nano3_kno3"]})`,
-          value: inspectionResult?.nano3_kno3,
+          value: inspectionResult.nano3_kno3,
         },
         {
           key: "chlorate",
           label: `Chlorate (${UNITS["chlorate"]})`,
-          value: inspectionResult?.chlorate,
+          value: inspectionResult.chlorate,
         },
         {
           key: "perchlorate",
           label: `Perchlorate (${UNITS["perchlorate"]})`,
-          value: inspectionResult?.perchlorate,
+          value: inspectionResult.perchlorate,
         },
       ];
