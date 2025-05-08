@@ -47,6 +47,7 @@ export const InspectionsShow = (props: InspectionShowProps) => {
   } = useOne<any, HttpError>({
     resource: "inspecting-results",
     id: props?.taskId ?? taskId,
+    errorNotification: false,
     queryOptions: {
       enabled: !!(props?.taskId || taskId) && props?.visible === true,
     },
