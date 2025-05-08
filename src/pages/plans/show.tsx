@@ -14,6 +14,12 @@ import {
   Anchor,
   Spin,
   Alert,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  InputNumber,
+  Select,
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -33,9 +39,10 @@ import {
   ArrowDownOutlined,
 } from "@ant-design/icons";
 import { DateField, Show } from "@refinedev/antd";
-import { HttpError, useList, useOne, useGo } from "@refinedev/core";
+import { HttpError, useList, useOne, useGo, useUpdate, useGetIdentity } from "@refinedev/core";
 import { useParams } from "react-router";
 import React, { PropsWithChildren } from "react";
+import dayjs from "dayjs";
 
 import { IOrder, IPlan, IProblem } from "@/interfaces";
 import { StatusTag } from "@/components/caring-task/status-tag";
@@ -72,15 +79,22 @@ interface IGeneralPlan {
     expert_name: string;
   };
   description: string;
+  seed_quantity: number;
 }
 
 export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
   const { token } = theme.useToken();
   const go = useGo();
   const { id } = useParams();
+  const { data: identity } = useGetIdentity<{ id: number; name: string }>();
   const [completedModal, setCompletedModal] = React.useState(false);
   const [valueModal, setValueModal] = React.useState("");
+  const [editModal, setEditModal] = React.useState(false);
+  const [form] = Form.useForm();
   const tasksRef = React.useRef<HTMLDivElement>(null);
+
+  const { mutate: updatePlan } = useUpdate();
+
   const {
     data: generalData,
     isLoading: generalLoading,
@@ -256,8 +270,55 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
   const orders = orderData?.data as any[];
   const breakpoint = Grid.useBreakpoint();
 
+  const { data: plantsData, isLoading: plantsLoading } = useList({
+    resource: "plants",
+  });
+
+  const { data: yieldsData, isLoading: yieldsLoading } = useList({
+    resource: "yields",
+  });
+
+  const { data: expertsData, isLoading: expertsLoading } = useList({
+    resource: "experts",
+  });
+
   const handleScrollToTasks = () => {
     tasksRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleUpdatePlan = (values: any) => {
+    updatePlan(
+      {
+        resource: "plans",
+        id,
+        values: {
+          ...values,
+          start_date: values.start_date.toISOString(),
+          end_date: values.end_date.toISOString(),
+          updated_by: identity?.name || "Unknown",
+        },
+      },
+      {
+        onSuccess: () => {
+          setEditModal(false);
+          generalRefetch();
+        },
+      },
+    );
+  };
+
+  const handleOpenEditModal = () => {
+    form.setFieldsValue({
+      plant_id: general_info?.plant_information?.plant_id,
+      yield_id: general_info?.yield_information?.yield_id,
+      expert_id: general_info?.expert_information?.expert_id,
+      plan_name: general_info?.plan_name,
+      description: general_info?.description,
+      start_date: general_info?.start_date ? dayjs(general_info?.start_date) : null,
+      end_date: general_info?.end_date ? dayjs(general_info?.end_date) : null,
+      estimated_product: general_info?.estimated_product,
+    });
+    setEditModal(true);
   };
 
   return (
@@ -354,6 +415,15 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
             <Flex justify="end" gap={8}>
               {general_info?.status === "Draft" && (
                 <Space>
+                  <Button
+                    onClick={handleOpenEditModal}
+                    icon={<EditOutlined />}
+                    style={{
+                      borderRadius: token.borderRadius,
+                    }}
+                  >
+                    Chỉnh sửa
+                  </Button>
                   <Button
                     danger
                     onClick={() => {
@@ -915,6 +985,151 @@ export const PlanShow = ({ children }: PropsWithChildren<{}>) => {
           problemRefetch();
         }}
       />
+      <Modal
+        title={
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Chỉnh sửa kế hoạch
+          </Typography.Title>
+        }
+        open={editModal}
+        onCancel={() => setEditModal(false)}
+        footer={null}
+        width={800}
+        bodyStyle={{ padding: "24px" }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleUpdatePlan}
+          initialValues={{
+            plant_id: general_info?.plant_information?.plant_id,
+            yield_id: general_info?.yield_information?.yield_id,
+            expert_id: general_info?.expert_information?.expert_id,
+            plan_name: general_info?.plan_name,
+            description: general_info?.description,
+            start_date: general_info?.start_date ? dayjs(general_info?.start_date) : null,
+            end_date: general_info?.end_date ? dayjs(general_info?.end_date) : null,
+            estimated_product: general_info?.estimated_product,
+            seed_quantity: general_info?.seed_quantity,
+          }}
+        >
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="plan_name"
+                label="Tên kế hoạch"
+                rules={[{ required: true, message: "Vui lòng nhập tên kế hoạch" }]}
+              >
+                <Input placeholder="Nhập tên kế hoạch" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="estimated_product"
+                label="Sản lượng dự kiến"
+                rules={[{ required: true, message: "Vui lòng nhập sản lượng dự kiến" }]}
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  placeholder="Nhập sản lượng dự kiến"
+                  min={0}
+                  addonAfter="kg"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="seed_quantity"
+                label="Số lượng hạt giống"
+                rules={[{ required: true, message: "Vui lòng nhập số lượng hạt giống" }]}
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  placeholder="Nhập số lượng hạt giống"
+                  min={0}
+                  addonAfter="hạt"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item
+            name="description"
+            label="Mô tả"
+            rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
+          >
+            <Input.TextArea rows={4} placeholder="Nhập mô tả" />
+          </Form.Item>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="start_date"
+                label="Ngày bắt đầu"
+                rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}
+              >
+                <DatePicker style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="end_date"
+                label="Ngày kết thúc"
+                rules={[{ required: true, message: "Vui lòng chọn ngày kết thúc" }]}
+              >
+                <DatePicker
+                  disabledDate={(current) => current < dayjs(general_info?.start_date)}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Divider style={{ margin: "16px 0" }} />
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Cây trồng">
+                <Input value={general_info?.plant_information?.plant_name} disabled />
+              </Form.Item>
+              <Form.Item name="plant_id" hidden>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Khu đất">
+                <Input value={general_info?.yield_information?.yield_name} disabled />
+              </Form.Item>
+              <Form.Item name="yield_id" hidden>
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item label="Chuyên gia phụ trách">
+                <Input value={general_info?.expert_information?.expert_name} disabled />
+              </Form.Item>
+              <Form.Item name="expert_id" hidden>
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item>
+            <Flex justify="end" gap={8}>
+              <Button onClick={() => setEditModal(false)}>Hủy</Button>
+              <Button type="primary" htmlType="submit">
+                Cập nhật
+              </Button>
+            </Flex>
+          </Form.Item>
+        </Form>
+      </Modal>
       {children}
     </Show>
   );
