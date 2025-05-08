@@ -779,5 +779,111 @@
     "basicInfo": {
       "title": "Basic Information"
     }
-  }
+  }, 
+  "inspection": {
+    "title": "Inspection Information",
+    "result": "Result",
+    "viewDetail": "View Details",
+    "complete": "Complete",
+    "beforeStart": "Not yet the inspection date",
+    "noResult": "No result yet. Click 'Complete' to add result.",
+    "late": "Inspection overdue",
+    "invalid": "Cannot create result in current status",
+    "cropName": "Plant Name",
+    "cropType": "Plant Type",
+    "description": "Description",
+    "jobTitle": "Job Information",
+    "planName": "Plan Name",
+    "center": "Inspection Center",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "status": "Status",
+    "criteria": "View Inspection Criteria",
+    "time": "Time",
+    "completedAt": "Completed At",
+    "createdAt": "Created At",
+    "createdBy": "Created By",
+    "evaluation": "Evaluation",
+    "resultContent": "Content",
+    "menu": "Inspecting Forms",
+    "inspection": "Inspection",
+    "modal": {
+      "title": "Inspection Result Details",
+      "note": "(*) Substances marked with an asterisk must not exceed the safety limit (must be zero).",
+      "conclusion": "Inspection Conclusion:",
+      "noComment": "No comment"
+    },
+    "table": {
+      "chemicalName": "Chemical Name",
+      "value": "Value",
+      "standard": "Standard",
+      "limitZero": "Must be zero",
+      "limitByCrop": "Based on crop type",
+      "noData": "No data available",
+      "safetyLimit": "Safety limit: {{value}}",
+      "tooltipThreshold": "Normal: ≤ {{warning}}, Light: > {{warning}}–{{danger}}, Heavy: ≥ {{danger}}"
+    }
+  },
+  "inspectionForm": {
+    "tab": {
+      "overview": "Overview"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "submit": "Submit"
+    },
+    "field": {
+      "inputRequired": "Please enter a value for {{label}}",
+      "resultContent": "Inspection Result Content",
+      "resultRequired": "Result content must not be empty",
+      "imageProof": "Image Evidence"
+    },
+    "warning": {
+      "title": "Threshold exceeded:\n",
+      "danger": "🚨 Danger: {{keys}}",
+      "warning": "⚠️ Warning: {{keys}}",
+      "fieldDanger": "🚨 DANGER: {{name}} exceeds the danger threshold",
+      "fieldWarning": "⚠️ WARNING: {{name}} exceeds the warning threshold"
+    },
+    "success": "Inspection result created successfully",
+    "error": "Creation failed, please try again",
+    "missing": "Please complete all required fields."
+  },
+  "contaminant": {
+    "title": "Inspection Criteria",
+    "plantType": "Crop Type",
+    "note": "(*) Substances marked with an asterisk must not exceed the safety limit (must be zero).",
+    "table": {
+      "chemicalName": "Substance Name",
+      "warningLimit": "Warning Threshold",
+      "dangerLimit": "Danger Threshold",
+      "mustBeZero": "Must be zero",
+      "thresholdTooltip": "Inspection threshold: {{value}}",
+      "range": "Light ≤ {{warning}}, Heavy ≥ {{danger}}"
+    }
+  },
+  "chemicalGroups": {
+    "heavyMetals": "Heavy Metals",
+    "pathogens": "Pathogenic Microorganisms",
+    "pesticides": "Pesticides & Residues",
+    "fumigants": "Fumigants & Preservatives",
+    "agrochemicals": "Agricultural Chemicals"
+  },
+  "notification": {
+    "title": "Notifications",
+    "markAll": "Mark all as read",
+    "seeMore": "See more",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "empty": {
+      "all": "No notifications 🤐",
+      "unread": "No new notifications 🤐"
+    }
+  },
+  "mrl": {
+  "label": "MRL (Maximum Residue Level)",
+  "description": "Maximum allowed residue level in agricultural products to ensure health safety."
+}
 }

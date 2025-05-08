@@ -779,5 +779,121 @@
     "basicInfo": {
       "title": "Basic Information"
     }
-  }
+  },
+  "inspections": {
+    "search_id": "Tìm ID",
+    "name": "Mẫu kiểm định",
+    "plan_name": "Kế hoạch kiểm nghiệm",
+    "task_name": "Nhiệm vụ kiểm nghiệm",
+    "start_date": "Ngày bắt đầu",
+    "end_date": "Ngày kết thúc",
+    "actions": "Hành động",
+    "status": "Trạng thái",
+    "title": "Phiếu kiểm định"
+  },
+  "inspection": {
+    "title": "Thông tin giống cây kiểm nghiệm",
+    "result": "Kết quả",
+    "viewDetail": "Xem chi tiết",
+    "complete": "Hoàn Thành",
+    "beforeStart": "Chưa đến ngày kiểm nghiệm",
+    "noResult": "Chưa có kết quả kiểm nghiệm. Nhấn 'Hoàn Thành' để nhập kết quả.",
+    "late": "Đã quá hạn kiểm nghiệm",
+    "invalid": "Không thể tạo kết quả trong trạng thái hiện tại",
+    "cropName": "Tên cây trồng",
+    "cropType": "Loại cây trồng",
+    "description": "Mô tả",
+    "jobTitle": "Thông tin công việc",
+    "planName": "Tên kế hoạch",
+    "center": "Trung tâm kiểm định",
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "status": "Trạng thái",
+    "criteria": "Xem tiêu chí kiểm định",
+    "time": "Thời gian",
+    "completedAt": "Hoàn thành",
+    "createdAt": "Tạo lúc",
+    "createdBy": "Tạo bởi",
+    "evaluation": "Đánh giá",
+    "resultContent": "Nội dung",
+    "menu": "Phiếu kiểm định",
+    "modal": {
+      "title": "Chi tiết kết quả kiểm nghiệm",
+      "note": "(*) Các chất có dấu sao bắt buộc không được vượt mức an toàn (bắt buộc bằng 0).",
+      "conclusion": "Kết luận kiểm nghiệm:",
+      "noComment": "Không có nhận xét"
+    },
+    "table": {
+      "chemicalName": "Tên chất",
+      "value": "Giá trị",
+      "standard": "Tiêu chuẩn",
+      "limitZero": "Bắt buộc = 0",
+      "limitByCrop": "Dựa trên loại cây trồng",
+      "noData": "Không có dữ liệu",
+      "safetyLimit": "Giới hạn an toàn: {{value}}",
+      "tooltipThreshold": "Bình thường: ≤ {{warning}}, Ngưỡng nhẹ: > {{warning}}–{{danger}}, Nặng: ≥ {{danger}}"
+    }
+  },
+  "inspectionForm": {
+    "tab": {
+      "overview": "Tổng quan"
+    },
+    "button": {
+      "cancel": "Hủy",
+      "submit": "Xác nhận"
+    },
+    "field": {
+      "inputRequired": "Vui lòng nhập giá trị cho {{label}}",
+      "resultContent": "Nội dung kết quả",
+      "resultRequired": "Nội dung không được để trống",
+      "imageProof": "Ảnh minh chứng"
+    },
+    "warning": {
+      "title": "Cảnh báo vượt ngưỡng:\n",
+      "danger": "🚨 Nguy hiểm: {{keys}}",
+      "warning": "⚠️ Cảnh báo: {{keys}}",
+      "fieldDanger": "🚨 NGUY HIỂM: {{name}} vượt quá ngưỡng nguy hiểm",
+      "fieldWarning": "⚠️ CẢNH BÁO: {{name}} vượt quá ngưỡng cảnh báo"
+    },
+    "success": "Tạo kết quả kiểm nghiệm thành công",
+    "error": "Tạo thất bại, vui lòng thử lại",
+    "missing": "Vui lòng nhập đầy đủ các trường bắt buộc."
+  },
+  "contaminant": {
+    "title": "Tiêu chí kiểm định",
+    "plantType": "Loại cây",
+    "note": "(*) Các chất có dấu sao bắt buộc không được vượt mức an toàn (bắt buộc bằng 0).",
+    "table": {
+      "chemicalName": "Tên chất",
+      "warningLimit": "Ngưỡng nhẹ",
+      "dangerLimit": "Ngưỡng nặng",
+      "mustBeZero": "Bắt buộc = 0",
+      "thresholdTooltip": "Ngưỡng kiểm định: {{value}}",
+      "range": "Nhẹ ≤ {{warning}}, Nặng ≥ {{danger}}"
+    }
+  },
+  "chemicalGroups": {
+    "heavyMetals": "Kim loại nặng",
+    "pathogens": "Vi sinh vật gây bệnh",
+    "pesticides": "Thuốc trừ sâu & tồn dư BVTV",
+    "fumigants": "Chất xông hơi & bảo quản",
+    "agrochemicals": "Hóa chất nông nghiệp"
+  },
+  "notification": {
+    "title": "Thông báo",
+    "markAll": "Đánh dấu đã đọc tất cả",
+    "seeMore": "Xem thêm",
+    "tabs": {
+      "all": "Tất cả",
+      "unread": "Chưa đọc"
+    },
+    "empty": {
+      "all": "Không có thông báo nào 🤐",
+      "unread": "Không có thông báo mới 🤐"
+    }
+  },
+  "mrl": {
+  "label": "MRL (Mức dư lượng tối đa)",
+  "description": "Giới hạn dư lượng tối đa cho phép tồn tại trong nông sản để đảm bảo an toàn sức khỏe."
+}
 }
