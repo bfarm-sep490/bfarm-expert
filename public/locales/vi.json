@@ -308,8 +308,7 @@
         "label": "Số lượng hạt giống",
         "placeholder": "Nhập số lượng hạt giống",
         "required": "Vui lòng nhập số lượng hạt giống"
-      },
-      "evaluated_result": "Kiểm định"
+      }
     },
     "filter": {
       "allStatus": {
@@ -781,17 +780,6 @@
       "title": "Basic Information"
     }
   },
-  "inspections": {
-    "search_id": "Tìm ID",
-    "name": "Mẫu kiểm định",
-    "plan_name": "Kế hoạch kiểm nghiệm",
-    "task_name": "Nhiệm vụ kiểm nghiệm",
-    "start_date": "Ngày bắt đầu",
-    "end_date": "Ngày kết thúc",
-    "actions": "Hành động",
-    "status": "Trạng thái",
-    "title": "Phiếu kiểm định"
-  },
   "inspection": {
     "title": "Thông tin giống cây kiểm nghiệm",
     "result": "Kết quả",
@@ -818,6 +806,7 @@
     "evaluation": "Đánh giá",
     "resultContent": "Nội dung",
     "menu": "Phiếu kiểm định",
+    "inspection": "Inspection",
     "modal": {
       "title": "Chi tiết kết quả kiểm nghiệm",
       "note": "(*) Các chất có dấu sao bắt buộc không được vượt mức an toàn (bắt buộc bằng 0).",
@@ -894,7 +883,7 @@
     }
   },
   "mrl": {
-  "label": "MRL (Mức dư lượng tối đa)",
-  "description": "Giới hạn dư lượng tối đa cho phép tồn tại trong nông sản để đảm bảo an toàn sức khỏe."
-}
+    "label": "MRL (Mức dư lượng tối đa)",
+    "description": "Giới hạn dư lượng tối đa cho phép tồn tại trong nông sản để đảm bảo an toàn sức khỏe."
+  }
 }
